@@ -159,10 +159,12 @@ def association(x, y, df, yates_correction = False, bias_correction = False):
         phi = (n[1,1]*n[0,0] - (n[1,0]*n[0,1])) / np.sqrt(n[-1,0]*n[-1,1]\
                                                           *n[0,-1]*n[1,-1])
 
-        print("Phi coefficient for binary variables '{}' == '{}' and '{}': \
-        {:.4f}".format(x, tab.index[0], y, -phi))
-        print("Phi coefficient for binary variables '{}' == '{}' and '{}': \
-        {:.4f}\n".format(x, tab.index[1], y, phi))
+        print(\
+        "Phi coefficient for binary variables '{}' == '{}' and '{}': {:.4f}"\
+        .format(x, tab.index[0], y, -phi))
+        print(\
+        "Phi coefficient for binary variables '{}' == '{}' and '{}': {:.4f}\n"\
+        .format(x, tab.index[1], y, phi))
 
     # Use open multi-dimensional meshgrid to avoid for loops
     i, j = np.ogrid[range(n_rows - 1), range(n_cols - 1)]
@@ -178,14 +180,16 @@ def association(x, y, df, yates_correction = False, bias_correction = False):
         V = np.sqrt(phi_squared / np.min([n_cols - (n_cols-2) ** 2 / (N-1) \
                                           - 2, n_rows - (n_rows-2) ** 2 / \
                                           (N-1) - 2]))
-        print("Cramér's V for variables '{}' and '{}' (Bias-Corrected): \
-        {:.4f}".format(x, y, V))
+        print(\
+        "Cramér's V for variables '{}' and '{}' (Bias-Corrected): {:.4f}"\
+        .format(x, y, V))
 
     else:
         phi_squared = chi_squared / N
         V = np.sqrt(phi_squared / np.min([n_cols - 2, n_rows - 2]))
-        print("Cramér's V for variables '{}' and '{}' (No Bias Correction): \
-        {:.4f}".format(x, y, V))
+        print(\
+        "Cramér's V for variables '{}' and '{}' (No Bias Correction): {:.4f}"\
+        .format(x, y, V))
 
     # Pearson's test of independence
     # Return chi-squared test statistic, p-value, and theoretical distribution
