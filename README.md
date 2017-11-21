@@ -34,3 +34,13 @@ Performing meaningful tests of association between _binary variables_ and plotti
 Function `association`, which returns phi coefficients (if applicable), Cramér's V, and the result of Pearson's test of independence. For the first two statistics no built-in Python function was available, so I had to define my own.
 
 [Link to Python module](/projects/p2/python-modules/p2.py)
+
+## P3 [Wrangle OpenStreetMap Data]()
+
+__Completion time:__
+
+### Overview
+
+### What was the biggest challenge?
+
+### Which part of the code do you like best?
