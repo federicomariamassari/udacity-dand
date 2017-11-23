@@ -3,7 +3,7 @@ def make_sample(filename):
     Take a systematic sample of elements from the original OSM region.
     Vary parameter k to obtain a coarser or finer sample. The file is slightly
     modified from [1].
-    Note: Place the original file in the same folder as this function.
+    Note: Place the original OSM file in the same folder as this function.
 
     Input
     --------------------------------------------------------------------------
