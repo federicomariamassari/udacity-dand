@@ -1,6 +1,13 @@
 def audit(filename):
     '''
+    Audit street names and postal codes contained in an OpenStreetMap file.
+    Store problematic data in two distinct dictionaries.
 
+    Input
+    --------------------------------------------------------------------------
+    filename: str, required argument. The name of the OpenStreetMap file to
+              audit. Either the full OSM file or a reduced file, output of
+              the 'make_sample' function.
 
     References
     --------------------------------------------------------------------------
@@ -17,7 +24,7 @@ def audit(filename):
     OSM_FILE = open(filename, 'r')
 
     '''
-    1 - STREET FEATURES
+    (1) STREET FEATURES
     --------------------------------------------------------------------------
 
     1.1 - STREET TYPES
@@ -166,7 +173,7 @@ def audit(filename):
         return (elem.tag == 'tag') & (elem.attrib['k'] == 'addr:street')
 
     '''
-    2 POSTCODE FEATURES
+    (2) POSTCODE FEATURES
     --------------------------------------------------------------------------
     Italy has five-digit postal codes. The Lombardy region has codes in the
     2XXXX range although the acceptable ones, those for the Milan and Monza
@@ -190,7 +197,8 @@ def audit(filename):
         re_queries = [street_type_re, expected_types,
                       day_in_street_re, None,
                       month_in_street_re, expected_months,
-                      abbreviations_re, None]
+                      abbreviations_re, None,
+                      apostrophes_re, None]
 
         '''
         Store half the length of 're_queries' in variable n (two variables
