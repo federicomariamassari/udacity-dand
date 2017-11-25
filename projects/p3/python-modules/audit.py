@@ -1,5 +1,7 @@
 def audit(filename):
     '''
+
+
     References
     --------------------------------------------------------------------------
     [1] 'Project: Wrangle OpenStreetMap Data', Data Wrangling Course, Udacity
@@ -163,33 +165,65 @@ def audit(filename):
     def is_street_name(elem):
         return (elem.tag == 'tag') & (elem.attrib['k'] == 'addr:street')
 
-    def audit_street(OSM_FILE, features, compiled_re, expected=None):
+    def audit_street(OSM_FILE):
 
-        # Wind up OSM file for each additional re.search
-        OSM_FILE.seek(0)
+        # Generate empty defaultdict
+        street_features = defaultdict(set)
 
         for event, elem in ET.iterparse(OSM_FILE, events=('start',)):
             if (elem.tag == 'node') | (elem.tag == 'way'):
                 for tag in elem.iter('tag'):
                     if is_street_name(tag):
-                        audit_feature(features, tag.attrib['v'], compiled_re,
-                                      expected)
-        return features
 
-    # Generate empty defaultdict
-    street_features = defaultdict(set)
+                        '''
+                        Update defaultdict with problematic street features.
+                        Pack everything in a single loop to avoid winding up
+                        the OSM file and to cut running time by 4x.
+                        '''
+                        audit_feature(street_features, tag.attrib['v'],
+                                      street_type_re, expected_types)
+                        audit_feature(street_features, tag.attrib['v'],
+                                      day_in_street_re)
+                        audit_feature(street_features, tag.attrib['v'],
+                                      month_in_street_re, expected_months)
+                        audit_feature(street_features, tag.attrib['v'],
+                                      abbreviations_re)
 
-    # Update defaultdict with problematic street features
-    audit_street(OSM_FILE, street_features, street_type_re, expected_types)
-    audit_street(OSM_FILE, street_features, day_in_street_re)
-    audit_street(OSM_FILE, street_features, month_in_street_re, expected_months)
-    audit_street(OSM_FILE, street_features, abbreviations_re)
+        return street_features
+
+    street_features = audit_street(OSM_FILE)
 
     '''
     2 POSTCODE FEATURES
     --------------------------------------------------------------------------
-
-
+    Italy has five-digit postal codes. The Lombardy region has codes in the
+    2XXXX range although the acceptable ones, those for the Milan and Monza
+    provinces, must start with 20, i.e. 20010 - 20900. All codes outside this
+    range belong to different provinces and are not part of the Milan area.
     '''
+    def is_postcode(elem):
+        return (elem.tag == 'tag') & (elem.attrib['k'] == 'addr:postcode')
+
+    def audit_postcode(OSM_FILE, features):
+        OSM_FILE.seek(0)
+        for event, elem in ET.iterparse(OSM_FILE, events=('start',)):
+                if (elem.tag == 'node') | (elem.tag == 'way'):
+                    for tag in elem.iter('tag'):
+                        if is_postcode(tag):
+
+                            '''
+                            If postcode length is != 5 or the code does not
+                            start with 20, add code to defaultdict.
+                            '''
+                            if (len(tag.attrib['v']) != 5) | \
+                               (tag.attrib['v'][:2] != '20'):
+                                features[tag.attrib['v']].add(tag.attrib['v'])
+        return features
+
+    # Generate empty defaultdict
+    postcode_features = defaultdict(set)
+
+    # Populate defaultdict with problematic postal codes
+    audit_postcode(OSM_FILE, postcode_features)
 
     return street_features, postcode_features
