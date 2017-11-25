@@ -170,6 +170,18 @@ def audit(filename):
         # Generate empty defaultdict
         street_features = defaultdict(set)
 
+        # Store variables to be used as arguments in 'audit_feature' in a list
+        re_queries = [street_type_re, expected_types,
+                      day_in_street_re, None,
+                      month_in_street_re, expected_months,
+                      abbreviations_re, None]
+
+        '''
+        Store half the length of 're_queries' in variable n (two variables
+        per time are used in list comprehension)
+        '''
+        n = len(re_queries)//2
+
         for event, elem in ET.iterparse(OSM_FILE, events=('start',)):
             if (elem.tag == 'node') | (elem.tag == 'way'):
                 for tag in elem.iter('tag'):
@@ -177,17 +189,12 @@ def audit(filename):
 
                         '''
                         Update defaultdict with problematic street features.
-                        Pack everything in a single loop to avoid winding up
-                        the OSM file and to cut running time by 4x.
+                        Use list comprehension to pack all queries in a single
+                        line of code.
                         '''
-                        audit_feature(street_features, tag.attrib['v'],
-                                      street_type_re, expected_types)
-                        audit_feature(street_features, tag.attrib['v'],
-                                      day_in_street_re)
-                        audit_feature(street_features, tag.attrib['v'],
-                                      month_in_street_re, expected_months)
-                        audit_feature(street_features, tag.attrib['v'],
-                                      abbreviations_re)
+                        [audit_feature(street_features, tag.attrib['v'],
+                                      re_queries[2*i], re_queries[2*i+1]) \
+                                      for i in range(n)]
 
         return street_features
 
