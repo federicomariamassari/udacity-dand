@@ -183,7 +183,10 @@ def audit(filename):
         street_features = defaultdict(set)
         postcode_features = defaultdict(set)
 
-        # Store variables to be used as arguments in 'audit_feature' in a list
+        '''
+        Store variables to be used as arguments in 'audit_feature' in a list
+        (street features auditing only)
+        '''
         re_queries = [street_type_re, expected_types,
                       day_in_street_re, None,
                       month_in_street_re, expected_months,
