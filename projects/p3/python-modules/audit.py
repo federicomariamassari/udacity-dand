@@ -147,6 +147,21 @@ def audit(filename):
     \s*\w*    # Remaining part of the string
     ''', re.VERBOSE)
 
+    '''
+    1.4 - APOSTROPHES
+
+    This re.search covers one bad use of apostrophes in street names, i.e.
+    a trailing space between the apostrophe and the word that follows, with
+    the additional constraint that such word is lowercase.
+    '''
+    apostrophes_re = re.compile(r'''
+    \w+       # Start with street type
+    \s*\w*    # Optional blank space and word
+    \'        # Required apostrophe
+    \s        # Required blank space
+    [a-z]+    # Required lowercase word
+    ''', re.VERBOSE)
+
     # Define auxiliary functions
     def audit_feature(features, street_name, compiled_re, expected=None):
         '''
@@ -184,6 +199,10 @@ def audit(filename):
         return (elem.tag == 'tag') & (elem.attrib['k'] == 'addr:postcode')
 
 
+    '''
+    Audit OSM file and store problematic data in two different defaultdicts,
+    'street_features' and 'postcode_features'.
+    '''
     def audit_all(OSM_FILE):
 
         # Generate empty defaultdicts
