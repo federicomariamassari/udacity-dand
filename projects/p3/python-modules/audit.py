@@ -95,13 +95,10 @@ def audit(filename):
     is with Roman numerals, e.g. 'Via XX Settembre'.
     '''
     day_in_street_re = re.compile(r'''
-    \w+       # Start with street type, e.g. Via, Piazza;
-    [aeio]    # Last letter of street type must be an accepted vowel;
-    \s        # One single blank space must follow street type;
-    [\d]+     # One or more numbers must follow blank space;
+    \s        # Start with a single blank space;
+    [\d]{1,2} # One or two digits must follow blank space;
     [°]*      # Optionally, account for °, as in 1° (1st);
-    \s        # One single blank space must follow a number or °;
-    \S+       # End with month name.
+    \s        # One single blank space must follow a number or °.
     ''', re.VERBOSE)
 
     '''
@@ -139,12 +136,9 @@ def audit(filename):
     while the latter must be dealt with on a case-by-case basis.
     '''
     abbreviations_re = re.compile(r'''
-    \w+       # Start with word, street type or first letter of abbreviation
-    \s*\w*    # Optional blank space and word (if \w+ was a street type)
+    \w+       # Start with letter (e.g. 'F' in 'F.lli') or word (e.g. 'Ing.')
     \.        # Required punctuation
     \s*\w*    # Optional blank space and second word
-    \.*       # Optional second punctuation (to catch second names, if any)
-    \s*\w*    # Remaining part of the string
     ''', re.VERBOSE)
 
     '''
@@ -199,6 +193,13 @@ def audit(filename):
         return (elem.tag == 'tag') & (elem.attrib['k'] == 'addr:postcode')
 
 
+    # Save re patterns in a list, to be passed to function 'clean.py'
+    query_library = [street_type_re,
+                     day_in_street_re,
+                     month_in_street_re,
+                     abbreviations_re,
+                     apostrophes_re]
+
     '''
     Audit OSM file and store problematic data in two different defaultdicts,
     'street_features' and 'postcode_features'.
@@ -211,19 +212,13 @@ def audit(filename):
 
         '''
         Store variables to be used as arguments in 'audit_feature' in a list
-        (street features auditing only)
+        of tuples (street features auditing only)
         '''
-        re_queries = [street_type_re, expected_types,
-                      day_in_street_re, None,
-                      month_in_street_re, expected_months,
-                      abbreviations_re, None,
-                      apostrophes_re, None]
-
-        '''
-        Store half the length of 're_queries' in variable n (two variables
-        per time are used in list comprehension)
-        '''
-        n = len(re_queries)//2
+        re_queries = [(street_type_re, expected_types),
+                      (day_in_street_re, None),
+                      (month_in_street_re, expected_months),
+                      (abbreviations_re, None),
+                      (apostrophes_re, None)]
 
         for event, elem in ET.iterparse(OSM_FILE, events=('start',)):
             if (elem.tag == 'node') | (elem.tag == 'way'):
@@ -238,8 +233,8 @@ def audit(filename):
                         line of code.
                         '''
                         [audit_feature(street_features, tag.attrib['v'],
-                                      re_queries[2*i], re_queries[2*i+1]) \
-                                      for i in range(n)]
+                                      re_queries[i][0], re_queries[i][1]) \
+                                      for i in range(len(re_queries))]
 
                     # Audit postcode features
                     elif is_postcode(tag):
@@ -256,4 +251,4 @@ def audit(filename):
 
     street_features, postcode_features = audit_all(OSM_FILE)
 
-    return street_features, postcode_features
+    return street_features, postcode_features, query_library
