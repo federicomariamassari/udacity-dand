@@ -145,15 +145,14 @@ def audit(filename):
     1.4 - APOSTROPHES
 
     This re.search covers one bad use of apostrophes in street names, i.e.
-    a trailing space between the apostrophe and the word that follows, with
-    the additional constraint that such word is lowercase.
+    a trailing space between l' (letter l + apostrophe) and the word that
+    follows.
     '''
-    apostrophes_re = re.compile(r'''
-    \w+       # Start with street type
-    \s*\w*    # Optional blank space and word
-    \'        # Required apostrophe
+    apostrophe_re = re.compile(r'''
+    \w*       # Start with preposition
+    l\'       # Preposition must end with l + apostrophe, e.g. l', dell'
     \s        # Required blank space
-    [a-z]+    # Required lowercase word
+    \w+       # Required word after blankspace
     ''', re.VERBOSE)
 
     # Define auxiliary functions
