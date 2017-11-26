@@ -148,7 +148,7 @@ def audit(filename):
     a trailing space between l' (letter l + apostrophe) and the word that
     follows.
     '''
-    apostrophe_re = re.compile(r'''
+    apostrophes_re = re.compile(r'''
     \w*       # Start with preposition
     l\'       # Preposition must end with l + apostrophe, e.g. l', dell'
     \s        # Required blank space
