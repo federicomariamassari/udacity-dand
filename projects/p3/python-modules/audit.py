@@ -29,12 +29,15 @@ def audit(filename):
 
     1.1 - STREET TYPES
 
-    Include a list of possible street qualifiers contained in street names:
-     - [Pp]rivat[ao]: private road (-a: feminine; -o: masculine)
-     - [Pp]rovinciale: county road (invariant)
-     - [Ss]tatale: trunk road (invariant).
+    Include a list of possible street qualifiers contained in street names
+    (ignoring case):
+     - Comunale: local road (invariant)
+     - Privat[ao]: private road (-a: feminine; -o: masculine)
+     - Provinciale: county road (invariant)
+     - Statale: trunk road (invariant).
     '''
-    street_qualifiers = set(['Privat[ao]',
+    street_qualifiers = set(['Comunale',
+                             'Privat[ao]',
                              'Provinciale',
                              'Statale'])
 
@@ -87,25 +90,11 @@ def audit(filename):
     '''
     1.2 - STREET NAMES / HISTORICAL DATE IN NAME
 
-    1.2.1 - Day
-
     It is not uncommon to find streets or squares named after a date in which
     a historical event took place, usually <day> + <month>.
-    Apart from 1° (primo, first), the most accepted way to refer to such days
-    is with Roman numerals, e.g. 'Via XX Settembre'.
-    '''
-    day_in_street_re = re.compile(r'''
-    \s        # Start with a single blank space;
-    [\d]{1,2} # One or two digits must follow blank space;
-    [°]*      # Optionally, account for °, as in 1° (1st);
-    \s        # One single blank space must follow a number or °.
-    ''', re.VERBOSE)
-
-    '''
-    1.2.2 - Month
-
-    Months appearing in street names are often written in lowercase. However,
-    they should be capitalised.
+    Apart from 1° (primo, first), days in dates are commonly written in Roman
+    numerals, as in 'Via XX Settembre'. Months, which are often written in
+    lowercase, should instead always be capitalized.
     '''
     expected_months = set(['Gennaio',
                            'Febbraio',
@@ -124,11 +113,17 @@ def audit(filename):
     expected_months_re = ''.join(['{}|'.format(month)
                               for month in expected_months]).strip('|')
 
-    month_in_street_re = re.compile(r'(' + expected_months_re + ')',
-                                    re.IGNORECASE)
+    date_in_street_re = re.compile(r'''
+    \d{1,2}   # Start with day number, one or two digits;
+    [°]*      # Optionally, account for °, as in 1° (1st);
+    \s        # One single blank space must follow a number or °;
+    ('''
+    + expected_months_re  # Must be followed by a month, ignoring lowercase.
+    + ''')''',
+    re.IGNORECASE | re.VERBOSE)
 
     '''
-    1.3 - ABBREVIATIONS
+    1.3 - STREET NAMES / ABBREVIATIONS
 
     Abbreviations in street names are generally used for both common words,
     e.g. 'F.lli' instead of 'Fratelli' (same as 'Bros.' for 'Brothers') and
@@ -145,7 +140,7 @@ def audit(filename):
     ''', re.VERBOSE)
 
     '''
-    1.4 - APOSTROPHES
+    1.4 - STREET NAMES / APOSTROPHES
 
     This re.search covers one bad use of apostrophes in street names, i.e.
     a trailing space between l' (letter l + apostrophe) and the word that
@@ -197,10 +192,10 @@ def audit(filename):
 
     # Save re patterns in a list, to be passed to function 'clean.py'
     query_library = [street_type_re,
-                     day_in_street_re,
-                     month_in_street_re,
+                     date_in_street_re,
                      abbreviations_re,
-                     apostrophes_re]
+                     apostrophes_re,
+                     number_in_street_re]
 
     '''
     Audit OSM file and store problematic data in two different defaultdicts,
@@ -217,10 +212,10 @@ def audit(filename):
         of tuples (street features auditing only)
         '''
         re_queries = [(street_type_re, expected_types),
-                      (day_in_street_re, None),
-                      (month_in_street_re, expected_months),
+                      (date_in_street_re, expected_months),
                       (abbreviations_re, None),
-                      (apostrophes_re, None)]
+                      (apostrophes_re, None),
+                      (number_in_street_re, None)]
 
         for event, elem in ET.iterparse(OSM_FILE, events=('start',)):
             if (elem.tag == 'node') | (elem.tag == 'way'):
