@@ -131,9 +131,12 @@ def audit(filename):
     1.3 - ABBREVIATIONS
 
     Abbreviations in street names are generally used for both common words,
-    e.g. 'F.lli' instead of 'Fratelli' (same as 'Bros.', 'Brothers') and
-    personal names, e.g. 'A.' instead of 'Ada'. The former are easy to fix,
-    while the latter must be dealt with on a case-by-case basis.
+    e.g. 'F.lli' instead of 'Fratelli' (same as 'Bros.' for 'Brothers') and
+    personal names, e.g. 'A.' instead of 'Ada'. The former are quite easy to
+    fix, despite the added complication of punctuation both inside ('F.lli')
+    and outside ('Ing.', for 'Ingegner', 'Engineer') the word. The latter are
+    much more difficult to fix, and should be dealt with on a case-by-case
+    basis. Only words in the first category will be replaced.
     '''
     abbreviations_re = re.compile(r'''
     \w+       # Start with letter (e.g. 'F' in 'F.lli') or word (e.g. 'Ing.')
