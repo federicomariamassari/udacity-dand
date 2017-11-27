@@ -88,6 +88,20 @@ def audit(filename):
                           'Vicolo privato'])
 
     '''
+    Catch additional road types which are hard to clean based on the regular
+    expression above. This mainly covers cases in which there is no blank
+    space between an abbreviated road type and the road number, e.g. 'SP14'
+    or 'S.P.208'.
+    '''
+    additional_road_types_re = re.compile(r'''
+    S         # String must begin with 'S' (S or S., for 'Strada')
+    \.*       # Optional punctuation
+    [\w+]*    # Optional second word
+    \.*       # Optional additional punctuation
+    \d+       # String must end with one or more digits
+    ''', re.VERBOSE)
+
+    '''
     1.2 - STREET NAMES / HISTORICAL DATE IN NAME
 
     It is not uncommon to find streets or squares named after a date in which
@@ -218,6 +232,7 @@ def audit(filename):
 
     # Save re patterns in a list, to be passed to function 'clean.py'
     query_library = [street_type_re,
+                     additional_road_types_re,
                      date_in_street_re,
                      abbreviations_re,
                      apostrophes_re,
@@ -238,6 +253,7 @@ def audit(filename):
         of tuples (street features auditing only)
         '''
         re_queries = [(street_type_re, expected_types),
+                      (additional_road_types_re, None),
                       (date_in_street_re, expected_months),
                       (abbreviations_re, None),
                       (apostrophes_re, None),
