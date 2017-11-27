@@ -153,6 +153,29 @@ def audit(filename):
     \w+       # Required word after blankspace
     ''', re.VERBOSE)
 
+    '''
+    1.5 - STREET NAMES / STREET NUMBER IN NAME
+
+    This query detects street numbers in street names, e.g. 'Via Europa 30',
+    ignoring admissible cases, such as county road numbers or years.
+    '''
+    # Concatenate months and street qualifiers, to be avoided in the re.search
+    street_with_valid_number = ''.join(['{}|'.format(term) for term in \
+                               (expected_months|street_qualifiers)])
+
+    # stackoverflow.com/questions/1240275/how-to-negate-specific-word-in-regex
+    number_in_street_re = re.compile(r'''
+    ^(?!.*(   # Only include street name if it does not begin with any of
+    '''       # the values included in the following strings
+    + street_with_valid_number +
+    '''
+    Km|SP|SS  # Other street names with admissible number at the end
+    )).*
+    \s        # Include blank space; rule out cases such as '99 for 1899.
+    \d+$      # End with one or more digits
+    ''', re.VERBOSE | re.IGNORECASE)
+
+
     # Define auxiliary functions
     def audit_feature(features, street_name, compiled_re, expected=None):
         '''
