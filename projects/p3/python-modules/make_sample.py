@@ -7,8 +7,8 @@ def make_sample(filename):
 
     Input
     --------------------------------------------------------------------------
-    osm_file: str, required argument. The name of the OpenStreetMap file to
-              parse, e.g. 'milan_italy.osm'.
+    filename: str, required argument. The name of the full OpenStreetMap file
+              to parse, e.g. 'milan_italy.osm'.
 
     References
     --------------------------------------------------------------------------
