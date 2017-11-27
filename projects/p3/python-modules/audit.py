@@ -91,7 +91,7 @@ def audit(filename):
     1.2 - STREET NAMES / HISTORICAL DATE IN NAME
 
     It is not uncommon to find streets or squares named after a date in which
-    a historical event took place, usually <day> + <month>.
+    a historical event took place, usually <day> + <month> [+ <year>].
     Apart from 1° (primo, first), days in dates are commonly written in Roman
     numerals, as in 'Via XX Settembre'. Months, which are often written in
     lowercase, should instead always be capitalized.
@@ -119,7 +119,10 @@ def audit(filename):
     \s        # One single blank space must follow a number or °;
     ('''
     + expected_months_re  # Must be followed by a month, ignoring lowercase.
-    + ''')''',
+    + ''')
+    \s*       # Optional space before year
+    [\d+]*$   # Optional year at the end
+    ''',
     re.IGNORECASE | re.VERBOSE)
 
     '''
