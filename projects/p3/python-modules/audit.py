@@ -139,7 +139,7 @@ def audit(filename):
     abbreviations_re = re.compile(r'''
     \w+       # Start with letter (e.g. 'F' in 'F.lli') or word (e.g. 'Ing.')
     \.        # Required punctuation
-    \s*\w*    # Optional blank space and second word
+    \w*       # Optional second word
     ''', re.VERBOSE)
 
     '''
