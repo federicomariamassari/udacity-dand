@@ -250,7 +250,10 @@ def audit(filename):
 
         '''
         Store variables to be used as arguments in 'audit_feature' in a list
-        of tuples (street features auditing only)
+        of tuples (street features auditing only). For each tuple, on the left
+        is the compiled re search, on the right the dictionary of expected
+        values, if applicable.
+
         '''
         re_queries = [(street_type_re, expected_types),
                       (additional_road_types_re, None),
