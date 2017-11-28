@@ -256,17 +256,16 @@ def audit(filename):
 
         '''
         Store variables to be used as arguments in 'audit_feature' in a list
-        of tuples (street features auditing only). For each tuple, on the left
-        is the compiled re search, on the right the dictionary of expected
-        values, if applicable.
-
+        of tuples. For each tuple, on the left is the compiled re search, on
+        the right the dictionary of expected values, if applicable.
         '''
         re_queries = [(street_type_re, expected_types),
                       (additional_road_types_re, None),
                       (date_in_street_re, expected_months),
                       (abbreviations_re, None),
                       (apostrophes_re, None),
-                      (number_in_street_re, None)]
+                      (number_in_street_re, None),
+                      (postcode_re, None)]
 
         for event, elem in ET.iterparse(OSM_FILE, events=('start',)):
             if (elem.tag == 'node') | (elem.tag == 'way'):
@@ -278,11 +277,11 @@ def audit(filename):
                         '''
                         Update defaultdict with problematic street features.
                         Use list comprehension to pack all queries in a single
-                        line of code.
+                        line of code. Leave out last query (postcodes only).
                         '''
                         [audit_feature(street_features, tag.attrib['v'],
                                       re_queries[i][0], re_queries[i][1]) \
-                                      for i in range(len(re_queries))]
+                                      for i in range(len(re_queries)-1)]
 
                     # Audit postcode features
                     elif is_postcode(tag):
@@ -290,10 +289,8 @@ def audit(filename):
                         If postcode length is != 5 or the code does not start
                         with 20, add code to defaultdict.
                         '''
-                        if (len(tag.attrib['v']) != 5) | \
-                           (tag.attrib['v'][:2] != '20'):
-                            postcode_features[tag.attrib['v']]\
-                            .add(tag.attrib['v'])
+                        audit_feature(postcode_features, tag.attrib['v'],
+                                      re_queries[-1][0], re_queries[-1][1])
 
         return street_features, postcode_features
 
