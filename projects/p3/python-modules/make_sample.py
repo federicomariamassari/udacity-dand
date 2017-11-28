@@ -1,4 +1,4 @@
-def make_sample(filename):
+def make_sample(filename, k):
     '''
     Take a systematic sample of elements from the original OSM region.
     Vary parameter k to obtain a coarser or finer sample. The file is slightly
@@ -9,6 +9,8 @@ def make_sample(filename):
     --------------------------------------------------------------------------
     filename: str, required argument. The name of the full OpenStreetMap file
               to parse, e.g. 'milan_italy.osm'.
+    k: int, required argument. Parameter governing the size of the resulting
+       sample file. Size will be ~N/k MB, with N the size of the original file.
 
     References
     --------------------------------------------------------------------------
@@ -31,7 +33,7 @@ def make_sample(filename):
     Parameter: take every k-th top level element.
     Size of the resulting sample (as of November 2017): ~850/k MB.
     '''
-    k = 10
+    k = k
 
     def get_element(osm_file, tags=('node', 'way', 'relation')):
         '''
