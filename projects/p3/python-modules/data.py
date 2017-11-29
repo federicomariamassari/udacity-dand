@@ -193,7 +193,7 @@ def shape_element(element, node_attr_fields=NODE_FIELDS, way_attr_fields=WAY_FIE
 
     # YOUR CODE HERE
 
-    
+
     if element.tag == 'node':
         return {'node': node_attribs, 'node_tags': tags}
     elif element.tag == 'way':
@@ -217,7 +217,7 @@ def get_element(osm_file, tags=('node', 'way', 'relation')):
 def validate_element(element, validator, schema=SCHEMA):
     """Raise ValidationError if element does not match schema"""
     if validator.validate(element, schema) is not True:
-        field, errors = next(validator.errors.iteritems())
+        field, errors = next(validator.errors.items())
         message_string = "\nElement of type '{0}' has the following errors:\n{1}"
         error_string = pprint.pformat(errors)
 
