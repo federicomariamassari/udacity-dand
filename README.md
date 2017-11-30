@@ -22,6 +22,8 @@ The deck generating process. In particular, the way suits and values are stored 
 
 __Completion time:__ 21 days
 
+__Textbook:__ Jake VanderPlas, [_Python Data Science Handbook. Essential Tools for Working with Data_](http://shop.oreilly.com/product/0636920034919.do), O'Reilly Media, 2016
+
 ### Overview
 _Choose one of Udacity's curated datasets and investigate it using NumPy and Pandas. Go through the entire data analysis process, starting by posing a question and finishing by sharing your findings._
 
