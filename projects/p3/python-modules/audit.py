@@ -98,7 +98,7 @@ def audit(filename):
     \.*       # Optional punctuation
     [\w+]*    # Optional second word
     \.*       # Optional additional punctuation
-    \d+$      # String must end with one or more digits
+    \d+       # String must end with one or more digits
     ''', re.VERBOSE)
 
     '''
