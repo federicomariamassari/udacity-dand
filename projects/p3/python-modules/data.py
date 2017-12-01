@@ -1,28 +1,34 @@
 """
-After auditing is complete the next step is to prepare the data to be inserted into a SQL database.
-To do so you will parse the elements in the OSM XML file, transforming them from document format to
-tabular format, thus making it possible to write to .csv files.  These csv files can then easily be
-imported to a SQL database as tables.
+After auditing is complete the next step is to prepare the data to be inserted
+into a SQL database. To do so you will parse the elements in the OSM XML file,
+transforming them from document format to tabular format, thus making it
+possible to write to .csv files.  These csv files can then easily be imported
+to a SQL database as tables.
 
 The process for this transformation is as follows:
-- Use iterparse to iteratively step through each top level element in the XML
-- Shape each element into several data structures using a custom function
-- Utilize a schema and validation library to ensure the transformed data is in the correct format
-- Write each data structure to the appropriate .csv files
+- Use iterparse to iteratively step through each top level element in the XML;
+- Shape each element into several data structures using a custom function;
+- Utilize a schema and validation library to ensure the transformed data is in
+  the correct format;
+- Write each data structure to the appropriate .csv files.
 
-We've already provided the code needed to load the data, perform iterative parsing and write the
-output to csv files. Your task is to complete the shape_element function that will transform each
-element into the correct format. To make this process easier we've already defined a schema (see
-the schema.py file in the last code tab) for the .csv files and the eventual tables. Using the
-cerberus library we can validate the output against this schema to ensure it is correct.
+We've already provided the code needed to load the data, perform iterative
+parsing and write the output to csv files. Your task is to complete the
+'shape_element' function that will transform each element into the correct
+format. To make this process easier we've already defined a schema (see the
+'schema.py' file in the last code tab) for the .csv files and the eventual
+tables. Using the 'cerberus' library we can validate the output against this
+schema to ensure it is correct.
 
 ## Shape Element Function
-The function should take as input an iterparse Element object and return a dictionary.
+The function should take as input an iterparse Element object and return a
+dictionary.
 
 ### If the element top level tag is "node":
 The dictionary returned should have the format {"node": .., "node_tags": ...}
 
-The "node" field should hold a dictionary of the following top level node attributes:
+The "node" field should hold a dictionary of the following top level node
+attributes:
 - id
 - user
 - uid
@@ -33,28 +39,32 @@ The "node" field should hold a dictionary of the following top level node attrib
 - changeset
 All other attributes can be ignored
 
-The "node_tags" field should hold a list of dictionaries, one per secondary tag. Secondary tags are
-child tags of node which have the tag name/type: "tag". Each dictionary should have the following
-fields from the secondary tag attributes:
+The "node_tags" field should hold a list of dictionaries, one per secondary
+tag. Secondary tags are child tags of node which have the tag name/type:
+"tag". Each dictionary should have the following fields from the secondary tag
+attributes:
 - id: the top level node id attribute value
-- key: the full tag "k" attribute value if no colon is present or the characters after the colon if one is.
+- key: the full tag "k" attribute value if no colon is present or the
+       characters after the colon if one is.
 - value: the tag "v" attribute value
-- type: either the characters before the colon in the tag "k" value or "regular" if a colon
-        is not present.
+- type: either the characters before the colon in the tag "k" value or
+        "regular" if a colon is not present.
 
 Additionally,
 
-- if the tag "k" value contains problematic characters, the tag should be ignored
-- if the tag "k" value contains a ":" the characters before the ":" should be set as the tag type
-  and characters after the ":" should be set as the tag key
-- if there are additional ":" in the "k" value they and they should be ignored and kept as part of
-  the tag key. For example:
+- if the tag "k" value contains problematic characters, the tag should be
+  ignored
+- if the tag "k" value contains a ":" the characters before the ":" should be
+  set as the tag type and characters after the ":" should be set as the tag key
+- if there are additional ":" in the "k" value they and they should be ignored
+  and kept as part of the tag key. For example:
 
   <tag k="addr:street:name" v="Lincoln"/>
   should be turned into
   {'id': 12345, 'key': 'street:name', 'value': 'Lincoln', 'type': 'addr'}
 
-- If a node has no secondary tags then the "node_tags" field should just contain an empty list.
+- If a node has no secondary tags then the "node_tags" field should just
+  contain an empty list.
 
 The final return value for a "node" element should look something like:
 
@@ -181,22 +191,70 @@ WAY_FIELDS = ['id', 'user', 'uid', 'version', 'changeset', 'timestamp']
 WAY_TAGS_FIELDS = ['id', 'key', 'value', 'type']
 WAY_NODES_FIELDS = ['id', 'node_id', 'position']
 
-
-def shape_element(element, node_attr_fields=NODE_FIELDS, way_attr_fields=WAY_FIELDS,
-                  problem_chars=PROBLEMCHARS, default_tag_type='regular'):
-    """Clean and shape node or way XML element to Python dict"""
+def shape_element(element, node_attr_fields=NODE_FIELDS, 
+                  way_attr_fields=WAY_FIELDS, problem_chars=PROBLEMCHARS,
+                  lower_colon=LOWER_COLON, default_tag_type='regular'):
 
     node_attribs = {}
     way_attribs = {}
     way_nodes = []
-    tags = []  # Handle secondary tags the same way for both node and way elements
+    tags = []
 
-    # YOUR CODE HERE
+
+    position = 0
+
+    for child in element:
+        tag = {}
+        if child.tag == 'tag':
+
+            if problem_chars.search(child.attrib['k']):
+                continue
+
+            elif lower_colon.search(child.attrib['k']):
+                tag['id'] = element.attrib['id']
+                tag['type'] = child.attrib['k'].split(':', 1)[0]
+                tag['key'] = child.attrib['k'].split(':', 1)[1]
+                if tag['key'] == 'street':
+                    for i in range(len(query_types)):
+                        child.attrib['v'] = update_name(child.attrib['v'],
+                                                        query_library[i],
+                                                        query_types[i],
+                                                        mappings[i])
+                        tag['value'] = child.attrib['v']
+
+                elif tag['key'] == 'postcode':
+                    tag['value'] = update_postcode(child.attrib['v'],
+                                                   query_library[-1])
+
+                else:
+                    tag['value'] = child.attrib['v']
+
+            else:
+                tag['type'] = default_tag_type
+                tag['key'] = child.attrib['k']
+                tag['value'] = child.attrib['v']
+                tag['id'] = element.attrib['id']
+
+            if tag:
+                tags.append(tag)
+
+        way_node = {}
+        if child.tag == 'nd':
+            way_node['id'] = element.attrib['id']
+            way_node['node_id'] = child.attrib['ref']
+            way_node['position'] = position
+            way_nodes.append(way_node)
+            position += 1
 
 
     if element.tag == 'node':
+        for label in NODE_FIELDS:
+            node_attribs[label] = element.attrib[label]
         return {'node': node_attribs, 'node_tags': tags}
+
     elif element.tag == 'way':
+        for label in WAY_FIELDS:
+            way_attribs[label] = element.attrib[label]
         return {'way': way_attribs, 'way_nodes': way_nodes, 'way_tags': tags}
 
 
