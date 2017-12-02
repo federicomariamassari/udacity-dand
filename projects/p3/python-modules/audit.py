@@ -245,6 +245,12 @@ def audit(filename):
                      postcode_re]
 
     '''
+    (3) CITY NAMES
+    --------------------------------------------------------------------------
+    '''
+    city_name_re = re.compile(r"(De'|Sul)")
+
+    '''
     Audit OSM file and store problematic data in two different defaultdicts,
     'street_features' and 'postcode_features'.
     '''
