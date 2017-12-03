@@ -12,6 +12,10 @@ def make_sample(filename, k):
     k: int, required argument. Parameter governing the size of the resulting
        sample file. Size will be ~N/k MB, with N the size of the original file.
 
+    Output
+    --------------------------------------------------------------------------
+    SAMPLE_FILE: str. The name of the sample file.
+
     References
     --------------------------------------------------------------------------
     [1] 'Project: Wrangle OpenStreetMap Data', Data Wrangling Course, Udacity
@@ -60,3 +64,5 @@ def make_sample(filename, k):
                 output.write(ET.tostring(element, encoding='unicode'))
 
         output.write('</osm>')
+
+    return SAMPLE_FILE
