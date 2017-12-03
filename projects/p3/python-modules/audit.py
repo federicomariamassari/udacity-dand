@@ -88,8 +88,8 @@ def audit(filename):
                           'Vicolo privato'])
 
     '''
-    Catch additional road types which are hard to clean based on the regular
-    expression above. This mainly covers cases in which there is no blank
+    Catch additional road types which are hard to clean based on the previous
+    regular expression. This mainly covers cases in which there is no blank
     space between an abbreviated road type and the road number, e.g. 'SP14'
     or 'S.P.208'.
     '''
@@ -192,31 +192,9 @@ def audit(filename):
     \d+$      # End with one or more digits
     ''', re.VERBOSE | re.IGNORECASE)
 
-
-    # Define auxiliary functions
-    def audit_feature(features, street_name, compiled_re, expected=None):
-        '''
-        Add data not conforming to specified criteria to a dictionary.
-        A generalised version of 'audit_street_type' [1].
-
-        Input
-        ----------------------------------------------------------------------
-        features: dict, required. The dictionary to store problematic data.
-        street_name: str, required. Street name, tag value of 'addr:street'.
-        compiled_re: _sre.SRE_Pattern, required. Compiled regex object.
-        expected: list or set, optional. Expected data features.
-        '''
-        match = compiled_re.search(street_name)
-        if match:
-            feature = match.group()
-            if expected != None:
-                if feature not in expected:
-                    features[feature].add(street_name)
-            else:
-                features[feature].add(street_name)
-
     def is_street_name(elem):
         return (elem.tag == 'tag') & (elem.attrib['k'] == 'addr:street')
+
 
     '''
     B. POSTCODE FEATURES
@@ -254,6 +232,28 @@ def audit(filename):
     always be lowercase.
     '''
     city_name_re = re.compile(r"(De'|Sul)")
+
+    # Define auxiliary functions
+    def audit_feature(features, tag_value, compiled_re, expected=None):
+        '''
+        Add data not conforming to specified criteria to a dictionary.
+        A generalised version of 'audit_street_type' [1].
+
+        Input
+        ----------------------------------------------------------------------
+        features: dict, required. The dictionary to store problematic data.
+        tag_value: str, required. Tag value of 'addr:<tag>'.
+        compiled_re: _sre.SRE_Pattern, required. Compiled regex object.
+        expected: list or set, optional. Expected data features.
+        '''
+        match = compiled_re.search(tag_value)
+        if match:
+            feature = match.group()
+            if expected != None:
+                if feature not in expected:
+                    features[feature].add(tag_value)
+            else:
+                features[feature].add(tag_value)
 
 
     def audit_all(OSM_FILE):
