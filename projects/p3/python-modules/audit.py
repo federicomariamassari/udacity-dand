@@ -204,14 +204,14 @@ def audit(filename):
     provinces, must start with 20, i.e. 20010 - 20900. All codes outside this
     range belong to different provinces and are not part of the Milan area.
     '''
-    def is_postcode(elem):
-        return (elem.tag == 'tag') & (elem.attrib['k'] == 'addr:postcode')
-
     postcode_re = re.compile(r'''
     ^\d{0,4}$|     # Find postal codes shorter than 5 digits, OR
     ^\d{6,}|       # longer than 5 digits, OR
     ^2[^0]\d{3,}   # whose second digit != 0 (outside the Milan-Monza area)
     ''', re.VERBOSE)
+
+    def is_postcode(elem):
+        return (elem.tag == 'tag') & (elem.attrib['k'] == 'addr:postcode')
 
     # Save re patterns in a list, to be passed to function 'clean.py'
     query_library = [street_type_re,
