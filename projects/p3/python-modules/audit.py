@@ -31,9 +31,9 @@ def audit(filename):
 
     Include a list of possible street qualifiers contained in street names
     (ignoring case):
-     - Comunale: local road (invariant)
-     - Privat[ao]: private road (-a: feminine; -o: masculine)
-     - Provinciale: county road (invariant)
+     - Comunale: local road (invariant);
+     - Privat[ao]: private road (-a: feminine; -o: masculine);
+     - Provinciale: county road (invariant);
      - Statale: trunk road (invariant).
     '''
     street_qualifiers = set(['Comunale',
