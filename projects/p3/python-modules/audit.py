@@ -1,7 +1,7 @@
 def audit(filename):
     '''
-    Audit street names and postal codes contained in an OpenStreetMap file.
-    Store problematic data in two distinct dictionaries.
+    Audit common features of an OpenStreetMap (XML) dataset: street names,
+    postal codes, city names. Store problematic data in distinct dictionaries.
 
     Input
     --------------------------------------------------------------------------
@@ -24,10 +24,10 @@ def audit(filename):
     OSM_FILE = open(filename, 'r')
 
     '''
-    (1) STREET FEATURES
+    A. STREET FEATURES
     --------------------------------------------------------------------------
 
-    1.1 - STREET TYPES
+    1. Street Types
 
     Include a list of possible street qualifiers contained in street names
     (ignoring case):
@@ -102,7 +102,7 @@ def audit(filename):
     ''', re.VERBOSE)
 
     '''
-    1.2 - STREET NAMES / HISTORICAL DATE IN NAME
+    2. Street Names / Historical Date in Name
 
     It is not uncommon to find streets or squares named after a date in which
     a historical event took place, usually <day> + <month> [+ <year>].
@@ -140,15 +140,15 @@ def audit(filename):
     re.IGNORECASE | re.VERBOSE)
 
     '''
-    1.3 - STREET NAMES / ABBREVIATIONS
+    3. Street Names / Abbreviations
 
     Abbreviations in street names are generally used for both common words,
     e.g. 'F.lli' instead of 'Fratelli' (same as 'Bros.' for 'Brothers') and
     personal names, e.g. 'A.' instead of 'Ada'. The former are quite easy to
     fix, despite the added complication of punctuation both inside ('F.lli')
-    and outside ('Ing.', for 'Ingegner', 'Engineer') the word. The latter are
-    much more difficult to fix, and should be dealt with on a case-by-case
-    basis. Only words in the first category will be replaced.
+    and outside ('Ing.', for 'Ingegner', i.e. 'Engineer') the word. The latter
+    are much more difficult to fix, and should be dealt with on a case-by-case
+    basis, so only words in the first category are replaced.
     '''
     abbreviations_re = re.compile(r'''
     \w+       # Start with letter (e.g. 'F' in 'F.lli') or word (e.g. 'Ing.')
@@ -157,10 +157,10 @@ def audit(filename):
     ''', re.VERBOSE)
 
     '''
-    1.4 - STREET NAMES / APOSTROPHES
+    4. Street Names / Apostrophes
 
-    This re.search covers one bad use of apostrophes in street names, i.e.
-    a trailing space between l' (letter l + apostrophe) and the word that
+    This regular expression covers one bad use of apostrophes in street names,
+    i.e. a trailing space between l' (letter l + apostrophe) and the word that
     follows.
     '''
     apostrophes_re = re.compile(r'''
@@ -171,10 +171,10 @@ def audit(filename):
     ''', re.VERBOSE)
 
     '''
-    1.5 - STREET NAMES / STREET NUMBER IN NAME
+    5. Street Names / Street Number in Name
 
-    This query detects street numbers in street names, e.g. 'Via Europa 30',
-    ignoring admissible cases, such as county road numbers or years.
+    This regular expression detects street numbers in street names, e.g. 'Via
+    Europa 30', ignoring admissible cases such as county road numbers or years.
     '''
     # Concatenate months and street qualifiers, to be avoided in the re.search
     street_with_valid_number = ''.join(['{}|'.format(term) for term in \
@@ -219,7 +219,7 @@ def audit(filename):
         return (elem.tag == 'tag') & (elem.attrib['k'] == 'addr:street')
 
     '''
-    (2) POSTCODE FEATURES
+    B. POSTCODE FEATURES
     --------------------------------------------------------------------------
     Italy has five-digit postal codes. The Lombardy region has codes in the
     2XXXX range although the acceptable ones, those for the Milan and Monza
@@ -245,15 +245,17 @@ def audit(filename):
                      postcode_re]
 
     '''
-    (3) CITY NAMES
+    C. CITY NAMES
     --------------------------------------------------------------------------
+    Uppercase/lowercase prepositions, e.g. 'Cernusco [Ss]ul Naviglio', special
+    characters (accents, apostrophes), e.g. 'Bascapè/Bascapé', and Provinces
+    in names, e.g. 'Origgio (VA)' are the most frequent issues in city names.
+    All lead to unnecessary duplicates in the dataset. Prepositions should
+    always be lowercase.
     '''
     city_name_re = re.compile(r"(De'|Sul)")
 
-    '''
-    Audit OSM file and store problematic data in two different defaultdicts,
-    'street_features' and 'postcode_features'.
-    '''
+
     def audit_all(OSM_FILE):
 
         # Generate empty defaultdicts
