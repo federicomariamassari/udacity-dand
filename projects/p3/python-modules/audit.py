@@ -213,14 +213,6 @@ def audit(filename):
     def is_postcode(elem):
         return (elem.tag == 'tag') & (elem.attrib['k'] == 'addr:postcode')
 
-    # Save re patterns in a list, to be passed to function 'clean.py'
-    query_library = [street_type_re,
-                     additional_road_types_re,
-                     date_in_street_re,
-                     abbreviations_re,
-                     apostrophes_re,
-                     number_in_street_re,
-                     postcode_re]
 
     '''
     C. CITY NAMES
@@ -303,5 +295,8 @@ def audit(filename):
         return street_features, postcode_features
 
     street_features, postcode_features = audit_all(OSM_FILE)
+
+    # Save re patterns in a list, to be passed to function 'clean.py'
+    query_library = re_queries.append([postcode_re, city_name_re])
 
     return street_features, postcode_features, query_library
