@@ -295,7 +295,7 @@ def audit(filename):
                     '''
                     Update defaultdict with problematic street features.
                     Use list comprehension to pack all queries in a single
-                    line of code. Leave out last query (postcodes only).
+                    line of code.
                     '''
                     [audit_feature(street_features, tag.attrib['v'],
                                   re_queries[i], expected[i]) for i \
