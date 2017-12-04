@@ -30,7 +30,7 @@ def make_sample(filename, k):
     filename, add '_sample.osm' to obtain sample file filename.
     '''
     OSM_FILE = filename
-    REGION_NAME = filename.split('.')
+    REGION_NAME = OSM_FILE.split('.')
     SAMPLE_FILE = '{}_sample.osm'.format(REGION_NAME[0])
 
     '''
