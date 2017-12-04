@@ -241,6 +241,7 @@ def audit(filename):
     def is_city_name(elem):
         return (elem.tag == 'tag') & (elem.attrib['k'] == 'addr:city')
 
+
     # Define auxiliary functions
     def audit_feature(features, tag_value, compiled_re, expected=None):
         '''
@@ -264,58 +265,53 @@ def audit(filename):
                 features[feature].add(tag_value)
 
 
-    def audit_all(OSM_FILE):
+    # Generate empty defaultdicts
+    street_features = defaultdict(set)
+    postcode_features = defaultdict(set)
+    city_features = defaultdict(set)
 
-        # Generate empty defaultdicts
-        street_features = defaultdict(set)
-        postcode_features = defaultdict(set)
+    '''
+    Store variables to be used as arguments in 'audit_feature' in a list
+    of tuples. For each tuple, on the left is the compiled re search, on
+    the right the dictionary of expected values, if applicable.
+    '''
+    re_queries = [(street_type_re, expected_types),
+                  (additional_road_types_re, None),
+                  (date_in_street_re, expected_months),
+                  (abbreviations_re, None),
+                  (apostrophes_re, None),
+                  (number_in_street_re, None),
+                  (postcode_re, None)]
 
-        '''
-        Store variables to be used as arguments in 'audit_feature' in a list
-        of tuples. For each tuple, on the left is the compiled re search, on
-        the right the dictionary of expected values, if applicable.
-        '''
-        re_queries = [(street_type_re, expected_types),
-                      (additional_road_types_re, None),
-                      (date_in_street_re, expected_months),
-                      (abbreviations_re, None),
-                      (apostrophes_re, None),
-                      (number_in_street_re, None),
-                      (postcode_re, None)]
+    for event, elem in ET.iterparse(OSM_FILE, events=('start',)):
+        if (elem.tag == 'node') | (elem.tag == 'way'):
+            for tag in elem.iter('tag'):
 
-        for event, elem in ET.iterparse(OSM_FILE, events=('start',)):
-            if (elem.tag == 'node') | (elem.tag == 'way'):
-                for tag in elem.iter('tag'):
+                # Audit street features
+                if is_street_name(tag):
 
-                    # Audit street features
-                    if is_street_name(tag):
+                    '''
+                    Update defaultdict with problematic street features.
+                    Use list comprehension to pack all queries in a single
+                    line of code. Leave out last query (postcodes only).
+                    '''
+                    [audit_feature(street_features, tag.attrib['v'],
+                                  re_queries[i][0], re_queries[i][1]) \
+                                  for i in range(len(re_queries)-1)]
 
-                        '''
-                        Update defaultdict with problematic street features.
-                        Use list comprehension to pack all queries in a single
-                        line of code. Leave out last query (postcodes only).
-                        '''
-                        [audit_feature(street_features, tag.attrib['v'],
-                                      re_queries[i][0], re_queries[i][1]) \
-                                      for i in range(len(re_queries)-1)]
+                # Audit postcode features
+                elif is_postcode(tag):
+                    '''
+                    If postcode length is != 5 or the code does not start
+                    with 20, add code to defaultdict.
+                    '''
+                    audit_feature(postcode_features, tag.attrib['v'],
+                                  re_queries[-1][0], re_queries[-1][1])
 
-                    # Audit postcode features
-                    elif is_postcode(tag):
-                        '''
-                        If postcode length is != 5 or the code does not start
-                        with 20, add code to defaultdict.
-                        '''
-                        audit_feature(postcode_features, tag.attrib['v'],
-                                      re_queries[-1][0], re_queries[-1][1])
-
-                    # Audit city features
-                    elif is_city_name(tag):
-                        audit_feature(city_features, tag.attrib['v'],
-                                      city_name_re, None)
-
-        return street_features, postcode_features
-
-    street_features, postcode_features = audit_all(OSM_FILE)
+                # Audit city features
+                elif is_city_name(tag):
+                    audit_feature(city_features, tag.attrib['v'],
+                                  city_name_re, None)
 
     # Save re patterns in a list, to be passed to function 'clean.py'
     query_library = re_queries.append([postcode_re, city_name_re])
