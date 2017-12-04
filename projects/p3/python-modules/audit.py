@@ -316,6 +316,6 @@ def audit(filename):
                                   city_name_re, None)
 
     # Save re patterns in a list, to be passed to function 'clean.py'
-    query_library = re_queries.append([postcode_re, city_name_re])
+    query_library = re_queries + [postcode_re, city_name_re]
 
     return street_features, postcode_features, city_features, query_library
