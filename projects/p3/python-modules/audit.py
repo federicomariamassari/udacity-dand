@@ -270,18 +270,20 @@ def audit(filename):
     postcode_features = defaultdict(set)
     city_features = defaultdict(set)
 
-    '''
-    Store variables to be used as arguments in 'audit_feature' in a list
-    of tuples. For each tuple, on the left is the compiled re search, on
-    the right the dictionary of expected values, if applicable.
-    '''
-    re_queries = [(street_type_re, expected_types),
-                  (additional_road_types_re, None),
-                  (date_in_street_re, expected_months),
-                  (abbreviations_re, None),
-                  (apostrophes_re, None),
-                  (number_in_street_re, None),
-                  (postcode_re, None)]
+    # Store variables to be used as arguments in 'audit_feature'
+    re_queries = [street_type_re,
+                  additional_road_types_re,
+                  date_in_street_re,
+                  abbreviations_re,
+                  apostrophes_re,
+                  number_in_street_re]
+
+    expected = [expected_types,
+                None,
+                expected_months,
+                None,
+                None,
+                None]
 
     for event, elem in ET.iterparse(OSM_FILE, events=('start',)):
         if (elem.tag == 'node') | (elem.tag == 'way'):
@@ -296,8 +298,8 @@ def audit(filename):
                     line of code. Leave out last query (postcodes only).
                     '''
                     [audit_feature(street_features, tag.attrib['v'],
-                                  re_queries[i][0], re_queries[i][1]) \
-                                  for i in range(len(re_queries)-1)]
+                                  re_queries[i], expected[i]) for i \
+                                  in range(len(re_queries))]
 
                 # Audit postcode features
                 elif is_postcode(tag):
@@ -306,7 +308,7 @@ def audit(filename):
                     with 20, add code to defaultdict.
                     '''
                     audit_feature(postcode_features, tag.attrib['v'],
-                                  re_queries[-1][0], re_queries[-1][1])
+                                  postcode_re, None)
 
                 # Audit city features
                 elif is_city_name(tag):
