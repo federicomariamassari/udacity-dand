@@ -223,7 +223,23 @@ def audit(filename):
     All lead to unnecessary duplicates in the dataset. Prepositions should
     always be lowercase.
     '''
-    city_name_re = re.compile(r"(De'|Sul)")
+    prepositions = set(['Al', 'Con', 'Di', 'In', 'Su[l]*'])
+
+    prepositions_re = ''.join(['{}|'.format(preposition) \
+                               for preposition in prepositions]).strip('|')
+
+    city_name_re = re.compile(r'''
+    \s        # Begin with blank space to single out prepositions only
+    ('''
+    + prepositions_re +
+    ''')
+    |\'|\(    # Also single out entries with special characters OR
+    |^[a-z]   # Entries beginning with lowercase letter OR
+    |é$       # Entries ending with 'é'
+    ''', re.VERBOSE)
+
+    def is_city_name(elem):
+        return (elem.tag == 'tag') & (elem.attrib['k'] == 'addr:city')
 
     # Define auxiliary functions
     def audit_feature(features, tag_value, compiled_re, expected=None):
@@ -292,6 +308,11 @@ def audit(filename):
                         audit_feature(postcode_features, tag.attrib['v'],
                                       re_queries[-1][0], re_queries[-1][1])
 
+                    # Audit city features
+                    elif is_city_name(tag):
+                        audit_feature(city_features, tag.attrib['v'],
+                                      city_name_re, None)
+
         return street_features, postcode_features
 
     street_features, postcode_features = audit_all(OSM_FILE)
@@ -299,4 +320,4 @@ def audit(filename):
     # Save re patterns in a list, to be passed to function 'clean.py'
     query_library = re_queries.append([postcode_re, city_name_re])
 
-    return street_features, postcode_features, query_library
+    return street_features, postcode_features, city_features, query_library
