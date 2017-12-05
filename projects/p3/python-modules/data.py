@@ -191,7 +191,7 @@ WAY_FIELDS = ['id', 'user', 'uid', 'version', 'changeset', 'timestamp']
 WAY_TAGS_FIELDS = ['id', 'key', 'value', 'type']
 WAY_NODES_FIELDS = ['id', 'node_id', 'position']
 
-def shape_element(element, node_attr_fields=NODE_FIELDS, 
+def shape_element(element, node_attr_fields=NODE_FIELDS,
                   way_attr_fields=WAY_FIELDS, problem_chars=PROBLEMCHARS,
                   lower_colon=LOWER_COLON, default_tag_type='regular'):
 
@@ -294,7 +294,7 @@ def process_map(file_in, validate):
          codecs.open(WAY_NODES_PATH, 'w') as way_nodes_file, \
          codecs.open(WAY_TAGS_PATH, 'w') as way_tags_file:
 
-        nodes_writer = csv.Writer(nodes_file, NODE_FIELDS)
+        nodes_writer = csv.DictWriter(nodes_file, NODE_FIELDS)
         node_tags_writer = csv.DictWriter(nodes_tags_file, NODE_TAGS_FIELDS)
         ways_writer = csv.DictWriter(ways_file, WAY_FIELDS)
         way_nodes_writer = csv.DictWriter(way_nodes_file, WAY_NODES_FIELDS)
