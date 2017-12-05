@@ -315,4 +315,4 @@ for event, elem in ET.iterparse(OSM_FILE, events=('start',)):
                               city_name_re, None)
 
 # Save re patterns in a list, to be passed to function 'clean.py'
-query_library = re_queries + [postcode_re, city_name_re]
+re_library = re_queries + [postcode_re, city_name_re]
