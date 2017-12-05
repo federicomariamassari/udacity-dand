@@ -8,6 +8,9 @@ References
     Data Analyst Nanodegree
 '''
 
+# Import required modules
+import audit
+
 '''
 (1) MAPPINGS
 
