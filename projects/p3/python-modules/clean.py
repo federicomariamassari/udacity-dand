@@ -187,3 +187,63 @@ def update_postcode(postcode, re_query):
             better_postcode = match.group().replace('0', '', 1)
 
     return better_postcode
+
+'''
+(4) CLEANING CITY NAMES
+'''
+def update_city_name(city_name, re_query):
+    match = re_query.search(city_name)
+    better_city_name = city_name
+    if match:
+        if city_name[0].islower():
+            # Capitalize first letter of city name if lowercase
+            better_city_name = city_name.title()
+
+        elif "'" in match.group():
+            '''
+            If apostrophe in city name, check if the letter before apostrophe
+            is 'e'. If so, the word is de', an abbreviation of del/degli/dei,
+            and it requires blank space after it, e.g. 'Cassina de' Pecchi'.
+            Otherwise, no space is required, e.g. 'Torre d'Isola'.
+            '''
+
+            '''
+            Split string by apostrophe first: e.g. "Cassina De'Pecchi" ->
+            ['Cassina De', 'Pecchi'], then by blank space -> ['Cassina', 'De',
+            'Pecchi'].
+            '''
+            split_string = city_name.split("'")[0].split(' ')
+
+            # Join words, make preposition lowercase
+            better_city_name = ''.join(split_string[0] + ' ' \
+                                       + split_string[1].lower() + "'" \
+                                       + city_name.split("'")[1].strip())
+
+            # Add blank space after de'
+            if city_name.split("'")[0][-1] == 'e':
+                better_city_name = better_city_name.replace("'", "' ")
+
+        elif '(' in match.group():
+            '''
+            Strip the two-letter Province code from city name. Usually, the
+            code follows the city name, in brackets, e.g. 'Origgio (VA)'.
+            Remove what follows the opening bracket, then strip blank space.
+            '''
+            better_city_name = city_name.split(match.group())[0].strip()
+
+        elif match.group() == 'é':
+            # Replace 'é' with 'è' if last letter of city name
+            better_city_name = city_name.split(match.group())[0] + 'è'
+
+        elif any(preposition in match.group() for preposition \
+            in ['Al', 'Con', 'Di', 'In', 'Su']):
+            '''
+            If preposition in city name, split the string on preposition, then
+            take the first element, add to it the lowercase preposition, then
+            the remainder of the string.
+            '''
+            better_city_name = city_name.split(match.group())[0] \
+                                + match.group().lower() + \
+                                city_name.split(match.group())[1]
+
+    return better_city_name
