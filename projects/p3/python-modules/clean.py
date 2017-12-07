@@ -87,6 +87,9 @@ def update_name(name, re_query, query_type, mapping=None):
         '''
         if query_type == 'street_type':
             if match.group() in mapping.keys():
+                # If street name is fully lowercase, titlecase it
+                if name.islower():
+                    name = name.title()
                 better_street_type = mapping[match.group()]
                 better_name = re_query.sub(better_street_type, name,
                                            count=1)
