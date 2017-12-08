@@ -263,19 +263,20 @@ def audit_feature(features, tag_value, compiled_re, expected=None):
         else:
             features[feature].add(tag_value)
 
+# Store variables to be used as arguments in 'audit_feature'
+re_library = [street_type_re,
+              additional_road_types_re,
+              date_in_street_re,
+              abbreviations_re,
+              apostrophes_re,
+              number_in_street_re,
+              postcode_re,
+              city_name_re]
 
 # Generate empty defaultdicts
 street_features = defaultdict(set)
 postcode_features = defaultdict(set)
 city_features = defaultdict(set)
-
-# Store variables to be used as arguments in 'audit_feature'
-re_queries = [street_type_re,
-              additional_road_types_re,
-              date_in_street_re,
-              abbreviations_re,
-              apostrophes_re,
-              number_in_street_re]
 
 expected = [expected_types,
             None,
