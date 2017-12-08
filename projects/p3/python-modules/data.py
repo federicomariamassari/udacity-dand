@@ -188,8 +188,12 @@ PROBLEMCHARS = re.compile(r'[=\+/&<>;\'"\?%#$@\,\. \t\r\n]')
 
 SCHEMA = schema
 
-# Make sure the fields order in the csvs matches the column order in the sql table schema
-NODE_FIELDS = ['id', 'lat', 'lon', 'user', 'uid', 'version', 'changeset', 'timestamp']
+'''
+Make sure the field order in the csvs matches the column order in the SQL
+table schema.
+'''
+NODE_FIELDS = ['id', 'lat', 'lon', 'user', 'uid', 'version', 'changeset',
+               'timestamp']
 NODE_TAGS_FIELDS = ['id', 'key', 'value', 'type']
 WAY_FIELDS = ['id', 'user', 'uid', 'version', 'changeset', 'timestamp']
 WAY_TAGS_FIELDS = ['id', 'key', 'value', 'type']
@@ -218,17 +222,21 @@ def shape_element(element, node_attr_fields=NODE_FIELDS,
                 tag['id'] = element.attrib['id']
                 tag['type'] = child.attrib['k'].split(':', 1)[0]
                 tag['key'] = child.attrib['k'].split(':', 1)[1]
+
                 if tag['key'] == 'street':
                     for i in range(len(query_types)):
-                        child.attrib['v'] = update_name(child.attrib['v'],
-                                                        query_library[i],
-                                                        query_types[i],
-                                                        mappings[i])
+                        child.attrib['v'] = \
+                        clean.update_name(child.attrib['v'], re_library[i],
+                                          query_types[i], mappings[i])
                         tag['value'] = child.attrib['v']
 
                 elif tag['key'] == 'postcode':
-                    tag['value'] = update_postcode(child.attrib['v'],
-                                                   query_library[-1])
+                    tag['value'] = clean.update_postcode(child.attrib['v'],
+                                                         re_library[-2])
+
+                elif tag['key'] == 'city':
+                    tag['value'] = clean.update_city_name(child.attrib['v'],
+                                                          re_library[-1])
 
                 else:
                     tag['value'] = child.attrib['v']
