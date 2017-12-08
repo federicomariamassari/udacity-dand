@@ -251,3 +251,37 @@ def update_city_name(city_name, re_query):
                                 city_name.split(match.group())[1]
 
     return better_city_name
+
+'''
+(5) TESTING
+
+On Terminal or Command Prompt, run '$ python3 clean.py' to print the output
+of the cleaning procedure.
+Note: depending on 'k', the parameter governing the size of the sample file
+in 'make_sample.py', some dictionaries may be empty.
+'''
+def print_library(dictionary, re_library, query_types=None, mappings=None):
+    for dict_values in dictionary.values():
+        for value in dict_values:
+            better_value = value
+            if dictionary == street_features:
+                for i in range(len(query_types)):
+                    better_value = update_name(better_value, re_library[i],
+                                                query_types[i], mappings[i])
+            elif dictionary == postcode_features:
+                better_value = update_postcode(better_value, re_library[-2])
+            elif dictionary == city_features:
+                better_value = update_city_name(better_value, re_library[-1])
+
+            print(value, '->', better_value)
+
+# Comment the remaining lines of code to suppress output
+filename = 'milan_italy_sample.osm'
+street_features, postcode_features, city_features = audit.audit(filename,
+                                                                re_library)
+print('\nStreet Features:')
+print_library(street_features, re_library, query_types, mappings)
+print('\nPostcode Features:')
+print_library(postcode_features, re_library)
+print('\nCity Features:')
+print_library(city_features, re_library)
