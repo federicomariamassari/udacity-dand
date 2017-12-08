@@ -273,47 +273,47 @@ re_library = [street_type_re,
               postcode_re,
               city_name_re]
 
-# Generate empty defaultdicts
-street_features = defaultdict(set)
-postcode_features = defaultdict(set)
-city_features = defaultdict(set)
+def audit(OSM_FILE, re_library):
+    # Generate empty defaultdicts
+    street_features = defaultdict(set)
+    postcode_features = defaultdict(set)
+    city_features = defaultdict(set)
 
-expected = [expected_types,
-            None,
-            expected_months,
-            None,
-            None,
-            None]
+    expected = [expected_types,
+                None,
+                expected_months,
+                None,
+                None,
+                None]
 
-for event, elem in ET.iterparse(OSM_FILE, events=('start',)):
-    if (elem.tag == 'node') | (elem.tag == 'way'):
-        for tag in elem.iter('tag'):
+    for event, elem in ET.iterparse(OSM_FILE, events=('start',)):
+        if (elem.tag == 'node') | (elem.tag == 'way'):
+            for tag in elem.iter('tag'):
 
-            # Audit street features
-            if is_street_name(tag):
+                # Audit street features
+                if is_street_name(tag):
 
-                '''
-                Update defaultdict with problematic street features.
-                Use list comprehension to pack all queries in a single
-                line of code.
-                '''
-                [audit_feature(street_features, tag.attrib['v'],
-                              re_queries[i], expected[i]) for i \
-                              in range(len(re_queries))]
+                    '''
+                    Update defaultdict with problematic street features.
+                    Use list comprehension to pack all queries in a single
+                    line of code.
+                    '''
+                    [audit_feature(street_features, tag.attrib['v'],
+                                  re_library[i], expected[i]) for i \
+                                  in range(len(re_library)-2)]
 
-            # Audit postcode features
-            elif is_postcode(tag):
-                '''
-                If postcode length is != 5 or the code does not start
-                with 20, add code to defaultdict.
-                '''
-                audit_feature(postcode_features, tag.attrib['v'],
-                              postcode_re, None)
+                # Audit postcode features
+                elif is_postcode(tag):
+                    '''
+                    If postcode length is != 5 or the code does not start
+                    with 20, add code to defaultdict.
+                    '''
+                    audit_feature(postcode_features, tag.attrib['v'],
+                                  postcode_re, None)
 
-            # Audit city features
-            elif is_city_name(tag):
-                audit_feature(city_features, tag.attrib['v'],
-                              city_name_re, None)
+                # Audit city features
+                elif is_city_name(tag):
+                    audit_feature(city_features, tag.attrib['v'],
+                                  city_name_re, None)
 
-# Save re patterns in a list, to be passed to function 'clean.py'
-re_library = re_queries + [postcode_re, city_name_re]
+    return street_features, postcode_features, city_features
