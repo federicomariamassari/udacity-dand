@@ -166,10 +166,14 @@ import codecs
 import pprint
 import re
 import xml.etree.cElementTree as ET
-
 import cerberus
+from schema import schema
 
-import schema
+# Import the list of compiled regular expressions from audit.py
+import audit
+from audit import re_library
+import clean
+from clean import query_types, mappings
 
 OSM_PATH = "milan_italy_sample.osm"
 
@@ -182,7 +186,7 @@ WAY_TAGS_PATH = "ways_tags.csv"
 LOWER_COLON = re.compile(r'^([a-z]|_)+:([a-z]|_)+')
 PROBLEMCHARS = re.compile(r'[=\+/&<>;\'"\?%#$@\,\. \t\r\n]')
 
-SCHEMA = schema.schema
+SCHEMA = schema
 
 # Make sure the fields order in the csvs matches the column order in the sql table schema
 NODE_FIELDS = ['id', 'lat', 'lon', 'user', 'uid', 'version', 'changeset', 'timestamp']
