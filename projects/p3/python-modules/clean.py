@@ -10,6 +10,7 @@ References
 
 # Import required modules
 import audit
+from audit import re_library
 
 '''
 (1) MAPPINGS
