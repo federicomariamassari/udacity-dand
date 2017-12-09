@@ -183,8 +183,8 @@ WAYS_PATH = "ways.csv"
 WAY_NODES_PATH = "ways_nodes.csv"
 WAY_TAGS_PATH = "ways_tags.csv"
 
-LOWER_COLON = re.compile(r'^([a-z]|_)+:([a-z]|_)+')
 PROBLEMCHARS = re.compile(r'[=\+/&<>;\'"\?%#$@\,\. \t\r\n]')
+LOWER_COLON = re.compile(r'^([a-z]|_)+:([a-z]|_)+')
 
 SCHEMA = schema
 
