@@ -1,6 +1,15 @@
-# Note: The schema is stored in a .py file in order to take advantage of the
-# int() and float() type coercion functions. Otherwise it could easily stored as
-# as JSON or another serialized format.
+'''
+Custom schema required to validate the transformed OSM data [1]. The schema is
+stored in a .py file in order to take advantage of the int() and float() type
+coercion functions.
+
+Note: Place this schema in the same folder as the data.py function.
+
+References
+-------------------------------------------------------------------------------
+[1] 'Project: Wrangle OpenStreetMap Data', Data Wrangling Course, Udacity
+    Data Analyst Nanodegree
+'''
 
 schema = {
     'node': {
