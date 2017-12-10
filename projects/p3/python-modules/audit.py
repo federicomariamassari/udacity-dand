@@ -202,6 +202,7 @@ Italy has five-digit postal codes. The Lombardy region has codes in the
 2XXXX range although the acceptable ones, those for the Milan and Monza
 provinces, must start with 20, i.e. 20010 - 20900. All codes outside this
 range belong to different provinces and are not part of the Milan area.
+The latter are returned for exploratory purpose only but will not be cleaned.
 '''
 postcode_re = re.compile(r'''
 ^\d{0,4}$|     # Find postal codes shorter than 5 digits, OR
