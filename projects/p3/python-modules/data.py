@@ -198,6 +198,10 @@ def validate_element(element, validator, schema=SCHEMA):
 def process_map(file_in, validate):
     '''Iteratively process each XML element and write to csv(s)'''
 
+    '''
+    Replace 'wb' with 'w', and 'UnicodeDictWriter()' with 'csv.DictWriter()',
+    to reflect conversion from Python 2 to Python 3 [3].
+    '''
     with codecs.open(NODES_PATH, 'w') as nodes_file, \
          codecs.open(NODE_TAGS_PATH, 'w') as nodes_tags_file, \
          codecs.open(WAYS_PATH, 'w') as ways_file, \
