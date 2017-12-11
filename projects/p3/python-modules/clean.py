@@ -1,11 +1,13 @@
 '''
-Clean the most commom problematic features in the 'milan_italy.osm' (or
-its sample) OpenStreetMap file.
+Clean the most commom problematic features in the 'milan_italy.osm' (or its
+sample) OpenStreetMap file.
+
+Note: Use Python 3 to run this script.
 
 References
---------------------------------------------------------------------------
-[1] 'Project: Wrangle OpenStreetMap Data', Data Wrangling Course, Udacity
-    Data Analyst Nanodegree
+-------------------------------------------------------------------------------
+[1] 'Project: Wrangle OpenStreetMap Data', Data Wrangling Course, Udacity Data
+     Analyst Nanodegree
 '''
 
 # Import required modules
@@ -15,9 +17,9 @@ from audit import re_library
 '''
 (1) MAPPINGS
 
-Regarding the mapping for 'privato'/'privata', the lowercase version is
-~6x more popular than the capitalized one in the OSM file, so the former
-was preserved.
+Regarding the mapping for 'privato'/'privata', the lowercase version is ~6x
+more popular than the capitalized one in the OSM file, so the former was
+preserved.
 '''
 street_type_mapping = {'piazza': 'Piazza',
                        'Stradia': 'Strada',
@@ -59,8 +61,8 @@ abbreviations_mapping = {'C.na': 'Cascina',
 '''
 (2) CLEANING STREET NAMES
 
-Store variables 'query_types' and 'mappings', to be used as arguments in
-the function 'update_name'.
+Store variables 'query_types' and 'mappings', to be used as arguments in the
+function 'update_name'.
 '''
 query_types = ['street_type',
                'additional_road_types',
@@ -83,8 +85,8 @@ def update_name(name, re_query, query_type, mapping=None):
     if match:
 
         '''
-        For street types (including additional road types) replace matched
-        key with corresponding value from 'street_type_mapping' dictionary.
+        For street types (including additional road types) replace matched key
+        with corresponding value from 'street_type_mapping' dictionary.
         '''
         if query_type == 'street_type':
             if match.group() in mapping.keys():
@@ -100,11 +102,11 @@ def update_name(name, re_query, query_type, mapping=None):
                 if key in match.group():
 
                     '''
-                    If string contains key, replace the substring with
-                    value + blank space + remainder of the string split
-                    on the key, e.g. 'SP14' -> (contains key) -> {'SP':
-                    'Strada Provinciale'} -> 'Strada Provinciale' + ' ' +
-                    '14' -> (result) 'Strada Provinciale 14'.
+                    If string contains key, replace the substring with value
+                    + blank space + remainder of the string split on key, e.g.
+                    'SP14' -> (contains key) -> {'SP': 'Strada Provinciale'}
+                    -> 'Strada Provinciale' + ' ' + '14' -> (result) 'Strada
+                    Provinciale 14'.
                     '''
                     better_road_type = value + ' ' \
                                        + match.group().split(key)[1]
@@ -112,13 +114,12 @@ def update_name(name, re_query, query_type, mapping=None):
                                                count=1)
 
             '''
-            For dates, split string on blank spaces, take the leftmost
-            element (day) and replace it with corresponding value from
-            'day_mapping'; then, to the replaced day, add blank space and
-            capitalized month, e.g. '24 maggio' -> (split) ['24', 'maggio']
-            -> '24' (contains key) -> {'24': 'XXIV'} -> 'XXIV' + ' ' +
-            (capitalized remainder of the string) 'Maggio' -> (result)
-            'XXIV Maggio'.
+            For dates, split string on blank spaces, take the leftmost element
+            (day) and replace it with corresponding value from 'day_mapping';
+            then, to the replaced day, add blank space and capitalized month,
+            e.g. '24 maggio' -> (split) ['24', 'maggio'] -> '24' (contains key)
+            -> {'24': 'XXIV'} -> 'XXIV' + ' ' + (capitalized remainder of the
+            string) 'Maggio' -> (result) 'XXIV Maggio'.
             '''
         elif query_type == 'date':
             if match.group().split(' ', 1)[0] in mapping.keys():
@@ -128,12 +129,11 @@ def update_name(name, re_query, query_type, mapping=None):
                 better_name = re_query.sub(better_date, name, count=1)
 
             '''
-            For abbreviations, check if any is present in the examined
-            string; if so, split the string on blank spaces, replace the
-            abbreviation with the corresponding value from the dictionary
-            'abbreviations_mapping', then join the replaced value with
-            blank space and the remainder of the split string (removing
-            extra spaces, if any).
+            For abbreviations, check if any is present in the examined string;
+            if so, split the string on blank spaces, replace abbreviation with
+            the corresponding value from the dictionary 'abbreviations_mapping',
+            then join the replaced value with blank space and the remainder of
+            the split string (removing extra spaces, if any).
             '''
         elif query_type == 'abbreviations':
             if any(abbreviation in match.group() for abbreviation \
@@ -145,10 +145,10 @@ def update_name(name, re_query, query_type, mapping=None):
                                            count=1)
 
             '''
-            For apostrophes, remove blank spaces between the apostrophe
-            and the following word, and capitalize all words, e.g. "dell'
-            artigianato" -> (split on blank space) ["dell'", 'artigianato']
-            -> (join, capitalize) "Dell'Artigianato".
+            For apostrophes, remove blank spaces between the apostrophe and the
+            following word, and capitalize all words, e.g. "dell' artigianato"
+            -> (split on blank space) ["dell'", 'artigianato'] -> (join and
+            capitalize) "Dell'Artigianato".
             '''
         elif query_type == 'apostrophes':
             better_apostrophe_use = ''.join(match.group().title().split())
@@ -156,10 +156,10 @@ def update_name(name, re_query, query_type, mapping=None):
                                        count=1)
 
             '''
-            For street numbers embedded in street names, split string on
-            blank spaces, then join all but the last element, e.g. 'Europa
-            30' -> (split on blank space) -> ['Europa', '30'] -> (join all
-            but last) -> (result) 'Europa'.
+            For street numbers embedded in street names, split string on blank
+            spaces, then join all but the last element, e.g. 'Europa 30' ->
+            (split on blank space) -> ['Europa', '30'] -> (join all but last)
+            -> (result) 'Europa'.
         '''
         elif query_type == 'street_numbers':
             stripped_number = ' '.join(match.group().split(' ')[:-1])
@@ -176,16 +176,16 @@ def update_postcode(postcode, re_query):
     if match:
         if len(match.group()) < 5:
             '''
-            If postcode is shorter than five digits add trailing zeros at
-            the end, e.g. '2013' -> '20130'. This is the most reasonable
-            way to fix the problem, without additional information.
+            If postcode is shorter than five digits add trailing zeros at the
+            end, e.g. '2013' -> '20130'. This is the most reasonable way to fix
+            the problem, without additional information.
             '''
             better_postcode = match.group() + '0' * (5-len(match.group()))
 
         elif len(match.group()) > 5:
             '''
-            The only postal code longer than 5 digits in the OSM file is
-            '200149'. The code contains an extra 0, since '20149' is a
+            The only postal code longer than 5 digits in the full OSM file is
+            '200149'. The code likely contains an extra 0, since '20149' is a
             legitimate Milan area postcode.
             '''
             better_postcode = match.group().replace('0', '', 1)
