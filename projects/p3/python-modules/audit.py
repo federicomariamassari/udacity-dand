@@ -1,11 +1,13 @@
 '''
-Audit common features of an OpenStreetMap (XML) dataset: street names,
-postal codes, city names. Store problematic data in distinct dictionaries.
+Audit common features of an OpenStreetMap (XML) dataset: street names, postal
+codes, city names. Store problematic data in distinct dictionaries.
+
+Note: Use Python 3 to run this script.
 
 References
---------------------------------------------------------------------------
-[1] 'Project: Wrangle OpenStreetMap Data', Data Wrangling Course, Udacity
-    Data Analyst Nanodegree
+-------------------------------------------------------------------------------
+[1] 'Project: Wrangle OpenStreetMap Data', Data Wrangling Course, Udacity Data
+     Analyst Nanodegree
 '''
 
 # Import required libraries
@@ -24,7 +26,7 @@ OSM_FILE = open(filename, 'r')
 
 '''
 A. STREET FEATURES
---------------------------------------------------------------------------
+-------------------------------------------------------------------------------
 
 1. Street Types
 
@@ -88,9 +90,8 @@ expected_types = set(['Alzaia',
 
 '''
 Catch additional road types which are hard to clean based on the previous
-regular expression. This mainly covers cases in which there is no blank
-space between an abbreviated road type and the road number, e.g. 'SP14'
-or 'S.P.208'.
+regular expression. This mainly covers cases in which there is no blank space
+between an abbreviated road type and the road number, e.g. 'SP14' or 'S.P.208'.
 '''
 additional_road_types_re = re.compile(r'''
 S         # String must begin with 'S' (S or S., for 'Strada')
@@ -103,11 +104,11 @@ S         # String must begin with 'S' (S or S., for 'Strada')
 '''
 2. Street Names / Historical Date in Name
 
-It is not uncommon to find streets or squares named after a date in which
-a historical event took place, usually <day> + <month> [+ <year>].
-Apart from 1° (primo, first), days in dates are commonly written in Roman
-numerals, as in 'Via XX Settembre'. Months, which are often written in
-lowercase, should instead always be capitalized.
+It is not uncommon to find streets or squares named after a date in which a
+historical event took place, usually <day> + <month> [+ <year>]. Apart from
+1° (primo, first), days in dates are commonly written in Roman numerals, as
+in 'Via XX Settembre'. Months, which are often written in lowercase, should
+instead always be capitalized.
 '''
 expected_months = set(['Gennaio',
                        'Febbraio',
@@ -141,13 +142,13 @@ re.IGNORECASE | re.VERBOSE)
 '''
 3. Street Names / Abbreviations
 
-Abbreviations in street names are generally used for both common words,
-e.g. 'F.lli' instead of 'Fratelli' (same as 'Bros.' for 'Brothers') and
-personal names, e.g. 'A.' instead of 'Ada'. The former are quite easy to
-fix, despite the added complication of punctuation both inside ('F.lli')
-and outside ('Ing.', for 'Ingegner', i.e. 'Engineer') the word. The latter
-are much more difficult to fix, and should be dealt with on a case-by-case
-basis, so only words in the first category are replaced.
+Abbreviations in street names are generally used for both common words, e.g.
+'F.lli' instead of 'Fratelli' (same as 'Bros.' for 'Brothers') and personal
+names, e.g. 'A.' instead of 'Ada'. The former are quite easy to fix, despite
+the added complication of punctuation both inside ('F.lli') and outside
+('Ing.', for 'Ingegner', i.e. 'Engineer') the word. The latter are much more
+difficult to fix, and should be dealt with on a case-by-case basis, so only
+words in the first category are replaced.
 '''
 abbreviations_re = re.compile(r'''
 \w+       # Start with letter (e.g. 'F' in 'F.lli') or word (e.g. 'Ing.')
@@ -158,9 +159,8 @@ abbreviations_re = re.compile(r'''
 '''
 4. Street Names / Apostrophes
 
-This regular expression covers one bad use of apostrophes in street names,
-i.e. a trailing space between l' (letter l + apostrophe) and the word that
-follows.
+This regular expression covers one bad use of apostrophes in street names, i.e.
+a trailing space between l' (letter l + apostrophe) and the word that follows.
 '''
 apostrophes_re = re.compile(r'''
 \w*       # Start with preposition
@@ -181,8 +181,8 @@ street_with_valid_number = ''.join(['{}|'.format(term) for term in \
 
 # stackoverflow.com/questions/1240275/how-to-negate-specific-word-in-regex
 number_in_street_re = re.compile(r'''
-^(?!.*(   # Only include street name if it does not begin with any of
-'''       # the values included in the following strings
+^(?!.*(   # Only include street name if it does not begin with any of the
+'''       # values included in the following strings
 + street_with_valid_number +
 '''
 Km|SP|SS  # Other street names with admissible number at the end
@@ -197,12 +197,12 @@ def is_street_name(elem):
 
 '''
 B. POSTCODE FEATURES
---------------------------------------------------------------------------
-Italy has five-digit postal codes. The Lombardy region has codes in the
-2XXXX range although the acceptable ones, those for the Milan and Monza
-provinces, must start with 20, i.e. 20010 - 20900. All codes outside this
-range belong to different provinces and are not part of the Milan area.
-The latter are returned for exploratory purpose only but will not be cleaned.
+-------------------------------------------------------------------------------
+Italy has five-digit postal codes. The Lombardy region has codes in the 2XXXX
+range although the acceptable ones, those for the Milan and Monza provinces,
+must start with 20, i.e. 20010 - 20900. All codes outside this range belong to
+different provinces and are not part of the Milan area. The latter are returned
+for exploratory purpose only, and will not be cleaned.
 '''
 postcode_re = re.compile(r'''
 ^\d{0,4}$|     # Find postal codes shorter than 5 digits, OR
@@ -216,12 +216,12 @@ def is_postcode(elem):
 
 '''
 C. CITY NAMES
---------------------------------------------------------------------------
+-------------------------------------------------------------------------------
 Uppercase/lowercase prepositions, e.g. 'Cernusco [Ss]ul Naviglio', special
-characters (accents, apostrophes), e.g. 'Bascapè/Bascapé', and Provinces
-in names, e.g. 'Origgio (VA)' are the most frequent issues in city names.
-All lead to unnecessary duplicates in the dataset. Prepositions should
-always be lowercase.
+characters (accents, apostrophes), e.g. 'Bascapè/Bascapé', and Provinces in
+names, e.g. 'Origgio (VA)' are the most frequent issues in city names. All
+lead to unnecessary duplicates in the dataset. Prepositions should always be
+lowercase.
 '''
 prepositions = set(['Al', 'Con', 'Di', 'In', 'Su[l]*'])
 
@@ -249,7 +249,7 @@ def audit_feature(features, tag_value, compiled_re, expected=None):
     A generalised version of 'audit_street_type' [1].
 
     Input
-    ----------------------------------------------------------------------
+    ---------------------------------------------------------------------------
     features: dict, required. The dictionary to store problematic data.
     tag_value: str, required. Tag value of 'addr:<tag>'.
     compiled_re: _sre.SRE_Pattern, required. Compiled regex object.
