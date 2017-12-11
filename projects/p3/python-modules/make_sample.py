@@ -5,9 +5,9 @@ modified from [1].
 Note: Place the original OSM file in the same folder as this function.
 
 References
---------------------------------------------------------------------------
-[1] 'Project: Wrangle OpenStreetMap Data', Data Wrangling Course, Udacity
-    Data Analyst Nanodegree
+-------------------------------------------------------------------------------
+[1] 'Project: Wrangle OpenStreetMap Data', Data Wrangling Course, Udacity Data
+     Analyst Nanodegree
 '''
 
 # Import required libraries
@@ -22,9 +22,9 @@ REGION_NAME = OSM_FILE.split('.')
 SAMPLE_FILE = '{}_sample.osm'.format(REGION_NAME[0])
 
 '''
-Take every k-th top level element. k is the parameter governing the size
-of the resulting sample file, about ~N/k MB, with N the size of the full
-OSM document. As of November 2017, the sample size is ~850/k MB.
+Take every k-th top level element. k is the parameter governing the size of the
+resulting sample file, about ~N/k MB, with N the size of the full OSM document.
+As of November 2017, the sample size is ~850/k MB.
 '''
 k = 100     # Resulting sample ~8.5 MB.
 
@@ -33,7 +33,7 @@ def get_element(osm_file, tags=('node', 'way', 'relation')):
     Yield element if it is the right type of tag.
 
     Reference:
-    stackoverflow.com/questions/3095434/inserting-newlines-in-xml-file-
+    https://stackoverflow.com/questions/3095434/inserting-newlines-in-xml-file-
     generated-via-xml-etree-elementtree-in-python
     '''
     context = iter(ET.iterparse(osm_file, events=('start', 'end')))
