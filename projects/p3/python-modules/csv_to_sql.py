@@ -4,6 +4,7 @@ Import the content of the .csv files into a SQL database.
 Use Python 3 to run this script.
 
 References
+-------------------------------------------------------------------------------
 [1] 'Project: Wrangle OpenStreetMap Data', Data Wrangling Course, Udacity Data
      Analyst Nanodegree
 [2] https://docs.python.org/3/library/sqlite3.html
