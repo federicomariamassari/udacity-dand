@@ -11,24 +11,28 @@ installed using conda on Command Prompt or Terminal:
 
 The latest PyPI version, 1.0.7, raises several Matplotlib deprecation warnings;
 however, the latest GitHub version, 1.1.0, is not fully compatible yet. Hence,
-the former must be used.
+the former must be used (all deprecation warnings are suppressed).
 
 References
 -------------------------------------------------------------------------------
+Suppress matplotlib deprecation warnings
+[1] https://stackoverflow.com/questions/24502500/python-matplotlib-getting-rid-
+    of-matplotlib-mpl-warning
+
 Display files list and size:
-[1] https://discussions.udacity.com/t/display-files-and-their-sizes-in-
+[2] https://discussions.udacity.com/t/display-files-and-their-sizes-in-
     directory/186741/2
-[2] https://stackoverflow.com/questions/10695139/sort-a-list-of-tuples-by-2nd-
+[3] https://stackoverflow.com/questions/10695139/sort-a-list-of-tuples-by-2nd-
     item-integer-value
 
 Lombardy postcodes resources:
-[3] http://www.tuttitalia.it/lombardia/
-[4] https://en.wikipedia.org/wiki/Province_of_Monza_and_Brianza
+[4] http://www.tuttitalia.it/lombardia/
+[5] https://en.wikipedia.org/wiki/Province_of_Monza_and_Brianza
 
 Basemap toolkit resources:
-[5] https://matplotlib.org/basemap/index.html
-[6] http://basemaptutorial.readthedocs.io/en/latest/
-[7] http://server.arcgisonline.com/arcgis/rest/services
+[6] https://matplotlib.org/basemap/index.html
+[7] http://basemaptutorial.readthedocs.io/en/latest/
+[8] http://server.arcgisonline.com/arcgis/rest/services
 '''
 
 import os
@@ -38,10 +42,15 @@ import matplotlib.pyplot as plt
 from mpl_toolkits.basemap import Basemap
 import seaborn as sns
 
+# Suppress matplotlib deprecation warnings from basemap 1.0.7 [1]
+import warnings
+import matplotlib.cbook
+warnings.filterwarnings('ignore', category=matplotlib.cbook.mplDeprecation)
+
 '''
 A. SIZE OF FILES
 -------------------------------------------------------------------------------
-This Python script, slightly modified from [1] and [2], prints both names and
+This Python script, slightly modified from [2] and [3], prints both names and
 size (in descending order) of all .csv, .db, and .osm files in the current
 working directory.
 '''
@@ -54,7 +63,7 @@ for path, dirs, files in os.walk(dirpath):
         files_list.extend([(filename, os.path.getsize(os.path.join(path, \
                             filename))) for filename in files])
 
-# Sort 'files_list' based on descending file size [2]
+# Sort 'files_list' based on descending file size [3]
 files_list =  sorted(files_list, key=lambda file: file[1], reverse=True)
 
 # Add header to 'files_list' table
@@ -77,7 +86,7 @@ c = conn.cursor()
 '''
 B. POSTAL CODES
 -------------------------------------------------------------------------------
-Admissible postcodes in the OSM file for Milan, Italy are [3]:
+Admissible postcodes in the OSM file for Milan, Italy are [4]:
 
  20010 - 20099: Municipalities in the Metropolitan City of Milan area
  20121 - 20162: City of Milan
@@ -85,7 +94,7 @@ Admissible postcodes in the OSM file for Milan, Italy are [3]:
 
 The province of Monza and Brianza 'was officially created by splitting the
 north-eastern part from the province of Milan [...] and became executive after
-[...] June 2009' [4]. It is, therefore, quite common to find postcodes related
+[...] June 2009' [5]. It is, therefore, quite common to find postcodes related
 to such province in the OSM file. However, they should not belong in the map.
 '''
 
@@ -137,9 +146,9 @@ plt.figure(figsize=(10,8))
 
 '''
 The matplotlib basemap toolkit is a library for plotting 2D data on maps in
-Python [5]. It allows to transform coordinates to map projections, so that
+Python [6]. It allows to transform coordinates to map projections, so that
 matplotlib can then be used to plot on such transformed coordinates.
-The 'Basemap' class creates the map [6]; the boundaries are set by supplying
+The 'Basemap' class creates the map [7]; the boundaries are set by supplying
 minimum and maximum longitude (x-axis limits) and latitude (y-axis limits).
 The map is centered on the data to plot.
 '''
@@ -147,7 +156,7 @@ m = Basemap(llcrnrlon=min_lon-diff, llcrnrlat=min_lat-diff, \
             urcrnrlon=max_lon+diff, urcrnrlat=max_lat+diff, resolution = 'h')
 
 '''
-Retrieve an image using the ArcGIS Server REST API [7] and display it on map
+Retrieve an image using the ArcGIS Server REST API [8] and display it on map
 Note: An internet connection is required.
 '''
 m.arcgisimage(service='ESRI_StreetMap_World_2D', xpixels = 900, dpi=1500)
