@@ -15,7 +15,7 @@ the former must be used (all deprecation warnings are suppressed).
 
 References
 -------------------------------------------------------------------------------
-Suppress matplotlib deprecation warnings
+Suppress matplotlib deprecation warnings:
 [1] https://stackoverflow.com/questions/24502500/python-matplotlib-getting-rid-
     of-matplotlib-mpl-warning
 
