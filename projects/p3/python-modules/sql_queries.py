@@ -30,6 +30,7 @@ Basemap toolkit resources:
 [7] http://server.arcgisonline.com/arcgis/rest/services
 '''
 
+import os
 import sqlite3
 import numpy as np
 import matplotlib.pyplot as plt
