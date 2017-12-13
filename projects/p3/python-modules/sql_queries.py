@@ -14,11 +14,20 @@ the former must be used.
 
 References
 -------------------------------------------------------------------------------
-[1] http://www.tuttitalia.it/lombardia/
-[2] https://en.wikipedia.org/wiki/Province_of_Monza_and_Brianza
-[3] https://matplotlib.org/basemap/index.html
-[4] http://basemaptutorial.readthedocs.io/en/latest/
-[5] http://server.arcgisonline.com/arcgis/rest/services
+Display files list and size:
+[1] https://discussions.udacity.com/t/display-files-and-their-sizes-in-
+    directory/186741/2
+[2] https://stackoverflow.com/questions/10695139/sort-a-list-of-tuples-by-2nd-
+    item-integer-value
+
+Lombardy postcodes resources:
+[3] http://www.tuttitalia.it/lombardia/
+[4] https://en.wikipedia.org/wiki/Province_of_Monza_and_Brianza
+
+Basemap toolkit resources:
+[5] https://matplotlib.org/basemap/index.html
+[6] http://basemaptutorial.readthedocs.io/en/latest/
+[7] http://server.arcgisonline.com/arcgis/rest/services
 '''
 
 import sqlite3
@@ -26,6 +35,34 @@ import numpy as np
 import matplotlib.pyplot as plt
 from mpl_toolkits.basemap import Basemap
 import seaborn as sns
+
+'''
+A. SIZE OF FILES
+-------------------------------------------------------------------------------
+This Python script, slightly modified from [1] and [2], prints both names and
+size (in descending order) of all .csv, .db, and .osm files in the current
+working directory.
+'''
+files_list = []
+
+# The files are supposed to be in the same directory. Modify path otherwise
+dirpath = '.'
+
+for path, dirs, files in os.walk(dirpath):
+        files_list.extend([(filename, os.path.getsize(os.path.join(path, \
+                            filename))) for filename in files])
+
+# Sort 'files_list' based on descending file size [2]
+files_list =  sorted(files_list, key=lambda file: file[1], reverse=True)
+
+for filename, size in files_list:
+
+    # Filter files to print based on extension, convert size to MB
+    if filename.split('.')[-1] in ['csv', 'db', 'osm']:
+        print('{:.<40s}: {:.2f} MB'.format(filename, size*1e-6))
+
+
+
 
 # Create Connection object representing SQL database and Cursor
 sqlite_database = 'milan_italy.db'
@@ -35,7 +72,7 @@ c = conn.cursor()
 '''
 B. POSTAL CODES
 -------------------------------------------------------------------------------
-Admissible postcodes in the OSM file for Milan, Italy are [1]:
+Admissible postcodes in the OSM file for Milan, Italy are [3]:
 
  20010 - 20099: Municipalities in the Metropolitan City of Milan area
  20121 - 20162: City of Milan
@@ -43,7 +80,7 @@ Admissible postcodes in the OSM file for Milan, Italy are [1]:
 
 The province of Monza and Brianza 'was officially created by splitting the
 north-eastern part from the province of Milan [...] and became executive after
-[...] June 2009' [2]. It is, therefore, quite common to find postcodes related
+[...] June 2009' [4]. It is, therefore, quite common to find postcodes related
 to such province in the OSM file. However, they should not belong in the map.
 '''
 
@@ -95,16 +132,16 @@ plt.figure(figsize=(10,8))
 
 '''
 The matplotlib basemap toolkit is a library for plotting 2D data on maps in
-Python [3]. It allows to transform coordinates to map projections, so that
+Python [5]. It allows to transform coordinates to map projections, so that
 matplotlib can then be used to plot on such transformed coordinates.
-The 'Basemap' class creates the map [4]; the boundaries are set by supplying
+The 'Basemap' class creates the map [6]; the boundaries are set by supplying
 minimum and maximum longitude (x-axis limits) and latitude (y-axis limits).
 The map is centered on the data to plot.
 '''
 m = Basemap(llcrnrlon=min_lon-diff, llcrnrlat=min_lat-diff, \
             urcrnrlon=max_lon+diff, urcrnrlat=max_lat+diff, resolution = 'h')
 
-# Retrieve an image using the ArcGIS Server REST API [5] and display it on map
+# Retrieve an image using the ArcGIS Server REST API [7] and display it on map
 m.arcgisimage(service='ESRI_StreetMap_World_2D', xpixels = 900, dpi=1500)
 
 # Supply coordinates to the Basemap object
