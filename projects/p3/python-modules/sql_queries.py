@@ -57,7 +57,9 @@ for path, dirs, files in os.walk(dirpath):
 # Sort 'files_list' based on descending file size [2]
 files_list =  sorted(files_list, key=lambda file: file[1], reverse=True)
 
+# Add header to 'files_list' table
 print('FILENAME', ' '*32, 'SIZE'), print('-'*51)
+
 for filename, size in files_list:
 
     # Filter files to print based on extension, convert size to MB
