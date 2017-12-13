@@ -1,4 +1,5 @@
 '''
+Use Python 3 to run this script.
 
 THE BASEMAP TOOLKIT (v1.0.7)
 -------------------------------------------------------------------------------
@@ -56,6 +57,7 @@ for path, dirs, files in os.walk(dirpath):
 # Sort 'files_list' based on descending file size [2]
 files_list =  sorted(files_list, key=lambda file: file[1], reverse=True)
 
+print('FILENAME', ' '*32, 'SIZE'), print('-'*51)
 for filename, size in files_list:
 
     # Filter files to print based on extension, convert size to MB
@@ -142,7 +144,10 @@ The map is centered on the data to plot.
 m = Basemap(llcrnrlon=min_lon-diff, llcrnrlat=min_lat-diff, \
             urcrnrlon=max_lon+diff, urcrnrlat=max_lat+diff, resolution = 'h')
 
-# Retrieve an image using the ArcGIS Server REST API [7] and display it on map
+'''
+Retrieve an image using the ArcGIS Server REST API [7] and display it on map
+Note: An internet connection is required.
+'''
 m.arcgisimage(service='ESRI_StreetMap_World_2D', xpixels = 900, dpi=1500)
 
 # Supply coordinates to the Basemap object
