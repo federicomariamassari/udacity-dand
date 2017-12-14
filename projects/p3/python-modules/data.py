@@ -43,7 +43,7 @@ import clean
 Import the list of compiled regular expressions from audit.py, and the lists
 of query_types and mappings from clean.py, all to be used in 'shape_element'.
 '''
-from audit import re_library
+from audit import expected_types, re_library
 from clean import query_types, mappings
 
 OSM_PATH = 'milan_italy_sample.osm'
@@ -95,39 +95,51 @@ def shape_element(element, node_attr_fields=NODE_FIELDS,
             if problem_chars.search(child.attrib['k']):
                 continue
 
-            '''
-            If tag 'k' value contains colon, set the character before colon as
-            the tag type, and characters after it as the tag key. If there are
-            additional colons in the 'k' value, ignore and keep as part of the
-            tag key.
-            '''
+
             elif lower_colon.search(child.attrib['k']):
-                tag['id'] = element.attrib['id']
-                tag['type'] = child.attrib['k'].split(':', 1)[0]
-                tag['key'] = child.attrib['k'].split(':', 1)[1]
 
                 '''
-                Programmatically clean 'street', 'postcode', and 'city' tag
-                values using functions from module clean.py
+                If tag['type'] == 'street' but tag['value'] does not contain
+                any of the street types included in 'expected_types' (audit.py),
+                e.g. 'Al Canele', ignore it.
                 '''
-                if tag['key'] == 'street':
-                    for i in range(len(query_types)):
-                        child.attrib['v'] = \
-                        clean.update_name(child.attrib['v'], re_library[i],
-                                          query_types[i], mappings[i])
-                        tag['value'] = child.attrib['v']
+                if (child.attrib['k'].split(':', 1)[1] == 'street') & \
+                (child.attrib['v'].split(' ', 1)[0] not in expected_types):
+                    continue
 
-                elif tag['key'] == 'postcode':
-                    tag['value'] = clean.update_postcode(child.attrib['v'],
-                                                         re_library[-2])
-
-                elif tag['key'] == 'city':
-                    tag['value'] = clean.update_city_name(child.attrib['v'],
-                                                          re_library[-1])
-
-                # Leave other tag values unmodified
                 else:
-                    tag['value'] = child.attrib['v']
+                    '''
+                    If tag 'k' value contains colon, set the character before
+                    colon as the tag type, and characters after it as the tag
+                    key. If there are additional colons in the 'k' value,
+                    ignore and keep as part of the tag key.
+                    '''
+                    tag['id'] = element.attrib['id']
+                    tag['type'] = child.attrib['k'].split(':', 1)[0]
+                    tag['key'] = child.attrib['k'].split(':', 1)[1]
+
+                    '''
+                    Programmatically clean 'street', 'postcode', and 'city' tag
+                    values using functions from module clean.py
+                    '''
+                    if tag['key'] == 'street':
+                        for i in range(len(query_types)):
+                            child.attrib['v'] = \
+                            clean.update_name(child.attrib['v'], re_library[i],
+                                              query_types[i], mappings[i])
+                            tag['value'] = child.attrib['v']
+
+                    elif tag['key'] == 'postcode':
+                        tag['value'] = clean.update_postcode(child.attrib['v'],
+                                                             re_library[-2])
+
+                    elif tag['key'] == 'city':
+                        tag['value'] = clean.update_city_name(child.attrib['v'],
+                                                              re_library[-1])
+
+                    # Leave other tag values unmodified
+                    else:
+                        tag['value'] = child.attrib['v']
 
             else:
                 '''
