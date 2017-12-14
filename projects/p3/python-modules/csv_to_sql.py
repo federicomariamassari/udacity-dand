@@ -15,7 +15,6 @@ References
 [5] https://en.wikipedia.org/wiki/Prepared_statement
 '''
 
-
 import sqlite3
 import csv
 
