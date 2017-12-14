@@ -26,6 +26,10 @@ from data import NODE_FIELDS as nodes,\
                 WAY_NODES_FIELDS as ways_nodes,\
                 WAY_TAGS_FIELDS as ways_tags
 
+# Additional list of fields for the 'municipalities' SQL table
+municipalities = ['municipality', 'province', 'province_code', 'region', \
+                    'postcode', 'population']
+
 # Store the data in the 'milan_italy.db' file
 sqlite_database = 'milan_italy.db'
 
@@ -99,8 +103,8 @@ def csv_to_sql(csv_file, fields):
 
 # Store filenames and lists of fields into separate lists, for neater code
 files = ['nodes.csv', 'nodes_tags.csv', 'ways.csv', 'ways_nodes.csv', \
-        'ways_tags.csv']
-field_lists = [nodes, nodes_tags, ways, ways_nodes, ways_tags]
+        'ways_tags.csv', 'municipalities.csv']
+field_lists = [nodes, nodes_tags, ways, ways_nodes, ways_tags, municipalities]
 
 # Insert csv content into SQL tables
 [csv_to_sql(files[i], field_lists[i]) for i in range(len(files))]
