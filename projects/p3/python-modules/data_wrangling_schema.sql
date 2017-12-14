@@ -41,3 +41,12 @@ CREATE TABLE ways_nodes (
     FOREIGN KEY (id) REFERENCES ways(id),
     FOREIGN KEY (node_id) REFERENCES nodes(id)
 );
+
+CREATE TABLE  municipalities (
+    municipality TEXT,
+    province TEXT,
+    province_code TEXT,
+    region TEXT,
+    postcode INTEGER,
+    population INTEGER
+);
