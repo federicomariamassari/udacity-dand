@@ -1,7 +1,9 @@
 '''
 Parse the elements in an OpenStreetMap file, transforming them from document
 format to tabular format, and write the data to .csv files, to be imported to
-a SQL database as tables.
+a SQL database as tables. Additionally, generate a 'municipality.csv' file
+including all municipalities in Lombardy, the provinces they belong to, and
+additional statistics.
 
 The transformation process is as follows:
  - Use iterparse ('get_element' function) to iteratively step through each top
@@ -12,8 +14,9 @@ The transformation process is as follows:
    transformed data is in the correct format ('validate_element');
  - Write each data structure to the appropriate .csv files ('process_map').
 
-Apart from the 'shape_element' function, all code (with minor modifications)
-taken from [1]. Input to the 'shape_element' function provided by [2].
+Apart from the 'shape_element' function and the 'Municipalities' section, all
+code (with minor modifications) taken from [1]. Input to the 'shape_element'
+function provided by [2].
 
 Note: Use Python 3 to run this script. Conversion was made using [3].
 
@@ -26,9 +29,12 @@ References
     and-csv-creation/231037
 [3] https://discussions.udacity.com/t/add-cleaning-functions-to-shape-element
     /348188/3
+[4] https://github.com/federicomariamassari/udacity-dand/blob/master/projects/
+    p2/dand-p2-investigate-a-dataset.ipynb
 '''
 
 import csv
+import pandas as pd
 import codecs
 import pprint
 import re
@@ -39,12 +45,18 @@ from schema import schema
 # Import custom scripts
 import audit
 import clean
+
 '''
 Import the list of compiled regular expressions from audit.py, and the lists
 of query_types and mappings from clean.py, all to be used in 'shape_element'.
 '''
 from audit import expected_types, re_library
 from clean import query_types, mappings
+
+'''
+A. OPENSTREETMAP DATA
+-------------------------------------------------------------------------------
+'''
 
 OSM_PATH = 'milan_italy_sample.osm'
 
@@ -255,3 +267,70 @@ if __name__ == '__main__':
     sample of the map when validating.
     '''
     process_map(OSM_PATH, validate=False)
+
+
+'''
+B. ADDITIONAL SOURCES
+-------------------------------------------------------------------------------
+Add a sixth .csv file, 'municipalities.csv', including all municipalities in
+Lombardy, together with: 1. the province they belong to; 2. the province code;
+3. the Region; 4. the postal code; 5. the population size. The file is used in
+the exploratory phase (sql_queries.py), for example to associate a municipality
+in the 'nodes_tags' table with its province. A copy of the raw .txt file used
+is available in the GitHub repository where this script is located. Original
+zipped file available at: http://lab.comuni-italiani.it/files/listacomuni.zip
+Unzip before running this script.
+'''
+
+# Store the content of the txt file in a Pandas DataFrame object
+df = pd.read_csv('listacomuni.txt', delimiter=';', encoding='latin-1')
+
+# Drop unnecessary columns
+df.drop(['Istat', 'Prefisso', 'CodFisco', 'Link'], axis=1, inplace=True)
+
+# Rename remaining columns for SQL table
+df.rename(columns = {'Comune': 'municipality', \
+                    'Provincia': 'province_code', \
+                    'Regione': 'region', \
+                    'CAP': 'postcode', \
+                    'Abitanti': 'population'}, inplace=True)
+
+# Add 'province' column to store the full name of the province (Lombardy only)
+df['province'] = df['province_code']
+
+df['province'].replace(['BG', 'BS', 'CO', 'CR', 'LC', 'LO', 'MN', 'MI', \
+                        'MB', 'PV', 'SO', 'VA'], \
+                        ['Bergamo', 'Brescia', 'Como', 'Cremona', 'Lecco', \
+                        'Lodi', 'Mantova', 'Milano', 'Monza-Brianza', \
+                        'Pavia', 'Sondrio', 'Varese'], inplace=True)
+
+# Replace Region code with full name
+df['region'].replace(['LOM'], ['Lombardy'], inplace=True)
+
+# Sort DataFrame columns
+sorted_cols = ['municipality', 'province', 'province_code', 'region', \
+                'postcode', 'population']
+
+df = df.reindex(columns=sorted_cols)
+
+# Single out municipalities in the Lombardy Region, store in 'data'
+data = df.loc[df['region'] == 'Lombardy']
+
+'''
+Three cities in the DataFrame have multiple postcodes: Milano (201xx), Bergamo
+(241xx), and Brescia (251xx). To avoid data type inconsistencies in the SQL
+database, 'xx' is replaced with '00', the 'neutral' code, applying function
+'ends_with_xx', to each row in df['postcode']. The function is a variation of
+'travels_with_spouse' in [4].
+'''
+def ends_with_xx(df, postcode):
+    '''Replace the last two 'xx' digits in a postcode with '00'.'''
+    if postcode.endswith('xx'):
+        df['postcode'] = df['postcode'][:-2] + '00'
+    return df
+
+# Use lambda function on each entry in the df['postcode'] column [4]
+data = data.apply(lambda df: ends_with_xx(df, df['postcode']), axis=1)
+
+# Store DataFrame in .csv file 'municipalities.csv'; do not write Pandas index
+data.to_csv('municipalities.csv', index=False)
