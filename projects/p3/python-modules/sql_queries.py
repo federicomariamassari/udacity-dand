@@ -130,10 +130,11 @@ removed from the dataset.
 
 # Join tables 'nodes' and 'nodes_tags' to find coordinates of all postal codes
 postcode_query = "SELECT nodes.lon, nodes.lat \
-FROM nodes_tags, nodes \
-WHERE nodes_tags.id = nodes.id \
-AND nodes_tags.key = 'postcode' AND {} \
-ORDER BY nodes_tags.value;"
+                    FROM nodes_tags, nodes \
+                    WHERE nodes_tags.id = nodes.id \
+                        AND nodes_tags.key = 'postcode' \
+                        AND {} \
+                    ORDER BY nodes_tags.value;"
 
 # Fill {} in the query above with the following strings using 'execute_query'
 mcm_postcodes = postcode_query.format("nodes_tags.value BETWEEN '20010' \
