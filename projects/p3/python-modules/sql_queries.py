@@ -93,6 +93,22 @@ sqlite_database = 'milan_italy.db'
 conn = sqlite3.connect(sqlite_database)
 c = conn.cursor()
 
+def execute_query(query):
+    # Execute SQL query and return a list of fetched results (in string format)
+    c.execute(query)
+    return c.fetchall()
+
+'''
+A.2 - Number of nodes and ways in the dataset
+'''
+
+number_of_nodes = execute_query("SELECT COUNT(*) FROM nodes;")
+number_of_ways = execute_query("SELECT COUNT(*) FROM ways;")
+
+print('\nQUERY 2: Find the total number of nodes and ways.\n')
+print('Number of nodes: {}'.format(number_of_nodes[0][0]))
+print('Number of ways: {}'.format(number_of_ways[0][0]))
+
 '''
 B. ADDITIONAL STATISTICS
 -------------------------------------------------------------------------------
@@ -129,10 +145,7 @@ AND '20900'")
 out_postcodes = postcode_query.format("(nodes_tags.value < '20010' \
 OR nodes_tags.value > '20900')")
 
-def execute_query(query):
-    # Execute SQL query and return a list of fetched results (in string format)
-    c.execute(query)
-    return c.fetchall()
+
 
 '''
 Store the results of the queries into NumPy arrays, convert string postcodes
