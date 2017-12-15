@@ -69,6 +69,10 @@ for path, dirs, files in os.walk(dirpath):
 # Sort 'files_list' based on descending file size [3]
 files_list =  sorted(files_list, key=lambda file: file[1], reverse=True)
 
+print('\nA. REQUIRED QUERIES')
+print('\nQUERY 1: Find the total size of all .csv, .db, and .osm files')
+print(' '*9 + 'in the current working directory (Python script).\n')
+
 # Add header to 'files_list' table
 print('FILENAME', ' '*32, 'SIZE'), print('-'*51)
 
@@ -76,11 +80,12 @@ for filename, size in files_list:
 
     # Filter files to print based on extension, convert size to MB
     if filename.split('.')[-1] in ['csv', 'db', 'osm']:
-        print('{:.<40s}: {:.2f} MB'.format(filename, size*1e-6))
 
-'''
-B.
-'''
+        # Convert size to MB or kb (if file size smaller than 1 MB)
+        if (size*1e-6 < 1) & (size*1e-3 >= 1):
+            print('{:.<40s}: {:.2f} kB'.format(filename, size*1e-3))
+        else:
+            print('{:.<40s}: {:.2f} MB'.format(filename, size*1e-6))
 
 
 # Create Connection object representing SQL database and Cursor
