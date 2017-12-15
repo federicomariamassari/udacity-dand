@@ -146,8 +146,6 @@ AND '20900'")
 out_postcodes = postcode_query.format("(nodes_tags.value < '20010' \
 OR nodes_tags.value > '20900')")
 
-
-
 '''
 Store the results of the queries into NumPy arrays, convert string postcodes
 into floating point values (dtype=np.float).
@@ -207,7 +205,33 @@ out = m.scatter(x_out, y_out, s=25, color='crimson', label='Other Provinces')
 plt.title('Map of postal codes for the Metropolitan City of Milan, Italy, \
 OpenStreetMap')
 plt.legend(handles=[milan, mcm, mb, out], loc=1)
-plt.show()
+
+'''
+
+'''
+postcode_by_province = "SELECT municipalities.postcode AS postcode, \
+                                nodes_tags.value AS city_name, \
+                                municipalities.province AS province \
+                            FROM nodes_tags, municipalities \
+                            WHERE nodes_tags.key='city' \
+                                AND postcode > 20900 \
+                                AND city_name = municipalities.municipality \
+                            GROUP BY city_name \
+                            ORDER BY postcode;"
+
+pbp = execute_query(postcode_by_province)
+
+print('\nB. ADDITIONAL STATISTICS')
+print('\nQUERY 1: Print postal code, municipality, and province for all')
+print(' '*9 + 'the entries which should not belong in the Milan OSM file.\n')
+
+print('{:<12s}{:<30}{}'.format('POSTCODE','MUNICIPALITY','PROVINCE'))
+print('-'*51)
+for postcode, municipality, province in pbp:
+    print('{:<12}{:<30}{}'.format(postcode, municipality, province))
 
 # Close the Connection object (i.e. the database)
 conn.close()
+
+# Show pictures at the end, to avoid blocking script execution
+plt.show()
