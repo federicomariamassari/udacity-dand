@@ -48,8 +48,11 @@ import matplotlib.cbook
 warnings.filterwarnings('ignore', category=matplotlib.cbook.mplDeprecation)
 
 '''
-A. SIZE OF FILES
+A. REQUIRED QUERIES
 -------------------------------------------------------------------------------
+
+A.1 - Files Size (Python script)
+
 This Python script, slightly modified from [2] and [3], prints both names and
 size (in descending order) of all .csv, .db, and .osm files in the current
 working directory.
@@ -75,7 +78,9 @@ for filename, size in files_list:
     if filename.split('.')[-1] in ['csv', 'db', 'osm']:
         print('{:.<40s}: {:.2f} MB'.format(filename, size*1e-6))
 
-
+'''
+B.
+'''
 
 
 # Create Connection object representing SQL database and Cursor
@@ -84,8 +89,11 @@ conn = sqlite3.connect(sqlite_database)
 c = conn.cursor()
 
 '''
-B. POSTAL CODES
+B. ADDITIONAL STATISTICS
 -------------------------------------------------------------------------------
+
+B.1 - Postal Codes
+
 Admissible postcodes in the OSM file for Milan, Italy are [4]:
 
  20010 - 20099: Municipalities in the Metropolitan City of Milan area
@@ -95,7 +103,8 @@ Admissible postcodes in the OSM file for Milan, Italy are [4]:
 The province of Monza and Brianza 'was officially created by splitting the
 north-eastern part from the province of Milan [...] and became executive after
 [...] June 2009' [5]. It is, therefore, quite common to find postcodes related
-to such province in the OSM file. However, they should not belong in the map.
+to such province in the OSM file. In the future, however, these should be
+removed from the dataset.
 '''
 
 # Join tables 'nodes' and 'nodes_tags' to find coordinates of all postal codes
