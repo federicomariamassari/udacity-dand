@@ -194,16 +194,16 @@ x_mb, y_mb = m(mb_lons, mb_lats)
 x_out, y_out = m(out_lons, out_lats)
 
 # Make scatter plot of postcodes in the OSM file, divided by group
-mcm = m.scatter(x_mcm, y_mcm, s=25, color='black', \
-                    label='Municipalities in the MCM area')
-milan = m.scatter(x_milan, y_milan, s=25, color='royalblue', \
+milan = m.scatter(x_milan, y_milan, s=15, color='royalblue', \
                     label='City of Milan')
-mb = m.scatter(x_mb, y_mb, s=25, color='darkorange', \
+mcm = m.scatter(x_mcm, y_mcm, s=15, color='limegreen', \
+                    label='Municipalities in the MCM area')
+mb = m.scatter(x_mb, y_mb, s=15, color='darkorange', \
                     label='Province of Monza and Brianza')
-out = m.scatter(x_out, y_out, s=25, color='crimson', label='Other Provinces')
+out = m.scatter(x_out, y_out, s=15, color='crimson', label='Other Provinces')
 
-plt.title('Map of postal codes for the Metropolitan City of Milan, Italy, \
-OpenStreetMap')
+plt.title('Map of postal codes in the OpenStreetMap sample file for Milan, \
+Italy')
 plt.legend(handles=[milan, mcm, mb, out], loc=1)
 
 '''
