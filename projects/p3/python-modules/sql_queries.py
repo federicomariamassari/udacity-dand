@@ -102,7 +102,7 @@ def execute_query(query):
     return c.fetchall()
 
 '''
-A.2 - Number of nodes and ways in the dataset
+A.2 - Number of nodes and ways in the dataset [1]
 '''
 
 number_of_nodes = execute_query("SELECT COUNT(*) FROM nodes;")
