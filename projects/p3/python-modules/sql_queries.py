@@ -138,7 +138,7 @@ def street_map(query, diff, colors, labels, title, query_args=None, \
 
     '''
     If 'query_args' is supplied, build a list of full queries; otherwise, if
-    'query' is self-contained, simply set 'full_query' to 'query'.
+    'query' is self-contained, simply append 'query' to empty list 'full_query'.
     '''
     try:
         # Assign convenient name to frequently used iterable object
@@ -152,7 +152,8 @@ def street_map(query, diff, colors, labels, title, query_args=None, \
 
     except:
         n = range(1)
-        full_query = query
+        full_query = []
+        full_query.append(query)
 
     '''
     Store query results into NumPy arrays, convert string elements into
