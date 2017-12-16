@@ -116,6 +116,24 @@ B. ADDITIONAL STATISTICS
 def street_map(query, diff, colors, labels, title, query_args=None, \
                 service='ESRI_StreetMap_World_2D'):
     '''
+    Scatter plot OpenStreetMap data on top of a 2D world map.
+
+    Input
+    ---------------------------------------------------------------------------
+    query: str, required argument. The SQL query to process. Must produce a
+           table of coordinates of the form (longitude, latitude). May contain
+           a pair of brackets {}, in which case list 'query_args' must also be
+           supplied.
+    diff: float, required argument. Parameter added to the max, or subtracted
+          to the min, longitude and latitude values to zoom on the map, which
+          is centered on the data.
+    colors, labels: lists of str, required arguments. List of colors and labels
+                    for the scatter plot.
+    title: str, required argument. Title of the plot.
+    query_args: list of str, optional argument. The variable part of the query
+                to process. Only provide in case 'query' contains brackets {}.
+    service: str, optional argument. The ArcGIS Server REST API used to get,
+             and display as plot background, an area of the world map [8].
     '''
 
     '''
@@ -170,7 +188,7 @@ def street_map(query, diff, colors, labels, title, query_args=None, \
 
     '''
     Retrieve a background map using the ArcGIS Server REST API [8] and display
-    it on the plot. 'ESRI_StreetMap_World_2D' is the default provider.
+    it on the plot. 'ESRI_StreetMap_World_2D' is the default map server.
     * Important: Internet connection required.
     '''
     m.arcgisimage(service=service, xpixels = 900, dpi=1500)
