@@ -113,19 +113,28 @@ print('Number of ways: {}'.format(number_of_ways[0][0]))
 B. ADDITIONAL STATISTICS
 -------------------------------------------------------------------------------
 '''
-def street_map(query, query_args, diff, colors, labels, title, \
+def street_map(query, diff, colors, labels, title, query_args=None, \
                 service='ESRI_StreetMap_World_2D'):
     '''
     '''
 
-    # Assign convenient name to frequently used iterable object
-    n = range(len(query_args))
+    '''
+    If 'query_args' is supplied, build a list of full queries; otherwise, if
+    'query' is self-contained, simply set 'full_query' to 'query'.
+    '''
+    try:
+        # Assign convenient name to frequently used iterable object
+        n = range(len(query_args))
 
-    '''
-    Generate list of full SQL queries, each full query obtained by replacing
-    the {} space in 'query' with a string element in 'query_args'.
-    '''
-    full_query = [query.format(query_args[i]) for i in n]
+        '''
+        Generate a list of full SQL queries, each one obtained by replacing
+        the {} space in 'query' with a string element in 'query_args'.
+        '''
+        full_query = [query.format(query_args[i]) for i in n]
+
+    except:
+        n = range(1)
+        full_query = query
 
     '''
     Store query results into NumPy arrays, convert string elements into
@@ -216,7 +225,7 @@ pc_title = 'Map of postal codes in the OpenStreetMap sample file for Milan, \
 Italy'
 
 # Create visual map of all postcodes in the OSM sample file for Milan, Italy
-street_map(postcode_query, query_args, 0.18, pc_colors, pc_labels, pc_title)
+street_map(postcode_query, 0.18, pc_colors, pc_labels, pc_title, query_args)
 
 '''
 
