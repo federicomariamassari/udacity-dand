@@ -112,7 +112,74 @@ print('Number of ways: {}'.format(number_of_ways[0][0]))
 '''
 B. ADDITIONAL STATISTICS
 -------------------------------------------------------------------------------
+'''
+def street_map(query, query_args, diff, colors, labels, title, \
+                service='ESRI_StreetMap_World_2D'):
+    '''
+    '''
 
+    # Assign convenient name to frequently used iterable object
+    n = range(len(query_args))
+
+    '''
+    Generate list of full SQL queries, each full query obtained by replacing
+    the {} space in 'query' with a string element in 'query_args'.
+    '''
+    full_query = [query.format(query_args[i]) for i in n]
+
+    '''
+    Store query results into NumPy arrays, convert string elements into
+    floating point values (dtype=np.float).
+    '''
+    query_res = [np.array(execute_query(full_query[i]), dtype=np.float) \
+                    for i in n]
+
+    # Separately store longitudes (x-axis) and latitudes (y-axis)
+    lons = [query_res[i][:,0] for i in n]
+    lats = [query_res[i][:,1] for i in n]
+
+    # Find the minimum and maximum longitude and latitude in the set
+    concat_lons = np.concatenate([lons[i] for i in n])
+    concat_lats = np.concatenate([lats[i] for i in n])
+    min_lon, max_lon = concat_lons.min(), concat_lons.max()
+    min_lat, max_lat = concat_lats.min(), concat_lats.max()
+
+    plt.figure(figsize=(10,8))
+
+    '''
+    The matplotlib basemap toolkit is a library for plotting 2D data on maps in
+    Python [6]. It allows to transform coordinates to map projections, so that
+    matplotlib can then be used to plot on such transformed coordinates.
+    The 'Basemap' class creates the map [7]; the boundaries are set by supplying
+    minimum and maximum longitude (x-axis limits) and latitude (y-axis limits).
+    The map is centered on the data to plot, using both the previously found
+    minima and maxima, and parameter 'diff'.
+    '''
+    m = Basemap(llcrnrlon=min_lon-diff, llcrnrlat=min_lat-diff, \
+                urcrnrlon=max_lon+diff, urcrnrlat=max_lat+diff, \
+                resolution = 'h')
+
+    '''
+    Retrieve a background map using the ArcGIS Server REST API [8] and display
+    it on the plot. 'ESRI_StreetMap_World_2D' is the default provider.
+    * Important: Internet connection required.
+    '''
+    m.arcgisimage(service=service, xpixels = 900, dpi=1500)
+
+    # Supply coordinates to the Basemap object
+    x, y = m(lons, lats)
+
+    # Make scatter plot of query results in the OSM file, divided by group
+    scatterplot = [m.scatter(x[i], y[i], s=15, color=colors[i], \
+                                label=labels[i]) for i in n]
+    plt.title(title)
+    plt.legend(handles=[scatterplot[i] for i in n], loc=1)
+
+    # Show pictures at the end, to avoid blocking script execution
+    plt.show()
+
+
+'''
 B.1 - Postal Codes
 
 Admissible postcodes in the OSM file for Milan, Italy are [4]:
@@ -137,74 +204,19 @@ postcode_query = "SELECT nodes.lon, nodes.lat \
                     ORDER BY nodes_tags.value;"
 
 # Fill {} in the query above with the following strings using 'execute_query'
-mcm_postcodes = postcode_query.format("nodes_tags.value BETWEEN '20010' \
-AND '20099'")
-milan_postcodes = postcode_query.format("nodes_tags.value BETWEEN '20121' \
-AND '20162'")
-mb_postcodes = postcode_query.format("nodes_tags.value BETWEEN '20811' \
-AND '20900'")
-out_postcodes = postcode_query.format("(nodes_tags.value < '20010' \
-OR nodes_tags.value > '20900')")
+query_args = ["nodes_tags.value BETWEEN '20121' AND '20162'", \
+              "nodes_tags.value BETWEEN '20010' AND '20099'", \
+              "nodes_tags.value BETWEEN '20811' AND '20900'", \
+              "(nodes_tags.value < '20010' OR nodes_tags.value > '20900')"]
 
-'''
-Store the results of the queries into NumPy arrays, convert string postcodes
-into floating point values (dtype=np.float).
-'''
-mcm_postcode_map = np.array(execute_query(mcm_postcodes), dtype=np.float)
-milan_postcode_map = np.array(execute_query(milan_postcodes), dtype=np.float)
-mb_postcode_map = np.array(execute_query(mb_postcodes), dtype=np.float)
-out_postcode_map = np.array(execute_query(out_postcodes), dtype=np.float)
+pc_colors = ['royalblue', 'limegreen', 'darkorange', 'crimson']
+pc_labels = ['City of Milan', 'Municipalities in the MCM area', \
+            'Province of Monza and Brianza', 'Other Provinces']
+pc_title = 'Map of postal codes in the OpenStreetMap sample file for Milan, \
+Italy'
 
-# Separately store longitudes (x) and latitudes (y)
-mcm_lons, mcm_lats = mcm_postcode_map[:,0], mcm_postcode_map[:,1]
-milan_lons, milan_lats = milan_postcode_map[:,0], milan_postcode_map[:,1]
-mb_lons, mb_lats = mb_postcode_map[:,0], mb_postcode_map[:,1]
-out_lons, out_lats = out_postcode_map[:,0], out_postcode_map[:,1]
-
-# Find approximate (proxy=out) minimum and maximum coordinates to center plot
-min_lon, max_lon = np.min(out_lons), np.max(out_lons)
-min_lat, max_lat = np.min(out_lats), np.max(out_lats)
-
-# Vary the following parameter to zoom into the plot
-diff = 0.18
-
-plt.figure(figsize=(10,8))
-
-'''
-The matplotlib basemap toolkit is a library for plotting 2D data on maps in
-Python [6]. It allows to transform coordinates to map projections, so that
-matplotlib can then be used to plot on such transformed coordinates.
-The 'Basemap' class creates the map [7]; the boundaries are set by supplying
-minimum and maximum longitude (x-axis limits) and latitude (y-axis limits).
-The map is centered on the data to plot.
-'''
-m = Basemap(llcrnrlon=min_lon-diff, llcrnrlat=min_lat-diff, \
-            urcrnrlon=max_lon+diff, urcrnrlat=max_lat+diff, resolution = 'h')
-
-'''
-Retrieve an image using the ArcGIS Server REST API [8] and display it on map
-Note: An internet connection is required.
-'''
-m.arcgisimage(service='ESRI_StreetMap_World_2D', xpixels = 900, dpi=1500)
-
-# Supply coordinates to the Basemap object
-x_mcm, y_mcm = m(mcm_lons, mcm_lats)
-x_milan, y_milan = m(milan_lons, milan_lats)
-x_mb, y_mb = m(mb_lons, mb_lats)
-x_out, y_out = m(out_lons, out_lats)
-
-# Make scatter plot of postcodes in the OSM file, divided by group
-milan = m.scatter(x_milan, y_milan, s=15, color='royalblue', \
-                    label='City of Milan')
-mcm = m.scatter(x_mcm, y_mcm, s=15, color='limegreen', \
-                    label='Municipalities in the MCM area')
-mb = m.scatter(x_mb, y_mb, s=15, color='darkorange', \
-                    label='Province of Monza and Brianza')
-out = m.scatter(x_out, y_out, s=15, color='crimson', label='Other Provinces')
-
-plt.title('Map of postal codes in the OpenStreetMap sample file for Milan, \
-Italy')
-plt.legend(handles=[milan, mcm, mb, out], loc=1)
+# Create visual map of all postcodes in the OSM sample file for Milan, Italy
+street_map(postcode_query, query_args, 0.18, pc_colors, pc_labels, pc_title)
 
 '''
 
@@ -232,6 +244,3 @@ for postcode, municipality, province in pbp:
 
 # Close the Connection object (i.e. the database)
 conn.close()
-
-# Show pictures at the end, to avoid blocking script execution
-plt.show()
