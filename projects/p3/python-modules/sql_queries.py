@@ -50,6 +50,11 @@ import warnings
 import matplotlib.cbook
 warnings.filterwarnings('ignore', category=matplotlib.cbook.mplDeprecation)
 
+# Make directory img to store output figures [2] -> above should be [3]
+directory = './img'
+if not os.path.exists(directory):
+    os.makedirs(directory)
+
 '''
 A. REQUIRED QUERIES
 -------------------------------------------------------------------------------
@@ -116,7 +121,7 @@ print('Number of ways: {}'.format(number_of_ways[0][0]))
 B. ADDITIONAL STATISTICS
 -------------------------------------------------------------------------------
 '''
-def street_map(query, diff, colors, labels, title, query_args=None, \
+def street_map(query, diff, colors, labels, title, fig_name, query_args=None, \
                 service='ESRI_StreetMap_World_2D'):
     '''
     Scatter plot OpenStreetMap data on top of a 2D world map.
@@ -133,6 +138,9 @@ def street_map(query, diff, colors, labels, title, query_args=None, \
     colors, labels: lists of str, required arguments. List of colors and labels
                     for the scatter plot.
     title: str, required argument. Title of the plot.
+    fig_name: str, required argument. The name of the saved figure, without
+              extension (default='png'). The figures are stored in directory
+              'img', which is generated if not already present.
     query_args: list of str, optional argument. The variable part of the query
                 to process. Only provide in case 'query' contains brackets {}.
     service: str, optional argument. The ArcGIS Server REST API used to get,
@@ -195,7 +203,7 @@ def street_map(query, diff, colors, labels, title, query_args=None, \
     on the plot. 'ESRI_StreetMap_World_2D' is the default map server.
     * Important: Internet connection required.
     '''
-    m.arcgisimage(service=service, xpixels = 900, dpi=1500)
+    m.arcgisimage(service=service, xpixels = 900)
 
     # Supply coordinates to the Basemap object
     x, y = m(lons, lats)
@@ -206,9 +214,11 @@ def street_map(query, diff, colors, labels, title, query_args=None, \
     plt.title(title)
     plt.legend(handles=[scatterplot[i] for i in n], loc=1)
 
-    # Show pictures at the end, to avoid blocking script execution
-    plt.show()
-
+    # Store all pictures in subdirectory 'img'; set image quality with 'dpi'
+    directory = './img'
+    fig_name = fig_name
+    plt.savefig('{}/{}.png'.format(directory, fig_name), dpi=150, \
+                format='png', bbox_inches='tight')
 
 '''
 B.1 - Postal Codes
@@ -246,8 +256,12 @@ pc_labels = ['City of Milan', 'Municipalities in the MCM area', \
 pc_title = 'Map of postal codes in the OpenStreetMap sample file for Milan, \
 Italy'
 
-# Create visual map of all postcodes in the OSM sample file for Milan, Italy
-street_map(postcode_query, 0.18, pc_colors, pc_labels, pc_title, query_args)
+'''
+Create a visual map of all postcodes in the OSM sample file for Milan, Italy.
+Store the output figure in './img' folder, with name 'postcode.png'.
+'''
+street_map(postcode_query, 0.18, 'postcode', pc_colors, pc_labels, pc_title, \
+            query_args)
 
 '''
 
