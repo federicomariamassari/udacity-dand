@@ -264,7 +264,7 @@ Italy'
 Create a visual map of all postcodes in the OSM sample file for Milan, Italy.
 Store the output figure in './img' folder, with name 'postcode.png'.
 '''
-street_map(postcode_query, 0.18, 'postcode', pc_colors, pc_labels, pc_title, \
+street_map(postcode_query, 0.18, pc_colors, pc_labels, pc_title, 'postcode',\
             query_args)
 
 '''
