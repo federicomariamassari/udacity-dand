@@ -111,9 +111,47 @@ def execute_query(query):
     return c.fetchall()
 
 '''
-A.2 - Number of unique users (taken from [1])
+A.2 - Number of unique users (modified from [1])
 '''
+unique = "SELECT count(DISTINCT e.{0}) AS num \
+            FROM (SELECT nodes.{0} FROM nodes \
+                UNION ALL \
+                SELECT ways.{0} FROM ways) e;"
+
+
+n_unique_users = execute_query(unique.format('user'))
+n_unique_uids = execute_query(unique.format('uid'))
+
 print('\n\nQUERY 2: Find the number of unique users.\n')
+print("No. of unique users, 'user' tag: {}".format(n_unique_users[0][0]))
+print("No. of unique users, 'uid' tag: {}".format(n_unique_uids[0][0]))
+
+'''
+If the results above are different, separately look for discrepancies in the
+two tables 'nodes', 'ways'.
+'''
+if n_unique_users != n_unique_uids:
+    print('\nIf the numbers above differ, find incongruous records:\n')
+
+    discrepancies = "SELECT a.uid, b.uid, a.user, b.user \
+                        FROM (SELECT uid, user FROM {0} GROUP BY uid) a, \
+                            (SELECT uid, user FROM {0} GROUP BY user) b \
+                        WHERE a.uid = b.uid AND a.user != b.user;"
+
+    discrepancies_nodes = execute_query(discrepancies.format('nodes'))
+    discrepancies_ways = execute_query(discrepancies.format('ways'))
+
+    for table in [discrepancies_nodes, discrepancies_ways]:
+
+        # Print all incongruous entries if the table is not empty
+        if table != []:
+            if table == discrepancies_nodes:
+                print("Table: 'nodes'")
+            else:
+                print("Table: 'ways'")
+
+            [print(entry) for entry in table]
+            print('count: {}'.format(len(table)))
 
 '''
 A.3 - Top 15 contributing users (taken from [1])
@@ -123,7 +161,7 @@ top_contributing = "SELECT all_users.user, count(*) AS num \
                                 UNION ALL \
                                 SELECT user FROM ways) all_users \
                         GROUP BY all_users.user \
-                        ORDER BY count(all_users.user) DESC \
+                        ORDER BY num DESC \
                             LIMIT 15;"
 
 top_15 = execute_query(top_contributing)
@@ -137,8 +175,8 @@ for username, contributions in top_15:
 '''
 A.4 - Number of nodes and ways in the dataset [1]
 '''
-number_of_nodes = execute_query("SELECT COUNT(*) FROM nodes;")
-number_of_ways = execute_query("SELECT COUNT(*) FROM ways;")
+number_of_nodes = execute_query("SELECT count(*) FROM nodes;")
+number_of_ways = execute_query("SELECT count(*) FROM ways;")
 
 print('\n\nQUERY 4: Find the total number of nodes and ways.\n')
 print('Number of nodes: {}'.format(number_of_nodes[0][0]))
@@ -298,7 +336,7 @@ postcode_by_province = "SELECT municipalities.postcode AS postcode, \
                                 municipalities.province AS province \
                             FROM nodes_tags, municipalities \
                             WHERE nodes_tags.key='city' \
-                                AND postcode > 20900 \
+                                AND (postcode < 20010 OR postcode > 20900) \
                                 AND city_name = municipalities.municipality \
                             GROUP BY city_name \
                             ORDER BY postcode;"
