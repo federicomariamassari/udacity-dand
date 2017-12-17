@@ -186,17 +186,15 @@ print('Number of ways: {}'.format(number_of_ways[0][0]))
 B. ADDITIONAL STATISTICS
 -------------------------------------------------------------------------------
 '''
-def street_map(query, diff, colors, labels, title, fig_name, query_args=None, \
-                service='ESRI_StreetMap_World_2D'):
+def street_map(query_keys, query_constr, diff, colors, labels, title, \
+                fig_name, service='ESRI_StreetMap_World_2D'):
     '''
     Scatter plot OpenStreetMap data on top of a 2D world map.
 
     Input
     ---------------------------------------------------------------------------
-    query: str, required argument. The SQL query to process. Must produce a
-           table of coordinates of the form (longitude, latitude). May contain
-           a pair of brackets {}, in which case list 'query_args' must also be
-           supplied.
+    query_keys, query_constr: list of str, required arguments. The key tag and
+                              constraint of the query to process.
     diff: float, required argument. Parameter added to the max, or subtracted
           to the min, longitude and latitude values to zoom on the map, which
           is centered on the data.
@@ -206,30 +204,31 @@ def street_map(query, diff, colors, labels, title, fig_name, query_args=None, \
     fig_name: str, required argument. The name of the saved figure, without
               extension (default='png'). The figures are stored in directory
               'img', which is generated if not already present.
-    query_args: list of str, optional argument. The variable part of the query
-                to process. Only provide in case 'query' contains brackets {}.
     service: str, optional argument. The ArcGIS Server REST API used to get,
              and display as plot background, an area of the world map [10].
     '''
 
     '''
-    If 'query_args' is supplied, build a list of full queries; otherwise, if
-    'query' is self-contained, simply append 'query' to empty list 'full_query'.
+    Generic SQL query to find the coordinates (longitude, latitude) of a set
+    of OpenStreetMap nodes, given input key, constraint tags.
     '''
-    try:
-        # Assign convenient name to frequently used iterable object
-        n = range(len(query_args))
+    query = "SELECT nodes.lon, nodes.lat \
+                FROM nodes, (SELECT * FROM nodes_tags \
+                                UNION ALL \
+                                SELECT * FROM ways_tags) join_tags \
+                WHERE join_tags.id = nodes.id \
+                    AND join_tags.key = {} \
+                    AND {} \
+                ORDER BY join_tags.value;"
 
-        '''
-        Generate a list of full SQL queries, each one obtained by replacing
-        the {} space in 'query' with a string element in 'query_args'.
-        '''
-        full_query = [query.format(query_args[i]) for i in n]
+    # Assign convenient name to frequently used iterable object
+    n = range(len(query_keys))
 
-    except:
-        n = range(1)
-        full_query = []
-        full_query.append(query)
+    '''
+    Generate a list of full SQL queries, each one obtained by replacing
+    the {} space in 'query' with a string element in 'query_constr'.
+    '''
+    full_query = [query.format(query_keys[i], query_constr[i]) for i in n]
 
     '''
     Store query results into NumPy arrays, convert string elements into
@@ -277,7 +276,7 @@ def street_map(query, diff, colors, labels, title, fig_name, query_args=None, \
     scatterplot = [m.scatter(x[i], y[i], s=15, color=colors[i], \
                                 label=labels[i]) for i in n]
     plt.title(title)
-    plt.legend(handles=[scatterplot[i] for i in n], loc=1)
+    plt.legend(handles=[scatterplot[i] for i in n], loc=3)
 
     # Store all pictures in subdirectory 'img'; set image quality with 'dpi'
     directory = './img'
@@ -301,22 +300,18 @@ to such province in the OSM file. In the future, however, these should be
 removed from the dataset.
 '''
 
-# Join tables 'nodes' and 'join_tags' to find coordinates of all postal codes
-postcode_query = "SELECT nodes.lon, nodes.lat \
-                    FROM nodes, (SELECT * FROM nodes_tags \
-                                    UNION ALL \
-                                    SELECT * FROM ways_tags) join_tags \
-                    WHERE join_tags.id = nodes.id \
-                        AND join_tags.key = 'postcode' \
-                        AND {} \
-                    ORDER BY join_tags.value;"
+'''
+Fill the empty brackets in the generic query in function 'street_map' with the
+following (key, constraint) pairs.
+'''
+postcode_keys = ["'postcode'"]*4
 
-# Fill {} in the query above with the following strings using 'execute_query'
-query_args = ["join_tags.value BETWEEN '20121' AND '20162'", \
-              "join_tags.value BETWEEN '20010' AND '20099'", \
-              "join_tags.value BETWEEN '20811' AND '20900'", \
-              "(join_tags.value < '20010' OR join_tags.value > '20900')"]
+postcode_constr = ["join_tags.value BETWEEN '20121' AND '20162'", \
+                    "join_tags.value BETWEEN '20010' AND '20099'", \
+                    "join_tags.value BETWEEN '20811' AND '20900'", \
+                    "(join_tags.value < '20010' OR join_tags.value > '20900')"]
 
+# Additional required arguments for 'street_map'
 pc_colors = ['royalblue', 'limegreen', 'darkorange', 'crimson']
 pc_labels = ['City of Milan', 'Municipalities in the MCM area', \
             'Province of Monza and Brianza', 'Other Provinces']
@@ -327,11 +322,12 @@ Italy'
 Create a visual map of all postcodes in the OSM sample file for Milan, Italy.
 Store the output figure in './img' folder, with name 'postcode.png'.
 '''
-street_map(postcode_query, 0.18, pc_colors, pc_labels, pc_title, 'postcode',\
-            query_args)
+street_map(postcode_keys, postcode_constr, 0.18, pc_colors, pc_labels, \
+            pc_title, fig_name='postcode')
 
 '''
-
+If (postcode < 20010) | (postcode > 20900), find which city and province it
+refers to:
 '''
 postcode_by_province = "SELECT municipalities.postcode AS postcode, \
                                 join_tags.value AS city_name, \
