@@ -18,24 +18,28 @@ References
 [1] 'Project: Wrangle OpenStreetMap Data', Data Wrangling Course, Udacity Data
      Analyst Nanodegree
 
+Make new directory from script:
+[2] https://stackoverflow.com/questions/273192/how-can-i-create-a-directory-
+    if-it-does-not-exist
+
 Suppress matplotlib deprecation warnings:
-[2] https://stackoverflow.com/questions/24502500/python-matplotlib-getting-rid-
+[3] https://stackoverflow.com/questions/24502500/python-matplotlib-getting-rid-
     of-matplotlib-mpl-warning
 
 Display files list and size:
-[3] https://discussions.udacity.com/t/display-files-and-their-sizes-in-
+[4] https://discussions.udacity.com/t/display-files-and-their-sizes-in-
     directory/186741/2
-[4] https://stackoverflow.com/questions/10695139/sort-a-list-of-tuples-by-2nd-
+[5] https://stackoverflow.com/questions/10695139/sort-a-list-of-tuples-by-2nd-
     item-integer-value
 
 Lombardy postcodes resources:
-[5] http://www.tuttitalia.it/lombardia/
-[6] https://en.wikipedia.org/wiki/Province_of_Monza_and_Brianza
+[6] http://www.tuttitalia.it/lombardia/
+[7] https://en.wikipedia.org/wiki/Province_of_Monza_and_Brianza
 
 Basemap toolkit resources:
-[7] https://matplotlib.org/basemap/index.html
-[8] http://basemaptutorial.readthedocs.io/en/latest/
-[9] http://server.arcgisonline.com/arcgis/rest/services
+[8] https://matplotlib.org/basemap/index.html
+[9] http://basemaptutorial.readthedocs.io/en/latest/
+[10] http://server.arcgisonline.com/arcgis/rest/services
 '''
 
 import os
@@ -45,15 +49,15 @@ import matplotlib.pyplot as plt
 from mpl_toolkits.basemap import Basemap
 import seaborn as sns
 
-# Suppress matplotlib deprecation warnings from basemap 1.0.7 [2]
-import warnings
-import matplotlib.cbook
-warnings.filterwarnings('ignore', category=matplotlib.cbook.mplDeprecation)
-
-# Make directory img to store output figures [2] -> above should be [3]
+# Make directory img to store output figures [2]
 directory = './img'
 if not os.path.exists(directory):
     os.makedirs(directory)
+
+# Suppress matplotlib deprecation warnings from basemap 1.0.7 [3]
+import warnings
+import matplotlib.cbook
+warnings.filterwarnings('ignore', category=matplotlib.cbook.mplDeprecation)
 
 '''
 A. REQUIRED QUERIES
@@ -61,7 +65,7 @@ A. REQUIRED QUERIES
 
 A.1 - Files Size (Python script)
 
-This Python script, slightly modified from [3] and [4], prints both names and
+This Python script, slightly modified from [4] and [5], prints both names and
 size (in descending order) of all .csv, .db, and .osm files in the current
 working directory.
 '''
@@ -74,7 +78,7 @@ for path, dirs, files in os.walk(dirpath):
         files_list.extend([(filename, os.path.getsize(os.path.join(path, \
                             filename))) for filename in files])
 
-# Sort 'files_list' based on descending file size [4]
+# Sort 'files_list' based on descending file size [5]
 files_list =  sorted(files_list, key=lambda file: file[1], reverse=True)
 
 print('\nA. REQUIRED QUERIES')
@@ -144,7 +148,7 @@ def street_map(query, diff, colors, labels, title, fig_name, query_args=None, \
     query_args: list of str, optional argument. The variable part of the query
                 to process. Only provide in case 'query' contains brackets {}.
     service: str, optional argument. The ArcGIS Server REST API used to get,
-             and display as plot background, an area of the world map [9].
+             and display as plot background, an area of the world map [10].
     '''
 
     '''
@@ -187,9 +191,9 @@ def street_map(query, diff, colors, labels, title, fig_name, query_args=None, \
 
     '''
     The matplotlib basemap toolkit is a library for plotting 2D data on maps in
-    Python [7]. It allows to transform coordinates to map projections, so that
+    Python [8]. It allows to transform coordinates to map projections, so that
     matplotlib can then be used to plot on such transformed coordinates.
-    The 'Basemap' class creates the map [8]; the boundaries are set by supplying
+    The 'Basemap' class creates the map [9]; the boundaries are set by supplying
     minimum and maximum longitude (x-axis limits) and latitude (y-axis limits).
     The map is centered on the data to plot, using both the previously found
     minima and maxima, and parameter 'diff'.
@@ -223,7 +227,7 @@ def street_map(query, diff, colors, labels, title, fig_name, query_args=None, \
 '''
 B.1 - Postal Codes
 
-Admissible postcodes in the OSM file for Milan, Italy are [5]:
+Admissible postcodes in the OSM file for Milan, Italy are [6]:
 
  20010 - 20099: Municipalities in the Metropolitan City of Milan area
  20121 - 20162: City of Milan
@@ -231,7 +235,7 @@ Admissible postcodes in the OSM file for Milan, Italy are [5]:
 
 The province of Monza and Brianza 'was officially created by splitting the
 north-eastern part from the province of Milan [...] and became executive after
-[...] June 2009' [6]. It is, therefore, quite common to find postcodes related
+[...] June 2009' [7]. It is, therefore, quite common to find postcodes related
 to such province in the OSM file. In the future, however, these should be
 removed from the dataset.
 '''
