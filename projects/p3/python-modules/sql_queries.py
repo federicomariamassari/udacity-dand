@@ -142,7 +142,6 @@ if n_unique_users != n_unique_uids:
     discrepancies_ways = execute_query(discrepancies.format('ways'))
 
     for table in [discrepancies_nodes, discrepancies_ways]:
-
         # Print all incongruous entries if the table is not empty
         if table != []:
             if table == discrepancies_nodes:
@@ -151,6 +150,8 @@ if n_unique_users != n_unique_uids:
                 print("Table: 'ways'")
 
             [print(entry) for entry in table]
+
+            # Also print the total number of incongruous entries in the table
             print('count: {}'.format(len(table)))
 
 '''
