@@ -11,7 +11,7 @@ installed using conda on Command Prompt or Terminal:
 
 The latest PyPI version, 1.0.7, raises several Matplotlib deprecation warnings;
 however, the latest GitHub version, 1.1.0, is not fully compatible yet. Hence,
-the former must be used (all deprecation warnings are suppressed).
+the former must be used (all deprecation warnings are suppressed in the script).
 
 References
 -------------------------------------------------------------------------------
@@ -117,7 +117,6 @@ unique = "SELECT count(DISTINCT e.{0}) AS num \
             FROM (SELECT nodes.{0} FROM nodes \
                 UNION ALL \
                 SELECT ways.{0} FROM ways) e;"
-
 
 n_unique_users = execute_query(unique.format('user'))
 n_unique_uids = execute_query(unique.format('uid'))
@@ -302,19 +301,21 @@ to such province in the OSM file. In the future, however, these should be
 removed from the dataset.
 '''
 
-# Join tables 'nodes' and 'nodes_tags' to find coordinates of all postal codes
+# Join tables 'nodes' and 'join_tags' to find coordinates of all postal codes
 postcode_query = "SELECT nodes.lon, nodes.lat \
-                    FROM nodes_tags, nodes \
-                    WHERE nodes_tags.id = nodes.id \
-                        AND nodes_tags.key = 'postcode' \
+                    FROM nodes, (SELECT * FROM nodes_tags \
+                                    UNION ALL \
+                                    SELECT * FROM ways_tags) join_tags \
+                    WHERE join_tags.id = nodes.id \
+                        AND join_tags.key = 'postcode' \
                         AND {} \
-                    ORDER BY nodes_tags.value;"
+                    ORDER BY join_tags.value;"
 
 # Fill {} in the query above with the following strings using 'execute_query'
-query_args = ["nodes_tags.value BETWEEN '20121' AND '20162'", \
-              "nodes_tags.value BETWEEN '20010' AND '20099'", \
-              "nodes_tags.value BETWEEN '20811' AND '20900'", \
-              "(nodes_tags.value < '20010' OR nodes_tags.value > '20900')"]
+query_args = ["join_tags.value BETWEEN '20121' AND '20162'", \
+              "join_tags.value BETWEEN '20010' AND '20099'", \
+              "join_tags.value BETWEEN '20811' AND '20900'", \
+              "(join_tags.value < '20010' OR join_tags.value > '20900')"]
 
 pc_colors = ['royalblue', 'limegreen', 'darkorange', 'crimson']
 pc_labels = ['City of Milan', 'Municipalities in the MCM area', \
@@ -333,10 +334,13 @@ street_map(postcode_query, 0.18, pc_colors, pc_labels, pc_title, 'postcode',\
 
 '''
 postcode_by_province = "SELECT municipalities.postcode AS postcode, \
-                                nodes_tags.value AS city_name, \
+                                join_tags.value AS city_name, \
                                 municipalities.province AS province \
-                            FROM nodes_tags, municipalities \
-                            WHERE nodes_tags.key='city' \
+                            FROM (SELECT * FROM nodes_tags \
+                                    UNION ALL \
+                                    SELECT * FROM ways_tags) join_tags, \
+                                    municipalities \
+                            WHERE join_tags.key='city' \
                                 AND (postcode < 20010 OR postcode > 20900) \
                                 AND city_name = municipalities.municipality \
                             GROUP BY city_name \
@@ -352,6 +356,9 @@ print('{:<12s}{:<30}{}'.format('POSTCODE','MUNICIPALITY','PROVINCE'))
 print('-'*51)
 for postcode, municipality, province in pbp:
     print('{:<12}{:<30}{}'.format(postcode, municipality, province))
+
+# Print total number of entries in the table
+print('count: {}'.format(len(pbp)))
 
 # Close the Connection object (i.e. the database)
 conn.close()
