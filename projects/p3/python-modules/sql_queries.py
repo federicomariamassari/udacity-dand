@@ -86,7 +86,7 @@ print('\nQUERY 1: Find the total size of all .csv, .db, and .osm files')
 print(' '*9 + 'in the current working directory (Python script).\n')
 
 # Add header to 'files_list' table
-print('FILENAME', ' '*32, 'SIZE'), print('-'*51)
+print('{:<42s}{}'.format('FILENAME','SIZE')), print('-'*51)
 
 for filename, size in files_list:
 
@@ -111,13 +111,36 @@ def execute_query(query):
     return c.fetchall()
 
 '''
-A.2 - Number of nodes and ways in the dataset [1]
+A.2 - Number of unique users (taken from [1])
 '''
+print('\n\nQUERY 2: Find the number of unique users.\n')
 
+'''
+A.3 - Top 15 contributing users (taken from [1])
+'''
+top_contributing = "SELECT all_users.user, count(*) AS num \
+                        FROM (SELECT user FROM nodes \
+                                UNION ALL \
+                                SELECT user FROM ways) all_users \
+                        GROUP BY all_users.user \
+                        ORDER BY count(all_users.user) DESC \
+                            LIMIT 15;"
+
+top_15 = execute_query(top_contributing)
+
+print('\n\nQUERY 3: Find the top 15 contributing users.\n')
+print('{:<42s}{}'.format('USER','NO.')), print('-'*51)
+
+for username, contributions in top_15:
+    print('{:.<40s}: {}'.format(username, contributions))
+
+'''
+A.4 - Number of nodes and ways in the dataset [1]
+'''
 number_of_nodes = execute_query("SELECT COUNT(*) FROM nodes;")
 number_of_ways = execute_query("SELECT COUNT(*) FROM ways;")
 
-print('\nQUERY 2: Find the total number of nodes and ways.\n')
+print('\n\nQUERY 4: Find the total number of nodes and ways.\n')
 print('Number of nodes: {}'.format(number_of_nodes[0][0]))
 print('Number of ways: {}'.format(number_of_ways[0][0]))
 
@@ -282,7 +305,7 @@ postcode_by_province = "SELECT municipalities.postcode AS postcode, \
 
 pbp = execute_query(postcode_by_province)
 
-print('\nB. ADDITIONAL STATISTICS')
+print('\n\nB. ADDITIONAL STATISTICS')
 print('\nQUERY 1: Print postal code, municipality, and province for all')
 print(' '*9 + 'the entries which should not belong in the Milan OSM file.\n')
 
