@@ -369,6 +369,107 @@ for postcode, municipality, province in pbp:
 print('count: {}'.format(len(pbp)))
 
 '''
+B.2 - Parks
+
+Find the location of all parks in the OpenStreetMap file.
+Look for the following tags (after joining tables 'nodes_tags', 'ways_tags'):
+
+ - Trees: 'tree', 'tree_group';
+ - Waste baskets: 'waste_basket';
+ - Benches: 'bench'
+ - Fountains: 'drinking_water', 'water', 'fountain'.
+'''
+parks_keys = ["'natural'", "'amenity'", "'amenity'", "'amenity'"]
+
+parks_constr = ["join_tags.value IN ('tree', 'tree_group')", \
+                "join_tags.value = 'waste_basket'", \
+                "join_tags.value = 'bench'", \
+                "join_tags.value IN ('drinking_water', 'fountain', 'water')"]
+
+parks_colors = ['limegreen', 'lightcoral', 'sienna', 'aqua']
+parks_labels = ['Tree', 'Waste basket', 'Bench', 'Drinking water']
+parks_title = 'Location of parks in the OpenStreetMap sample file for Milan, \
+Italy'
+
+parks_fig_title = 'parks'
+street_map(query, parks_constr, 0.05, parks_colors, parks_labels, parks_title, \
+            parks_fig_title, parks_keys)
+
+'''
+B.3 - Eateries in Milan
+
+To display all eateries in the City of Milan only, two methods are used:
+
+- tag='city' method: find all tag values in a desired set, searching among all
+                     nodes and ways that have tag value='Milano' associated
+                     to tag key='city'. This is the wrong method: most eateries
+                     do not have added tag key='city';
+- min, max coordinates: find all tag values in a desired set, searching among
+                        all nodes and ways whose coordinates are within the
+                        city boundaries of Milan, as determined by the min, max
+                        longitude and latitude for all tags with value='Milano'
+                        associated to tag key='city'. This is the right method.
+'''
+eateries_by_city_tag = "SELECT nodes.lon, nodes.lat \
+                            FROM nodes, \
+                                (SELECT * FROM nodes_tags \
+                                    UNION ALL \
+                                    SELECT * FROM ways_tags) join_tags \
+                            WHERE nodes.id IN \
+                                (SELECT id FROM (SELECT * FROM nodes_tags \
+                                    UNION ALL \
+                                    SELECT * FROM ways_tags) join_tags \
+                                    WHERE join_tags.key = 'city' \
+                                    AND join_tags.value = 'Milano') \
+                                    AND join_tags.id = nodes.id \
+                                    AND join_tags.key = 'amenity' \
+                                    AND join_tags.value IN {} \
+                            ORDER BY join_tags.value;"
+
+eateries_by_boundaries = "SELECT nodes.lon, nodes.lat \
+                            FROM nodes, \
+                                (SELECT * FROM nodes_tags \
+                                    UNION ALL \
+                                    SELECT * FROM ways_tags) join_tags, \
+                                (SELECT MIN(nodes.lon) AS min_lon, \
+                                        MAX(nodes.lon) AS max_lon, \
+                                        MIN(nodes.lat) AS min_lat, \
+                                        MAX(nodes.lat) AS max_lat \
+                                    FROM nodes, (SELECT * FROM nodes_tags \
+                                        UNION ALL \
+                                        SELECT * FROM ways_tags) join_tags \
+                                    WHERE join_tags.value = 'Milano' \
+                                        AND nodes.id = join_tags.id) e \
+                            WHERE nodes.lon BETWEEN e.min_lon AND e.max_lon \
+                                AND nodes.lat BETWEEN e.min_lat AND e.max_lat \
+                                AND nodes.id = join_tags.id \
+                                AND join_tags.value IN {};"
+
+# Look for the following tag tuples in the queries above
+eateries_constr = ["('bar', 'pub')", \
+                    "('restaurant', 'bbq')", \
+                    "('cafe', 'ice-cream')", \
+                    "('fast_food')"]
+
+eateries_colors = ['lime', 'tomato', 'blue', 'gold']
+eateries_labels = ['Bars and pubs', 'Restaurants and BBQs', \
+                    'Cafés and ice-cream shops', 'Fast food']
+
+ect_title = "Eateries by tag='city' in Milan, Italy, OpenStreetMap sample"
+ebb_title = 'Eateries by boundaries in Milan, Italy, OpenStreetMap sample'
+
+ect_fig_title = 'eateries_by_city_tag'
+ebb_fig_title = 'eateries_by_boundaries'
+
+street_map(eateries_by_city_tag, eateries_constr, 0.1, eateries_colors, \
+            eateries_labels, ect_title, ect_fig_title)
+
+street_map(eateries_by_boundaries, eateries_constr, 0.1, eateries_colors, \
+            eateries_labels, ebb_title, ebb_fig_title)
+
+
+
+'''
 Save maps to .png and inform user. Also print folder './img' creation message
 if flag = 0.
 '''
