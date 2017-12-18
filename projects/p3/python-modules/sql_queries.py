@@ -222,15 +222,25 @@ def street_map(query, query_constr, diff, colors, labels, title, fig_name, \
     n = range(len(query_constr))
 
     '''
+    Merge SQL tables 'nodes_tags' and 'ways_tags' into 'join_tags'. Replace
+    {join_tags} in the supplied query with the string below.
+    '''
+    join_tags = '(SELECT * FROM nodes_tags \
+                    UNION ALL \
+                    SELECT * FROM ways_tags) join_tags'
+
+    '''
     Generate a list of full SQL queries, each one obtained by replacing the {}
     brackets in the supplied 'query' with the string element in 'query_constr'
     (and 'query_keys', if applicable).
     '''
     if query_keys != None:
-        full_query = [query.format(query_keys[i], query_constr[i]) for i in n]
+        full_query = [query.format(query_keys[i], query_constr[i], \
+                        join_tags=join_tags) for i in n]
 
     else:
-        full_query = [query.format(query_constr[i]) for i in n]
+        full_query = [query.format(query_constr[i], join_tags=join_tags) \
+                        for i in n]
 
     '''
     Store query results into NumPy arrays, convert string elements into
@@ -287,6 +297,10 @@ def street_map(query, query_constr, diff, colors, labels, title, fig_name, \
                 format='png', bbox_inches='tight')
 
 '''
+B.0 - Most represented cities
+'''
+
+'''
 B.1 - Postal Codes
 
 Admissible postcodes in the OSM file for Milan, Italy are [6]:
@@ -306,9 +320,7 @@ SQL query to find the coordinates of a set of OpenStreetMap nodes, given
 input constraints on tag keys and values.
 '''
 query = "SELECT nodes.lon, nodes.lat \
-            FROM nodes, (SELECT * FROM nodes_tags \
-                            UNION ALL \
-                            SELECT * FROM ways_tags) join_tags \
+            FROM nodes, {join_tags} \
             WHERE join_tags.id = nodes.id \
                 AND join_tags.key = {} \
                 AND {} \
@@ -411,14 +423,8 @@ To display all eateries in the City of Milan only, two methods are used:
                         associated to tag key='city'. This is the right method.
 '''
 eateries_by_city_tag = "SELECT nodes.lon, nodes.lat \
-                            FROM nodes, \
-                                (SELECT * FROM nodes_tags \
-                                    UNION ALL \
-                                    SELECT * FROM ways_tags) join_tags \
-                            WHERE nodes.id IN \
-                                (SELECT id FROM (SELECT * FROM nodes_tags \
-                                    UNION ALL \
-                                    SELECT * FROM ways_tags) join_tags \
+                            FROM nodes, {join_tags} \
+                            WHERE nodes.id IN (SELECT id FROM {join_tags} \
                                     WHERE join_tags.key = 'city' \
                                     AND join_tags.value = 'Milano') \
                                     AND join_tags.id = nodes.id \
@@ -427,17 +433,12 @@ eateries_by_city_tag = "SELECT nodes.lon, nodes.lat \
                             ORDER BY join_tags.value;"
 
 eateries_by_boundaries = "SELECT nodes.lon, nodes.lat \
-                            FROM nodes, \
-                                (SELECT * FROM nodes_tags \
-                                    UNION ALL \
-                                    SELECT * FROM ways_tags) join_tags, \
+                            FROM nodes, {join_tags}, \
                                 (SELECT MIN(nodes.lon) AS min_lon, \
                                         MAX(nodes.lon) AS max_lon, \
                                         MIN(nodes.lat) AS min_lat, \
                                         MAX(nodes.lat) AS max_lat \
-                                    FROM nodes, (SELECT * FROM nodes_tags \
-                                        UNION ALL \
-                                        SELECT * FROM ways_tags) join_tags \
+                                    FROM nodes, {join_tags} \
                                     WHERE join_tags.value = 'Milano' \
                                         AND nodes.id = join_tags.id) e \
                             WHERE nodes.lon BETWEEN e.min_lon AND e.max_lon \
@@ -455,7 +456,7 @@ eateries_colors = ['lime', 'tomato', 'blue', 'gold']
 eateries_labels = ['Bars and pubs', 'Restaurants and BBQs', \
                     'Cafés and ice-cream shops', 'Fast food']
 
-ect_title = "Eateries by tag='city' in Milan, Italy, OpenStreetMap sample"
+ect_title = "Eateries by tag key='city' in Milan, Italy, OpenStreetMap sample"
 ebb_title = 'Eateries by boundaries in Milan, Italy, OpenStreetMap sample'
 
 ect_fig_title = 'eateries_by_city_tag'
