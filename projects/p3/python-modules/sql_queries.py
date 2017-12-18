@@ -190,8 +190,20 @@ print('Number of ways: {}'.format(number_of_ways[0][0]))
 B. ADDITIONAL STATISTICS
 -------------------------------------------------------------------------------
 '''
+
+'''
+Auxiliary SQL query string: join tables 'nodes_tags', 'ways_tags' and name the
+output 'join_tags'. Factored out as it is frequently used and to make queries
+more readable. Whenever a query is supplied to function 'street_map', replace
+{join_tags} with this string.
+'''
+join_tags = '(SELECT * FROM nodes_tags \
+                UNION ALL \
+                SELECT * FROM ways_tags) join_tags'
+
 def street_map(query, query_constr, diff, colors, labels, title, fig_name, \
-                query_keys=None, service='ESRI_StreetMap_World_2D'):
+                query_keys=None, join_tags=join_tags, \
+                service='ESRI_StreetMap_World_2D'):
     '''
     Scatter plot OpenStreetMap data on top of a 2D world map.
 
@@ -214,20 +226,13 @@ def street_map(query, query_constr, diff, colors, labels, title, fig_name, \
               extension (default='png'). The figures are stored in directory
               'img', which is generated if not already present.
     query_keys: list of str, optional argument. List of constraints on tag keys.
+    join_tags: str, optional argument. Auxiliary SQL query string.
     service: str, optional argument. The ArcGIS Server REST API used to get,
              and display as plot background, an area of the world map [10].
     '''
 
     # Assign convenient name to frequently used iterable object
     n = range(len(query_constr))
-
-    '''
-    Merge SQL tables 'nodes_tags' and 'ways_tags' into 'join_tags'. Replace
-    {join_tags} in the supplied query with the string below.
-    '''
-    join_tags = '(SELECT * FROM nodes_tags \
-                    UNION ALL \
-                    SELECT * FROM ways_tags) join_tags'
 
     '''
     Generate a list of full SQL queries, each one obtained by replacing the {}
@@ -356,15 +361,12 @@ refers to:
 postcode_by_province = "SELECT municipalities.postcode AS postcode, \
                                 join_tags.value AS city_name, \
                                 municipalities.province AS province \
-                            FROM (SELECT * FROM nodes_tags \
-                                    UNION ALL \
-                                    SELECT * FROM ways_tags) join_tags, \
-                                    municipalities \
+                            FROM municipalities, {join_tags} \
                             WHERE join_tags.key='city' \
                                 AND (postcode < 20010 OR postcode > 20900) \
                                 AND city_name = municipalities.municipality \
                             GROUP BY city_name \
-                            ORDER BY postcode;"
+                            ORDER BY postcode;".format(join_tags=join_tags)
 
 pbp = execute_query(postcode_by_province)
 
@@ -471,6 +473,8 @@ street_map(eateries_by_boundaries, eateries_constr, 0.1, eateries_colors, \
 
 
 '''
+C. SAVE MAPS TO FILE
+
 Save maps to .png and inform user. Also print folder './img' creation message
 if flag = 0.
 '''
