@@ -186,15 +186,20 @@ print('Number of ways: {}'.format(number_of_ways[0][0]))
 B. ADDITIONAL STATISTICS
 -------------------------------------------------------------------------------
 '''
-def street_map(query_keys, query_constr, diff, colors, labels, title, \
-                fig_name, service='ESRI_StreetMap_World_2D'):
+def street_map(query, query_constr, diff, colors, labels, title, fig_name, \
+                query_keys=None, service='ESRI_StreetMap_World_2D'):
     '''
     Scatter plot OpenStreetMap data on top of a 2D world map.
 
     Input
     ---------------------------------------------------------------------------
-    query_keys, query_constr: list of str, required arguments. The key tag and
-                              constraint of the query to process.
+    query: str, required argument. The SQL query to process. Must produce
+           a table of coordinates (longitude, latitude). Must contain a pair
+           of brackets {}, in which case list 'query_constr' must also be
+           provided. If an additional pair of brackets is present, also supply
+           'query_keys'.
+    query_constr: list of str, required argument. The list of constraints on
+                  tag values.
     diff: float, required argument. Parameter added to the max, or subtracted
           to the min, longitude and latitude values to zoom on the map, which
           is centered on the data.
@@ -204,31 +209,24 @@ def street_map(query_keys, query_constr, diff, colors, labels, title, \
     fig_name: str, required argument. The name of the saved figure, without
               extension (default='png'). The figures are stored in directory
               'img', which is generated if not already present.
+    query_keys: list of str, optional argument. List of constraints on tag keys.
     service: str, optional argument. The ArcGIS Server REST API used to get,
              and display as plot background, an area of the world map [10].
     '''
 
-    '''
-    Generic SQL query to find the coordinates (longitude, latitude) of a set
-    of OpenStreetMap nodes, given input key, constraint tags.
-    '''
-    query = "SELECT nodes.lon, nodes.lat \
-                FROM nodes, (SELECT * FROM nodes_tags \
-                                UNION ALL \
-                                SELECT * FROM ways_tags) join_tags \
-                WHERE join_tags.id = nodes.id \
-                    AND join_tags.key = {} \
-                    AND {} \
-                ORDER BY join_tags.value;"
-
     # Assign convenient name to frequently used iterable object
-    n = range(len(query_keys))
+    n = range(len(query_constr))
 
     '''
-    Generate a list of full SQL queries, each one obtained by replacing
-    the {} space in 'query' with a string element in 'query_constr'.
+    Generate a list of full SQL queries, each one obtained by replacing the {}
+    brackets in the supplied 'query' with the string element in 'query_constr'
+    (and 'query_keys', if applicable).
     '''
-    full_query = [query.format(query_keys[i], query_constr[i]) for i in n]
+    if query_keys != None:
+        query = [query.format(query_keys[i], query_constr[i]) for i in n]
+
+    else:
+        full_query = [query.format(query_constr[i]) for i in n]
 
     '''
     Store query results into NumPy arrays, convert string elements into
@@ -260,12 +258,12 @@ def street_map(query_keys, query_constr, diff, colors, labels, title, \
     '''
     m = Basemap(llcrnrlon=min_lon-diff, llcrnrlat=min_lat-diff, \
                 urcrnrlon=max_lon+diff, urcrnrlat=max_lat+diff, \
-                resolution = 'h')
+                resolution = 'l')
 
     '''
     Retrieve a background map using the ArcGIS Server REST API and display it
     on the plot. 'ESRI_StreetMap_World_2D' is the default map server.
-    * Important: Internet connection required.
+    * IMPORTANT: Internet connection required.
     '''
     m.arcgisimage(service=service, xpixels = 900)
 
@@ -301,9 +299,19 @@ removed from the dataset.
 '''
 
 '''
-Fill the empty brackets in the generic query in function 'street_map' with the
-following (key, constraint) pairs.
+SQL query to find the coordinates of a set of OpenStreetMap nodes, given
+input constraints on tag keys and values.
 '''
+query = "SELECT nodes.lon, nodes.lat \
+            FROM nodes, (SELECT * FROM nodes_tags \
+                            UNION ALL \
+                            SELECT * FROM ways_tags) join_tags \
+            WHERE join_tags.id = nodes.id \
+                AND join_tags.key = {} \
+                AND {} \
+            ORDER BY join_tags.value;"
+
+# Fill the empty brackets in the query above with each (key, constraint) pair
 postcode_keys = ["'postcode'"]*4
 
 postcode_constr = ["join_tags.value BETWEEN '20121' AND '20162'", \
@@ -312,18 +320,18 @@ postcode_constr = ["join_tags.value BETWEEN '20121' AND '20162'", \
                     "(join_tags.value < '20010' OR join_tags.value > '20900')"]
 
 # Additional required arguments for 'street_map'
-pc_colors = ['royalblue', 'limegreen', 'darkorange', 'crimson']
-pc_labels = ['City of Milan', 'Municipalities in the MCM area', \
-            'Province of Monza and Brianza', 'Other Provinces']
-pc_title = 'Map of postal codes in the OpenStreetMap sample file for Milan, \
-Italy'
+postcode_colors = ['royalblue', 'limegreen', 'darkorange', 'crimson']
+postcode_labels = ['City of Milan', 'Municipalities in the MCM area', \
+                    'Province of Monza and Brianza', 'Other Provinces']
+postcode_title = 'Map of postal codes in the OpenStreetMap sample file for \
+Milan, Italy'
 
 '''
 Create a visual map of all postcodes in the OSM sample file for Milan, Italy.
 Store the output figure in './img' folder, with name 'postcode.png'.
 '''
-street_map(postcode_keys, postcode_constr, 0.18, pc_colors, pc_labels, \
-            pc_title, fig_name='postcode')
+street_map(query, postcode_constr, 0.18, postcode_colors, postcode_labels, \
+            postcode_title, 'postcodes', postcode_keys)
 
 '''
 If (postcode < 20010) | (postcode > 20900), find which city and province it
