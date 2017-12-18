@@ -368,15 +368,18 @@ for postcode, municipality, province in pbp:
 # Print total number of entries in the table
 print('count: {}'.format(len(pbp)))
 
-# Save maps to .png and inform user. Print folder creation msg if flag = 0
+'''
+Save maps to .png and inform user. Also print folder './img' creation message
+if flag = 0.
+'''
 print('\n\nC. SAVE MAPS TO FILE\n')
 if flag != -1:
     print("Generated: folder './img'")
 else:
     pass
-print("Generated: '{}.png' in folder './img'.".format(postcode_fig_title))
-print("Generated: '{}.png' in folder './img'.".format(parks_fig_title))
-print("Generated: '{}.png' in folder './img'.\n".format(eateries_fig_title))
+
+fig_list = [postcode_fig_title, parks_fig_title, ect_fig_title, ebb_fig_title]
+[print("Generated: '{}.png' in folder './img'.".format(i)) for i in fig_list]
 
 # Close the Connection object (i.e. the database)
 conn.close()
