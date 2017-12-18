@@ -99,7 +99,6 @@ for filename, size in files_list:
         else:
             print('{:.<40s}: {:.2f} MB'.format(filename, size*1e-6))
 
-
 # Create Connection object representing SQL database and Cursor
 sqlite_database = 'milan_italy.db'
 conn = sqlite3.connect(sqlite_database)
@@ -223,7 +222,7 @@ def street_map(query, query_constr, diff, colors, labels, title, fig_name, \
     (and 'query_keys', if applicable).
     '''
     if query_keys != None:
-        query = [query.format(query_keys[i], query_constr[i]) for i in n]
+        full_query = [query.format(query_keys[i], query_constr[i]) for i in n]
 
     else:
         full_query = [query.format(query_constr[i]) for i in n]
@@ -289,13 +288,12 @@ Admissible postcodes in the OSM file for Milan, Italy are [6]:
 
  20010 - 20099: Municipalities in the Metropolitan City of Milan area
  20121 - 20162: City of Milan
- 20811 - 20900: Province of Monza and Brianza
+ 20811 - 20900: Province of Monza and Brianza (*)
 
-The province of Monza and Brianza 'was officially created by splitting the
+(*) The province of Monza and Brianza 'was officially created by splitting the
 north-eastern part from the province of Milan [...] and became executive after
-[...] June 2009' [7]. It is, therefore, quite common to find postcodes related
-to such province in the OSM file. In the future, however, these should be
-removed from the dataset.
+[...] June 2009' [7]. Postcodes related to this province are very common in the
+OSM file; however, these do not belong in the dataset anymore.
 '''
 
 '''
