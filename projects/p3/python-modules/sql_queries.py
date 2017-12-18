@@ -49,10 +49,15 @@ import matplotlib.pyplot as plt
 from mpl_toolkits.basemap import Basemap
 import seaborn as sns
 
-# Make directory img to store output figures [2]
+'''
+Make directory img to store output figures [2] if not already present.
+If so, set flag = 0, whith 'flag' a variable used when saving maps to file.
+'''
 directory = './img'
+flag = -1
 if not os.path.exists(directory):
     os.makedirs(directory)
+    flag += 1
 
 # Suppress matplotlib deprecation warnings from basemap 1.0.7 [3]
 import warnings
@@ -328,8 +333,9 @@ Milan, Italy'
 Create a visual map of all postcodes in the OSM sample file for Milan, Italy.
 Store the output figure in './img' folder, with name 'postcode.png'.
 '''
+postcode_fig_title = 'postcodes'
 street_map(query, postcode_constr, 0.18, postcode_colors, postcode_labels, \
-            postcode_title, 'postcodes', postcode_keys)
+            postcode_title, postcode_fig_title, postcode_keys)
 
 '''
 If (postcode < 20010) | (postcode > 20900), find which city and province it
@@ -361,6 +367,16 @@ for postcode, municipality, province in pbp:
 
 # Print total number of entries in the table
 print('count: {}'.format(len(pbp)))
+
+# Save maps to .png and inform user. Print folder creation msg if flag = 0
+print('\n\nC. SAVE MAPS TO FILE\n')
+if flag != -1:
+    print("Generated: folder './img'")
+else:
+    pass
+print("Generated: '{}.png' in folder './img'.".format(postcode_fig_title))
+print("Generated: '{}.png' in folder './img'.".format(parks_fig_title))
+print("Generated: '{}.png' in folder './img'.\n".format(eateries_fig_title))
 
 # Close the Connection object (i.e. the database)
 conn.close()
