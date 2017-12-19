@@ -388,17 +388,17 @@ B.2 - Parks
 Find the location of all parks in the OpenStreetMap file.
 Look for the following tags (after joining tables 'nodes_tags', 'ways_tags'):
 
- - Trees: 'tree', 'tree_group';
+ - Trees: 'tree', 'tree_row', 'tree_group';
  - Waste baskets: 'waste_basket';
- - Benches: 'bench'
- - Fountains: 'drinking_water', 'water', 'fountain'.
+ - Benches: 'bench';
+ - Fountains: 'drinking_water'.
 '''
 parks_keys = ["'natural'", "'amenity'", "'amenity'", "'amenity'"]
 
 parks_constr = ["join_tags.value IN ('tree', 'tree_group')", \
                 "join_tags.value = 'waste_basket'", \
                 "join_tags.value = 'bench'", \
-                "join_tags.value IN ('drinking_water', 'fountain', 'water')"]
+                "join_tags.value = 'drinking_water'"]
 
 parks_colors = ['limegreen', 'lightcoral', 'sienna', 'aqua']
 parks_labels = ['Tree', 'Waste basket', 'Bench', 'Drinking water']
