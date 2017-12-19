@@ -1,7 +1,9 @@
 '''
+Provide a statistical overview of the dataset using SQL queries.
+
 Use Python 3 to run this script.
 
-THE BASEMAP TOOLKIT (v1.0.7)
+Required installation: THE BASEMAP TOOLKIT (v1.0.7)
 -------------------------------------------------------------------------------
 This script requires installation of the basemap toolkit, version 1.0.7.
 The toolkit is available on PyPI (https://pypi.python.org/), and it can be
@@ -322,7 +324,7 @@ OSM file; however, these do not belong in the dataset anymore.
 
 '''
 SQL query to find the coordinates of a set of OpenStreetMap nodes, given
-input constraints on tag keys and values.
+input constraints on tag keys and values. Valid for 'postcodes', 'parks'.
 '''
 query = "SELECT nodes.lon, nodes.lat \
             FROM nodes, {join_tags} \
@@ -395,7 +397,7 @@ Look for the following tags (after joining tables 'nodes_tags', 'ways_tags'):
 '''
 parks_keys = ["'natural'", "'amenity'", "'amenity'", "'amenity'"]
 
-parks_constr = ["join_tags.value IN ('tree', 'tree_group')", \
+parks_constr = ["join_tags.value IN ('tree', 'tree_row', 'tree_group')", \
                 "join_tags.value = 'waste_basket'", \
                 "join_tags.value = 'bench'", \
                 "join_tags.value = 'drinking_water'"]
@@ -414,10 +416,10 @@ B.3 - Eateries in Milan
 
 To display all eateries in the City of Milan only, two methods are used:
 
-- tag='city' method: find all tag values in a desired set, searching among all
-                     nodes and ways that have tag value='Milano' associated
-                     to tag key='city'. This is the wrong method: most eateries
-                     do not have added tag key='city';
+- tag='city' method: find all tag values in a desired set, e.g. ('restaurant',
+                     'bbq'), searching among all nodes and ways that have tag
+                     value='Milano' associated with tag key='city'. This is the
+                     wrong method: most eateries do not have added key='city';
 - min, max coordinates: find all tag values in a desired set, searching among
                         all nodes and ways whose coordinates are within the
                         city boundaries of Milan, as determined by the min, max
