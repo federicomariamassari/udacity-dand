@@ -231,6 +231,23 @@ print('{:<42s}{}'.format('ESTABLISHMENT','COUNT')), print('-'*51)
 for establishment, count_school in school_by_type:
     print('{:.<40s}: {}'.format(establishment, count_school))
 
+'''A.6 - Number of 'fixme' tags
+
+Count the number of 'fixme' key, value, and type tags. Use LIKE '%fixme' to
+cover all possible cases: 1) key='fixme'; 2) key='note', value='FIXME'; 3)
+key='note', value='FIXME: ...'. '%<text>' finds any value starting with <text>.
+'''
+fixme = "SELECT count(*) \
+            FROM {join_tags} \
+            WHERE join_tags.key LIKE '%fixme' \
+                OR join_tags.value LIKE '%fixme' \
+                OR join_tags.type LIKE '%fixme';".format(join_tags=join_tags)
+
+number_of_fixme_tags = execute_query(fixme)
+
+print('\n\nQUERY 6: Find the number of tags that require fixing.\n')
+print("Number of 'fixme' tags: {}".format(number_of_fixme_tags[0][0]))
+
 '''B. ADDITIONAL STATISTICS
 -------------------------------------------------------------------------------
 '''
