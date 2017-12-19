@@ -251,16 +251,6 @@ print("Number of 'fixme' tags: {}".format(number_of_fixme_tags[0][0]))
 '''B. ADDITIONAL STATISTICS
 -------------------------------------------------------------------------------
 '''
-
-'''Auxiliary SQL query string: join tables 'nodes_tags', 'ways_tags' and name
-the output 'join_tags'. Factor out as it is frequently used and to make queries
-more readable. Whenever a query is supplied to function 'street_map', replace
-{join_tags} with this string.
-'''
-join_tags = '(SELECT * FROM nodes_tags \
-                UNION ALL \
-                SELECT * FROM ways_tags) join_tags'
-
 def street_map(query, query_constr, diff, colors, labels, title, fig_name, \
                 query_keys=None, join_tags=join_tags, \
                 service='ESRI_StreetMap_World_2D'):
@@ -290,6 +280,15 @@ def street_map(query, query_constr, diff, colors, labels, title, fig_name, \
     service: str, optional argument. The ArcGIS Server REST API used to get,
              and display as plot background, an area of the world map [10].
     '''
+
+    # Notify user a picture is being generated [7]
+    sys.stdout.write("\n* Generating '{}.png'".format(fig_name))
+    start = time.time()
+    time.sleep(.5)
+    while (time.time() - start) < 2:
+        sys.stdout.write('.')
+        sys.stdout.flush()
+        time.sleep(.5)
 
     # Assign convenient name to frequently used iterable object
     n = range(len(query_constr))
