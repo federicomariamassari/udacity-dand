@@ -50,11 +50,16 @@ Lombardy postcodes resources:
 '''
 
 import os
+import time
+import sys
 import sqlite3
 import numpy as np
 import matplotlib.pyplot as plt
 from mpl_toolkits.basemap import Basemap
 import seaborn as sns
+
+# Time script execution time
+tic = time.time()
 
 '''Make directory img to store output figures [2] if not already present.
 If so, set flag = 0, whith 'flag' a variable used when saving maps to file.
@@ -476,3 +481,7 @@ fig_list = [postcode_fig_title, parks_fig_title, ect_fig_title, ebb_fig_title]
 
 # Close the Connection object (i.e. the database)
 conn.close()
+
+# Return total elapsed time
+toc = time.time() - tic
+print('\nTotal elapsed time: {:.2f} seconds\n'.format(toc))
