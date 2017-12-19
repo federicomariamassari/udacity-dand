@@ -356,10 +356,29 @@ def street_map(query, query_constr, diff, colors, labels, title, fig_name, \
     plt.savefig('{}/{}.png'.format(directory, fig_name), dpi=150, \
                 format='png', bbox_inches='tight')
 
-'''B.0 - Most represented cities
+''' B.1 - Most represented cities
 '''
+most_represented_cities = "SELECT join_tags.value, \
+                                    municipalities.province, count(*) \
+                            FROM municipalities, {join_tags} \
+                            WHERE join_tags.value \
+                                    = municipalities.municipality \
+                            GROUP BY join_tags.value \
+                            ORDER BY count(*) DESC \
+                                LIMIT 15;".format(join_tags=join_tags)
 
-'''B.1 - Postal Codes
+top_15_cities = execute_query(most_represented_cities)
+
+print('\n\nB. ADDITIONAL STATISTICS')
+print('\nQUERY 1: Print a list of the 15 most represented municipalities')
+print(' '*9 + 'and associated provinces.\n')
+
+print('{:<25s}{:<17}{}'.format('MUNICIPALITY', 'PROVINCE', 'COUNT'))
+print('-'*51)
+for municipality, province, count in top_15_cities:
+    print('{:<25}{:<17}{}'.format(municipality, province, count))
+
+'''B.2 - Postal Codes
 
 Admissible postcodes in the OSM file for Milan, Italy are [6]:
 
@@ -420,8 +439,7 @@ postcode_by_province = "SELECT municipalities.postcode AS postcode, \
 
 pbp = execute_query(postcode_by_province)
 
-print('\n\nB. ADDITIONAL STATISTICS')
-print('\nQUERY 1: Print postal code, municipality, and province for all')
+print('\nQUERY 2: Print postal code, municipality, and province for all')
 print(' '*9 + 'the entries which should not belong in the Milan OSM file.\n')
 
 print('{:<12s}{:<30}{}'.format('POSTCODE','MUNICIPALITY','PROVINCE'))
