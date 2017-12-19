@@ -1,5 +1,4 @@
-'''
-Provide a statistical overview of the dataset using SQL queries.
+'''Provide a statistical overview of the dataset using SQL queries.
 
 Use Python 3 to run this script.
 
@@ -34,14 +33,20 @@ Display files list and size:
 [5] https://stackoverflow.com/questions/10695139/sort-a-list-of-tuples-by-2nd-
     item-integer-value
 
-Lombardy postcodes resources:
-[6] http://www.tuttitalia.it/lombardia/
-[7] https://en.wikipedia.org/wiki/Province_of_Monza_and_Brianza
+Custom 'ORDER BY' statement:
+[6] https://stackoverflow.com/questions/3303851/sqlite-and-custom-order-by
+
+Print dots while waiting
+[7] https://mail.python.org/pipermail/python-list/2008-January/509830.html
 
 Basemap toolkit resources:
 [8] https://matplotlib.org/basemap/index.html
 [9] http://basemaptutorial.readthedocs.io/en/latest/
 [10] http://server.arcgisonline.com/arcgis/rest/services
+
+Lombardy postcodes resources:
+[11] http://www.tuttitalia.it/lombardia/
+[12] https://en.wikipedia.org/wiki/Province_of_Monza_and_Brianza
 '''
 
 import os
@@ -51,8 +56,7 @@ import matplotlib.pyplot as plt
 from mpl_toolkits.basemap import Basemap
 import seaborn as sns
 
-'''
-Make directory img to store output figures [2] if not already present.
+'''Make directory img to store output figures [2] if not already present.
 If so, set flag = 0, whith 'flag' a variable used when saving maps to file.
 '''
 directory = './img'
@@ -66,11 +70,10 @@ import warnings
 import matplotlib.cbook
 warnings.filterwarnings('ignore', category=matplotlib.cbook.mplDeprecation)
 
-'''
-A. REQUIRED QUERIES
+'''A. REQUIRED QUERIES
 -------------------------------------------------------------------------------
 
-A.1 - Files Size (Python script)
+A.1 - Size of files in the current working directory (Python script)
 
 This Python script, slightly modified from [4] and [5], prints both names and
 size (in descending order) of all .csv, .db, and .osm files in the current
@@ -116,8 +119,7 @@ def execute_query(query):
     c.execute(query)
     return c.fetchall()
 
-'''
-A.2 - Number of unique users (modified from [1])
+'''A.2 - Number of unique users (modified from [1])
 '''
 unique = "SELECT count(DISTINCT e.{0}) AS num \
             FROM (SELECT nodes.{0} FROM nodes \
@@ -131,8 +133,7 @@ print('\n\nQUERY 2: Find the number of unique users.\n')
 print("No. of unique users, 'user' tag: {}".format(n_unique_users[0][0]))
 print("No. of unique users, 'uid' tag: {}".format(n_unique_uids[0][0]))
 
-'''
-If the results above are different, separately look for discrepancies in the
+'''If the results above are different, separately look for discrepancies in the
 two tables 'nodes', 'ways'.
 '''
 if n_unique_users != n_unique_uids:
@@ -159,8 +160,7 @@ if n_unique_users != n_unique_uids:
             # Also print the total number of incongruous entries in the table
             print('count: {}'.format(len(table)))
 
-'''
-A.3 - Top 15 contributing users (taken from [1])
+'''A.3 - Top 15 contributing users (taken from [1])
 '''
 top_contributing = "SELECT all_users.user, count(*) AS num \
                         FROM (SELECT user FROM nodes \
@@ -178,8 +178,7 @@ print('{:<42s}{}'.format('USER','NO.')), print('-'*51)
 for username, contributions in top_15:
     print('{:.<40s}: {}'.format(username, contributions))
 
-'''
-A.4 - Number of nodes and ways in the dataset [1]
+'''A.4 - Number of nodes and ways in the dataset [1]
 '''
 number_of_nodes = execute_query("SELECT count(*) FROM nodes;")
 number_of_ways = execute_query("SELECT count(*) FROM ways;")
@@ -188,14 +187,12 @@ print('\n\nQUERY 4: Find the total number of nodes and ways.\n')
 print('Number of nodes: {}'.format(number_of_nodes[0][0]))
 print('Number of ways: {}'.format(number_of_ways[0][0]))
 
-'''
-B. ADDITIONAL STATISTICS
+'''B. ADDITIONAL STATISTICS
 -------------------------------------------------------------------------------
 '''
 
-'''
-Auxiliary SQL query string: join tables 'nodes_tags', 'ways_tags' and name the
-output 'join_tags'. Factored out as it is frequently used and to make queries
+'''Auxiliary SQL query string: join tables 'nodes_tags', 'ways_tags' and name
+the output 'join_tags'. Factor out as it is frequently used and to make queries
 more readable. Whenever a query is supplied to function 'street_map', replace
 {join_tags} with this string.
 '''
@@ -206,8 +203,8 @@ join_tags = '(SELECT * FROM nodes_tags \
 def street_map(query, query_constr, diff, colors, labels, title, fig_name, \
                 query_keys=None, join_tags=join_tags, \
                 service='ESRI_StreetMap_World_2D'):
-    '''
-    Scatter plot OpenStreetMap data on top of a 2D world map.
+
+    '''Scatter plot OpenStreetMap data on top of a 2D world map.
 
     Input
     ---------------------------------------------------------------------------
@@ -236,9 +233,8 @@ def street_map(query, query_constr, diff, colors, labels, title, fig_name, \
     # Assign convenient name to frequently used iterable object
     n = range(len(query_constr))
 
-    '''
-    Generate a list of full SQL queries, each one obtained by replacing the {}
-    brackets in the supplied 'query' with the string element in 'query_constr'
+    '''Generate a list of full SQL queries, each one obtained by replacing the
+    {} brackets in the supplied query with the string element in 'query_constr'
     (and 'query_keys', if applicable).
     '''
     if query_keys != None:
@@ -249,8 +245,7 @@ def street_map(query, query_constr, diff, colors, labels, title, fig_name, \
         full_query = [query.format(query_constr[i], join_tags=join_tags) \
                         for i in n]
 
-    '''
-    Store query results into NumPy arrays, convert string elements into
+    '''Store query results into NumPy arrays, convert string elements into
     floating point values (dtype=np.float).
     '''
     query_res = [np.array(execute_query(full_query[i]), dtype=np.float) \
@@ -268,9 +263,8 @@ def street_map(query, query_constr, diff, colors, labels, title, fig_name, \
 
     plt.figure(figsize=(10,8))
 
-    '''
-    The matplotlib basemap toolkit is a library for plotting 2D data on maps in
-    Python [8]. It allows to transform coordinates to map projections, so that
+    '''The matplotlib basemap toolkit is a library for plotting 2D data on maps
+    in Python [8]. It allows to transform coordinates to map projections so that
     matplotlib can then be used to plot on such transformed coordinates.
     The 'Basemap' class creates the map [9]; the boundaries are set by supplying
     minimum and maximum longitude (x-axis limits) and latitude (y-axis limits).
@@ -281,9 +275,8 @@ def street_map(query, query_constr, diff, colors, labels, title, fig_name, \
                 urcrnrlon=max_lon+diff, urcrnrlat=max_lat+diff, \
                 resolution = 'l')
 
-    '''
-    Retrieve a background map using the ArcGIS Server REST API and display it
-    on the plot. 'ESRI_StreetMap_World_2D' is the default map server.
+    '''Retrieve a background map using the ArcGIS Server REST API and display
+    it on the plot. 'ESRI_StreetMap_World_2D' is the default map server.
     * IMPORTANT: Internet connection required.
     '''
     m.arcgisimage(service=service, xpixels = 900)
@@ -303,12 +296,10 @@ def street_map(query, query_constr, diff, colors, labels, title, fig_name, \
     plt.savefig('{}/{}.png'.format(directory, fig_name), dpi=150, \
                 format='png', bbox_inches='tight')
 
-'''
-B.0 - Most represented cities
+'''B.0 - Most represented cities
 '''
 
-'''
-B.1 - Postal Codes
+'''B.1 - Postal Codes
 
 Admissible postcodes in the OSM file for Milan, Italy are [6]:
 
@@ -322,8 +313,7 @@ north-eastern part from the province of Milan [...] and became executive after
 OSM file; however, these do not belong in the dataset anymore.
 '''
 
-'''
-SQL query to find the coordinates of a set of OpenStreetMap nodes, given
+'''SQL query to find the coordinates of a set of OpenStreetMap nodes, given
 input constraints on tag keys and values. Valid for 'postcodes', 'parks'.
 '''
 query = "SELECT nodes.lon, nodes.lat \
@@ -348,16 +338,14 @@ postcode_labels = ['City of Milan', 'Municipalities in the MCM area', \
 postcode_title = 'Map of postal codes in the OpenStreetMap sample file for \
 Milan, Italy'
 
-'''
-Create a visual map of all postcodes in the OSM sample file for Milan, Italy.
+'''Create a visual map of all postcodes in the OSM sample file for Milan, Italy.
 Store the output figure in './img' folder, with name 'postcode.png'.
 '''
 postcode_fig_title = 'postcodes'
 street_map(query, postcode_constr, 0.18, postcode_colors, postcode_labels, \
             postcode_title, postcode_fig_title, postcode_keys)
 
-'''
-If (postcode < 20010) | (postcode > 20900), find which city and province it
+'''If (postcode < 20010) | (postcode > 20900), find which city and province it
 refers to:
 '''
 postcode_by_province = "SELECT municipalities.postcode AS postcode, \
@@ -384,8 +372,7 @@ for postcode, municipality, province in pbp:
 # Print total number of entries in the table
 print('count: {}'.format(len(pbp)))
 
-'''
-B.2 - Parks
+'''B.2 - Parks
 
 Find the location of all parks in the OpenStreetMap file.
 Look for the following tags (after joining tables 'nodes_tags', 'ways_tags'):
@@ -411,8 +398,7 @@ parks_fig_title = 'parks'
 street_map(query, parks_constr, 0.05, parks_colors, parks_labels, parks_title, \
             parks_fig_title, parks_keys)
 
-'''
-B.3 - Eateries in Milan
+'''B.3 - Eateries in Milan
 
 To display all eateries in the City of Milan only, two methods are used:
 
@@ -474,8 +460,7 @@ street_map(eateries_by_boundaries, eateries_constr, 0.1, eateries_colors, \
 
 
 
-'''
-C. SAVE MAPS TO FILE
+'''C. SAVE MAPS TO FILE
 
 Save maps to .png and inform user. Also print folder './img' creation message
 if flag = 0.
