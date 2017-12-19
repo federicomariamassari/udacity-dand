@@ -192,6 +192,45 @@ print('\n\nQUERY 4: Find the total number of nodes and ways.\n')
 print('Number of nodes: {}'.format(number_of_nodes[0][0]))
 print('Number of ways: {}'.format(number_of_ways[0][0]))
 
+'''A.5 - Number of educational establishments by level
+
+Find all kindergartens (age: 0-4), schools (5-18), universities, and colleges.
+'university' refers to institutions of higher education, 'college' for further
+education. In the query, include both key tags 'amenity', 'building'. Despite
+some overlapping, the result is more reasonable than with 'amenity' alone.
+'''
+
+'''Auxiliary SQL query string: join tables 'nodes_tags', 'ways_tags' and name
+the output 'join_tags'. Factor out as it is frequently used and to make queries
+more readable. Every time {join_tags} appears in a query, replace it with this
+string.
+'''
+join_tags = '(SELECT * FROM nodes_tags \
+                UNION ALL \
+                SELECT * FROM ways_tags) join_tags'
+
+# Use custom 'ORDER BY' statement [6]
+schools = "SELECT value, count(*) \
+            FROM {join_tags} \
+            WHERE join_tags.value \
+                IN ('kindergarten', 'school', 'university', 'college') \
+            GROUP BY value \
+            ORDER BY \
+                CASE value \
+                    WHEN 'kindergarden' THEN 0 \
+                    WHEN 'school' THEN 1 \
+                    WHEN 'university' THEN 2 \
+                    WHEN 'college' THEN 3 \
+                END;".format(join_tags=join_tags)
+
+school_by_type = execute_query(schools)
+
+print('\n\nQUERY 5: Find the number of educational establishments by level.\n')
+print('{:<42s}{}'.format('ESTABLISHMENT','COUNT')), print('-'*51)
+
+for establishment, count_school in school_by_type:
+    print('{:.<40s}: {}'.format(establishment, count_school))
+
 '''B. ADDITIONAL STATISTICS
 -------------------------------------------------------------------------------
 '''
