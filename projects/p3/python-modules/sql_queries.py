@@ -1,6 +1,6 @@
 '''Provide a statistical overview of the dataset using SQL queries.
 
-Use Python 3 to run this script.
+Note: Use Python 3 to run this script.
 
 Required installation: THE BASEMAP TOOLKIT (v1.0.7)
 -------------------------------------------------------------------------------

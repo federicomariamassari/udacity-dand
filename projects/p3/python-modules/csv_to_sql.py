@@ -1,6 +1,8 @@
 '''Import the content of the .csv files into a SQL database.
 
-Use Python 3 to run this script.
+Note: Use Python 3 to run this script.
+
+* Module 5 of 6
 
 References
 -------------------------------------------------------------------------------
@@ -14,8 +16,6 @@ References
 [5] https://en.wikipedia.org/wiki/Prepared_statement
 
 2017 - Federico Maria Massari / federico.massari@bocconialumni.it
-
-* Module 5 of 6
 '''
 
 import sqlite3
