@@ -20,17 +20,7 @@ References
 
 import sqlite3
 import csv
-
-# Import lists of fields from data.py to be used in the 'csv_to_sql' function
-from data import NODE_FIELDS as nodes,\
-                NODE_TAGS_FIELDS as nodes_tags,\
-                WAY_FIELDS as ways,\
-                WAY_NODES_FIELDS as ways_nodes,\
-                WAY_TAGS_FIELDS as ways_tags
-
-# Additional list of fields for the 'municipalities' SQL table
-municipalities = ['municipality', 'province', 'province_code', 'region', \
-                    'postcode', 'population']
+import pandas as pd
 
 # Store the data in the 'milan_italy.db' file
 sqlite_database = 'milan_italy.db'
@@ -59,7 +49,7 @@ sqlite> .schema <tablename>     <- For the schema of individual tables
 '''
 
 # Fill database tables with the content of the csv files output of data.py [4]
-def csv_to_sql(csv_file, fields, directory=''):
+def csv_to_sql(csv_file, directory=''):
     '''Import the content of a csv file into a SQL database table, whose name
     is specified by the csv filename (without extension).
 
@@ -67,13 +57,14 @@ def csv_to_sql(csv_file, fields, directory=''):
     ---------------------------------------------------------------------------
     csv_file: str, required argument. The full name of the csv file, e.g.
               'nodes.csv';
-    fields: list, required argument. A list of field names from data.py, e.g.
-            nodes = ['id', 'lat', 'lon', 'user', 'uid', 'version', 'changeset',
-                     'timestamp'];
     directory: str, optional argument. The folder containing the csv file.
                Must include forward slash at the end, e.g. './'.
     '''
     file_path = directory + csv_file
+
+    # Read header from csv file and store it in a list
+    fields = list(pd.read_csv(file_path, nrows=0))
+
     with open(file_path, 'r') as f:
         dr = csv.DictReader(f)
 
@@ -106,10 +97,9 @@ def csv_to_sql(csv_file, fields, directory=''):
 directory = './csv/'
 files = ['nodes.csv', 'nodes_tags.csv', 'ways.csv', 'ways_nodes.csv', \
             'ways_tags.csv', 'municipalities.csv']
-field_lists = [nodes, nodes_tags, ways, ways_nodes, ways_tags, municipalities]
 
 # Insert csv content into SQL tables
-[csv_to_sql(files[i], field_lists[i], directory) for i in range(len(files))]
+[csv_to_sql(files[i], directory) for i in range(len(files))]
 
 # Commit all changes and close the Connection object (i.e. the database)
 conn.commit()
