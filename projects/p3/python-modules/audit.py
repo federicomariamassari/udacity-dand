@@ -194,13 +194,11 @@ def is_street_name(elem):
 Italy has five-digit postal codes. The Lombardy region has codes in the 2XXXX
 range although the acceptable ones, those for the Milan and Monza provinces,
 must start with 20, i.e. 20010 - 20900. All codes outside this range belong to
-different provinces and are not part of the Milan area. The latter are returned
-for exploratory purpose only, and will not be cleaned.
+different provinces and are not part of the Milan area.
 '''
 postcode_re = re.compile(r'''
 ^\d{0,4}$|     # Find postal codes shorter than 5 digits, OR
-^\d{6,}|       # longer than 5 digits, OR
-^2[^0]\d{3,}   # whose second digit != 0 (outside the Milan-Monza area)
+^\d{6,}        # longer than 5 digits
 ''', re.VERBOSE)
 
 def is_postcode(elem):
