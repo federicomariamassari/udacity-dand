@@ -259,7 +259,8 @@ def print_library(dictionary, re_library, query_types=None, mappings=None):
             elif dictionary == city_features:
                 better_value = update_city_name(better_value, re_library[-1])
 
-            print(value, '->', better_value)
+            if value != better_value:
+                print(value, '->', better_value)
 
 # Comment the remaining lines of code to suppress output
 filename = 'milan_italy_sample.osm'
