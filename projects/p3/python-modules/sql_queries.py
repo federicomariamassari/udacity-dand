@@ -356,7 +356,7 @@ def street_map(query, query_constr, diff, colors, labels, title, fig_name, \
     plt.savefig('{}/{}.png'.format(directory, fig_name), dpi=150, \
                 format='png', bbox_inches='tight')
 
-''' B.1 - Most represented cities
+'''B.1 - Most represented cities
 '''
 most_represented_cities = "SELECT join_tags.value, \
                                     municipalities.province, count(*) \
@@ -439,7 +439,7 @@ postcode_by_province = "SELECT municipalities.postcode AS postcode, \
 
 pbp = execute_query(postcode_by_province)
 
-print('\nQUERY 2: Print postal code, municipality, and province for all')
+print('\n\nQUERY 2: Print postal code, municipality, and province for all')
 print(' '*9 + 'the entries which should not belong in the Milan OSM file.\n')
 
 print('{:<12s}{:<30}{}'.format('POSTCODE','MUNICIPALITY','PROVINCE'))
@@ -449,6 +449,89 @@ for postcode, municipality, province in pbp:
 
 # Print total number of entries in the table
 print('count: {}'.format(len(pbp)))
+
+''' B.3 - Most popular shops
+'''
+shops = "SELECT value, count(*) AS num \
+            FROM {join_tags} \
+            WHERE key = 'shop' \
+            GROUP BY value \
+            ORDER BY num DESC \
+                LIMIT 15;".format(join_tags=join_tags)
+
+shops_exec = execute_query(shops)
+
+print('\n\nQUERY 3.A: Print a list of the 15 most popular shop types.\n')
+print('{:<42s}{}'.format('SHOP', 'COUNT'))
+print('-'*51)
+for shop, count in shops_exec:
+    print('{:.<40}: {}'.format(shop, count))
+
+'''A prominent tag value related to shops is value='yes'. Use of this tag is
+considered bad practice by wiki.openstreetmap.org: find out where, when, and
+by whom it was used. Only return the most recent 15 entries.
+'''
+
+'''Print date (YYYY-MM-DD), user, municipality, and province of all entries
+where key='shop' and value='yes'. Date is extracted by selecting the first 10
+characters from 'timestamp' using SUBSTR().
+'''
+shops_yes = "SELECT SUBSTR(join_nodes.timestamp, -10,-10) AS date, \
+                    join_nodes.user, join_tags.value, municipalities.province \
+                FROM {join_tags}, (SELECT id, timestamp, user FROM nodes \
+                                    UNION ALL \
+                                    SELECT id, timestamp, user FROM ways) \
+                                    join_nodes, municipalities \
+                WHERE join_tags.id IN (SELECT id FROM {join_tags} \
+                                        WHERE key='shop' AND value='yes') \
+                    AND join_tags.key='city' \
+                    AND join_nodes.id = join_tags.id \
+                    AND join_tags.value = municipalities.municipality \
+                ORDER BY date DESC \
+                    LIMIT 15;".format(join_tags=join_tags)
+
+shops_yes_exec = execute_query(shops_yes)
+
+print('\n\nQUERY 3.B: Print date, user, municipality, and province of the')
+print(' '*11 + "most recent 15 entries where key='shop' and value='yes'.\n")
+print('{:<15s}{:<19s}{:<25s}{}'.format('DATE', 'USER', 'MUNICIPALITY', \
+                                        'PROVINCE')),
+print('-'*75)
+for date, user, city, province in shops_yes_exec:
+    print('{:<15}{:<19}{:<25}{}'.format(date, user, city, province))
+
+
+yes_shop_types = "SELECT key, value, type, count(*) AS num \
+                    FROM {join_tags} \
+                    WHERE key = 'shop' AND value = 'yes' \
+                    GROUP BY type \
+                    ORDER BY num;".format(join_tags=join_tags)
+
+shop_yes_type_exec = execute_query(yes_shop_types)
+print("\n\nQUERY 3.C: Breakdown of shop='yes' tag by type.\n")
+print('{:<12s}{:<13}{:<17}{}'.format('KEY', 'VALUE', 'TYPE', 'COUNT'))
+print('-'*51)
+for key, value, typology, count in shop_yes_type_exec:
+    print('{:<12}{:<13}{:<17}{}'.format(key, value, typology, count))
+
+disused_shops = "SELECT value, count(*) AS num \
+                    FROM {join_tags} \
+                    WHERE id IN (SELECT id \
+                                    FROM {join_tags} \
+                                    WHERE key = 'shop' \
+                                        AND value = 'yes' \
+                                        AND type = 'disused') \
+                        AND key = 'city' \
+                        GROUP by value \
+                        ORDER by num DESC \
+                            LIMIT 15;".format(join_tags=join_tags)
+
+disused_shops_exec = execute_query(disused_shops)
+print('\n\nQUERY 3.D: Location of disused yes shops.\n')
+print('{:<42s}{}'.format('MUNICIPALITY', 'COUNT'))
+print('-'*51)
+for location, count in disused_shops_exec:
+    print('{:.<40}: {}'.format(location, count))
 
 '''B.2 - Parks
 
