@@ -29,12 +29,15 @@ References
     and-csv-creation/231037
 [3] https://discussions.udacity.com/t/add-cleaning-functions-to-shape-element
     /348188/3
-[4] https://github.com/federicomariamassari/udacity-dand/blob/master/projects/
+[4] https://stackoverflow.com/questions/273192/how-can-i-create-a-directory-
+    if-it-does-not-exist
+[5] https://github.com/federicomariamassari/udacity-dand/blob/master/projects/
     p2/dand-p2-investigate-a-dataset.ipynb
 
 2017 - Federico Maria Massari / federico.massari@bocconialumni.it
 '''
 
+import os
 import csv
 import pandas as pd
 import codecs
@@ -60,11 +63,16 @@ from clean import query_types, mappings
 
 OSM_PATH = 'milan_italy_sample.osm'
 
-NODES_PATH = 'nodes.csv'
-NODE_TAGS_PATH = 'nodes_tags.csv'
-WAYS_PATH = 'ways.csv'
-WAY_NODES_PATH = 'ways_nodes.csv'
-WAY_TAGS_PATH = 'ways_tags.csv'
+# Save .csv files in separate folder './csv' [4]
+directory = './csv/'
+if not os.path.exists(directory):
+    os.makedirs(directory)
+
+NODES_PATH = directory + 'nodes.csv'
+NODE_TAGS_PATH = directory + 'nodes_tags.csv'
+WAYS_PATH = directory + 'ways.csv'
+WAY_NODES_PATH = directory + 'ways_nodes.csv'
+WAY_TAGS_PATH = directory + 'ways_tags.csv'
 
 PROBLEMCHARS = re.compile(r'[=\+/&<>;\'"\?%#$@\,\. \t\r\n]')
 LOWER_COLON = re.compile(r'^([a-z]|_)+:([a-z]|_)+')
@@ -309,7 +317,7 @@ data = df.loc[df['region'] == 'Lombardy']
 Bergamo (241xx), and Brescia (251xx). To avoid data type inconsistencies in
 the SQL database, replace 'xx' with '00', the 'neutral' code, applying function
 'ends_with_xx', to each row in df['postcode']. The function is a variation of
-'travels_with_spouse' in [4].
+'travels_with_spouse' in [5].
 '''
 def ends_with_xx(df, postcode):
     '''Replace the last two 'xx' digits in a postcode with '00'.
@@ -318,8 +326,8 @@ def ends_with_xx(df, postcode):
         df['postcode'] = df['postcode'][:-2] + '00'
     return df
 
-# Use lambda function on each entry in the df['postcode'] column [4]
+# Use lambda function on each entry in the df['postcode'] column [5]
 data = data.apply(lambda df: ends_with_xx(df, df['postcode']), axis=1)
 
 # Store DataFrame in .csv file 'municipalities.csv'; do not write Pandas index
-data.to_csv('municipalities.csv', index=False)
+data.to_csv(directory + 'municipalities.csv', index=False)

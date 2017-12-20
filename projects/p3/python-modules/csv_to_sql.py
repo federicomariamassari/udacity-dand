@@ -59,19 +59,22 @@ sqlite> .schema <tablename>     <- For the schema of individual tables
 '''
 
 # Fill database tables with the content of the csv files output of data.py [4]
-def csv_to_sql(csv_file, fields):
+def csv_to_sql(csv_file, fields, directory=''):
     '''Import the content of a csv file into a SQL database table, whose name
     is specified by the csv filename (without extension).
 
     Input
     ---------------------------------------------------------------------------
     csv_file: str, required argument. The full name of the csv file, e.g.
-              'nodes.csv'.
+              'nodes.csv';
     fields: list, required argument. A list of field names from data.py, e.g.
             nodes = ['id', 'lat', 'lon', 'user', 'uid', 'version', 'changeset',
-                     'timestamp']
+                     'timestamp'];
+    directory: str, optional argument. The folder containing the csv file.
+               Must include forward slash at the end, e.g. './'.
     '''
-    with open(csv_file, 'r') as f:
+    file_path = directory + csv_file
+    with open(file_path, 'r') as f:
         dr = csv.DictReader(f)
 
         # For 'nodes', the inner list comprehension gives i['id'], i['lat'], ...
@@ -100,12 +103,13 @@ def csv_to_sql(csv_file, fields):
                         ('?, '*len(fields)).rstrip(', ')), to_db)
 
 # Store filenames and lists of fields into separate lists, for neater code
+directory = './csv/'
 files = ['nodes.csv', 'nodes_tags.csv', 'ways.csv', 'ways_nodes.csv', \
-        'ways_tags.csv', 'municipalities.csv']
+            'ways_tags.csv', 'municipalities.csv']
 field_lists = [nodes, nodes_tags, ways, ways_nodes, ways_tags, municipalities]
 
 # Insert csv content into SQL tables
-[csv_to_sql(files[i], field_lists[i]) for i in range(len(files))]
+[csv_to_sql(files[i], field_lists[i], directory) for i in range(len(files))]
 
 # Commit all changes and close the Connection object (i.e. the database)
 conn.commit()
