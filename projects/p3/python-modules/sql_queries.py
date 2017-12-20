@@ -14,6 +14,8 @@ The latest PyPI version, 1.0.7, raises several Matplotlib deprecation warnings;
 however, the latest GitHub version, 1.1.0, is not fully compatible yet. Hence,
 the former must be used (all deprecation warnings are suppressed in the script).
 
+* Module 6 of 6
+
 References
 -------------------------------------------------------------------------------
 [1] 'Project: Wrangle OpenStreetMap Data', Data Wrangling Course, Udacity Data
@@ -47,6 +49,8 @@ Basemap toolkit resources:
 Lombardy postcodes resources:
 [11] http://www.tuttitalia.it/lombardia/
 [12] https://en.wikipedia.org/wiki/Province_of_Monza_and_Brianza
+
+2017 - Federico Maria Massari / federico.massari@bocconialumni.it
 '''
 
 import os
@@ -380,7 +384,7 @@ for municipality, province, count in top_15_cities:
 
 '''B.2 - Postal Codes
 
-Admissible postcodes in the OSM file for Milan, Italy are [6]:
+Admissible postcodes in the OSM file for Milan, Italy are [11]:
 
  20010 - 20099: Municipalities in the Metropolitan City of Milan area
  20121 - 20162: City of Milan
@@ -388,8 +392,8 @@ Admissible postcodes in the OSM file for Milan, Italy are [6]:
 
 (*) The province of Monza and Brianza 'was officially created by splitting the
 north-eastern part from the province of Milan [...] and became executive after
-[...] June 2009' [7]. Postcodes related to this province are very common in the
-OSM file; however, these do not belong in the dataset anymore.
+[...] June 2009' [12]. Postcodes related to this province are very common in
+the OSM file; however, these do not belong in the dataset anymore.
 '''
 
 '''SQL query to find the coordinates of a set of OpenStreetMap nodes, given
@@ -450,7 +454,7 @@ for postcode, municipality, province in pbp:
 # Print total number of entries in the table
 print('count: {}'.format(len(pbp)))
 
-''' B.3 - Most popular shops
+'''B.3 - Most popular shops
 '''
 shops = "SELECT value, count(*) AS num \
             FROM {join_tags} \
@@ -533,7 +537,7 @@ print('-'*51)
 for location, count in disused_shops_exec:
     print('{:.<40}: {}'.format(location, count))
 
-'''B.2 - Parks
+'''B.4 - Parks
 
 Find the location of all parks in the OpenStreetMap file.
 Look for the following tags (after joining tables 'nodes_tags', 'ways_tags'):
@@ -559,7 +563,7 @@ parks_fig_title = 'parks'
 street_map(query, parks_constr, 0.05, parks_colors, parks_labels, parks_title, \
             parks_fig_title, parks_keys)
 
-'''B.3 - Eateries in Milan
+'''B.5 - Eateries in Milan
 
 To display all eateries in the City of Milan only, two methods are used:
 
@@ -618,8 +622,6 @@ street_map(eateries_by_city_tag, eateries_constr, 0.1, eateries_colors, \
 
 street_map(eateries_by_boundaries, eateries_constr, 0.1, eateries_colors, \
             eateries_labels, ebb_title, ebb_fig_title)
-
-
 
 '''C. SAVE MAPS TO FILE
 

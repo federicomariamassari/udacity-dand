@@ -1,5 +1,4 @@
-'''
-Import the content of the .csv files into a SQL database.
+'''Import the content of the .csv files into a SQL database.
 
 Use Python 3 to run this script.
 
@@ -13,6 +12,10 @@ References
 [4] https://stackoverflow.com/questions/2887878/importing-a-csv-file-into-a-
     sqlite3-database-table-using-python
 [5] https://en.wikipedia.org/wiki/Prepared_statement
+
+2017 - Federico Maria Massari / federico.massari@bocconialumni.it
+
+* Module 5 of 6
 '''
 
 import sqlite3
@@ -42,16 +45,14 @@ c = conn.cursor()
 dw_schema = 'data_wrangling_schema.sql'
 query = open(dw_schema, 'r').read()
 
-'''
-Import the data wrangling schema into the open database. Using .execute() will
+'''Import data wrangling schema into the open database. Using .execute() will
 raise 'Warning: You can only execute one statement at a time.' .executescript()
 allows instead to execute multiple SQL statements with one single call [3].
 '''
 c.executescript(query)
 
-'''
-The database now contains five empty tables which can be accessed via Terminal
-or Command Prompt:
+'''The database now contains five empty tables accessible via Terminal or
+Command Prompt:
 $ sqlite3 milan_italy.db
 sqlite> .tables                 <- For a list of tables in the database
 sqlite> .schema <tablename>     <- For the schema of individual tables
@@ -59,9 +60,8 @@ sqlite> .schema <tablename>     <- For the schema of individual tables
 
 # Fill database tables with the content of the csv files output of data.py [4]
 def csv_to_sql(csv_file, fields):
-    '''
-    Import the content of a csv file into a SQL database table, whose name is
-    specified by the csv filename (without extension).
+    '''Import the content of a csv file into a SQL database table, whose name
+    is specified by the csv filename (without extension).
 
     Input
     ---------------------------------------------------------------------------
@@ -77,8 +77,7 @@ def csv_to_sql(csv_file, fields):
         # For 'nodes', the inner list comprehension gives i['id'], i['lat'], ...
         to_db = [[i[field] for field in fields] for i in dr]
 
-    '''
-    Use .executemany() to execute an SQL command against all parameter
+    '''Use .executemany() to execute an SQL command against all parameter
     sequences or mappings found in the sequence 'to_db' [2].
 
     The syntax for executemany() [2] is executemany(SQL, [parameters]), where

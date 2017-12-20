@@ -1,21 +1,23 @@
-'''
-Clean the most commom problematic features in the 'milan_italy.osm' (or its
+'''Clean the most commom problematic features in the 'milan_italy.osm' (or its
 sample) OpenStreetMap file.
 
 Note: Use Python 3 to run this script.
 
+* Module 3 of 6
+
 References
 -------------------------------------------------------------------------------
 [1] 'Project: Wrangle OpenStreetMap Data', Data Wrangling Course, Udacity Data
-     Analyst Nanodegree
+    Analyst Nanodegree
+
+2017 - Federico Maria Massari / federico.massari@bocconialumni.it
 '''
 
 # Import required modules
 import audit
 from audit import re_library
 
-'''
-(1) MAPPINGS
+'''(1) MAPPINGS
 
 Regarding the mapping for 'privato'/'privata', the lowercase version is ~6x
 more popular than the capitalized one in the OSM file, so the former was
@@ -58,8 +60,7 @@ abbreviations_mapping = {'C.na': 'Cascina',
                          'Geom.': 'Geometra',
                          'On.': 'Onorevole'}
 
-'''
-(2) CLEANING STREET NAMES
+'''(2) CLEANING STREET NAMES
 
 Store variables 'query_types' and 'mappings', to be used as arguments in the
 function 'update_name'.
@@ -84,9 +85,8 @@ def update_name(name, re_query, query_type, mapping=None):
     better_name = name
     if match:
 
-        '''
-        For street types (including additional road types) replace matched key
-        with corresponding value from 'street_type_mapping' dictionary.
+        '''For street types (including additional road types) replace matched
+        key with corresponding value from 'street_type_mapping' dictionary.
         '''
         if query_type == 'street_type':
             if match.group() in mapping.keys():
@@ -101,8 +101,7 @@ def update_name(name, re_query, query_type, mapping=None):
             for key, value in mapping.items():
                 if key in match.group():
 
-                    '''
-                    If string contains key, replace the substring with value
+                    '''If string contains key, replace substring with value
                     + blank space + remainder of the string split on key, e.g.
                     'SP14' -> (contains key) -> {'SP': 'Strada Provinciale'}
                     -> 'Strada Provinciale' + ' ' + '14' -> (result) 'Strada
@@ -113,8 +112,7 @@ def update_name(name, re_query, query_type, mapping=None):
                     better_name = re_query.sub(better_road_type, name,
                                                count=1)
 
-            '''
-            For dates, split string on blank spaces, take the leftmost element
+            '''For dates, split string on blank spaces, take leftmost element
             (day) and replace it with corresponding value from 'day_mapping';
             then, to the replaced day, add blank space and capitalized month,
             e.g. '24 maggio' -> (split) ['24', 'maggio'] -> '24' (contains key)
@@ -128,8 +126,7 @@ def update_name(name, re_query, query_type, mapping=None):
                 + ' '.join(split_string[1:]).capitalize()
                 better_name = re_query.sub(better_date, name, count=1)
 
-            '''
-            For abbreviations, check if any is present in the examined string;
+            '''For abbreviations, check if any is present in the scanned string;
             if so, split the string on blank spaces, replace abbreviation with
             the corresponding value from the dictionary 'abbreviations_mapping',
             then join the replaced value with blank space and the remainder of
@@ -144,8 +141,7 @@ def update_name(name, re_query, query_type, mapping=None):
                 better_name = re_query.sub(full_word, name,
                                            count=1)
 
-            '''
-            For apostrophes, remove blank spaces between the apostrophe and the
+            '''For apostrophes, remove blank spaces between apostrophe and the
             following word, and capitalize all words, e.g. "dell' artigianato"
             -> (split on blank space) ["dell'", 'artigianato'] -> (join and
             capitalize) "Dell'Artigianato".
@@ -155,10 +151,9 @@ def update_name(name, re_query, query_type, mapping=None):
             better_name = re_query.sub(better_apostrophe_use, name,
                                        count=1)
 
-            '''
-            For street numbers embedded in street names, split string on blank
-            spaces, then join all but the last element, e.g. 'Europa 30' ->
-            (split on blank space) -> ['Europa', '30'] -> (join all but last)
+            '''For street numbers embedded in street names, split string on
+            blank spaces, then join all but the last element, e.g. 'Europa 30'
+            -> (split on blank space) -> ['Europa', '30'] -> (join all but last)
             -> (result) 'Europa'.
         '''
         elif query_type == 'street_numbers':
@@ -167,33 +162,29 @@ def update_name(name, re_query, query_type, mapping=None):
 
     return better_name
 
-'''
-(3) CLEANING POSTAL CODES
+'''(3) CLEANING POSTAL CODES
 '''
 def update_postcode(postcode, re_query):
     match = re_query.search(postcode)
     better_postcode = postcode
     if match:
         if len(match.group()) < 5:
-            '''
-            If postcode is shorter than five digits add trailing zeros at the
-            end, e.g. '2013' -> '20130'. This is the most reasonable way to fix
-            the problem, without additional information.
+            '''If postcode is shorter than five digits add trailing zeros at
+            the end, e.g. '2013' -> '20130'. This is the most reasonable way to
+            fix the problem, without additional information.
             '''
             better_postcode = match.group() + '0' * (5-len(match.group()))
 
         elif len(match.group()) > 5:
-            '''
-            The only postal code longer than 5 digits in the full OSM file is
-            '200149'. The code likely contains an extra 0, since '20149' is a
-            legitimate Milan area postcode.
+            '''The only postal code longer than 5 digits in the full OSM file
+            is '200149'. The code likely contains an extra 0, since '20149' is
+            a legitimate Milan area postcode.
             '''
             better_postcode = match.group().replace('0', '', 1)
 
     return better_postcode
 
-'''
-(4) CLEANING CITY NAMES
+'''(4) CLEANING CITY NAMES
 '''
 def update_city_name(city_name, re_query):
     match = re_query.search(city_name)
@@ -204,15 +195,13 @@ def update_city_name(city_name, re_query):
             better_city_name = city_name.title()
 
         elif "'" in match.group():
-            '''
-            If apostrophe in city name, check if the letter before apostrophe
+            '''If apostrophe in city name, check if the letter before apostrophe
             is 'e'. If so, the word is de', an abbreviation of del/degli/dei,
             and it requires blank space after it, e.g. 'Cassina de' Pecchi'.
             Otherwise, no space is required, e.g. 'Torre d'Isola'.
             '''
 
-            '''
-            Split string by apostrophe first: e.g. "Cassina De'Pecchi" ->
+            '''Split string by apostrophe first: e.g. "Cassina De'Pecchi" ->
             ['Cassina De', 'Pecchi'], then by blank space -> ['Cassina', 'De',
             'Pecchi'].
             '''
@@ -228,9 +217,8 @@ def update_city_name(city_name, re_query):
                 better_city_name = better_city_name.replace("'", "' ")
 
         elif '(' in match.group():
-            '''
-            Strip the two-letter Province code from city name. Usually, the
-            code follows the city name, in brackets, e.g. 'Origgio (VA)'.
+            '''Strip the two-letter Province code from city name. Usually,
+            the code follows the city name, in brackets, e.g. 'Origgio (VA)'.
             Remove what follows the opening bracket, then strip blank space.
             '''
             better_city_name = city_name.split(match.group())[0].strip()
@@ -241,10 +229,9 @@ def update_city_name(city_name, re_query):
 
         elif any(preposition in match.group() for preposition \
             in ['Al', 'Con', 'Di', 'In', 'Su']):
-            '''
-            If preposition in city name, split the string on preposition, then
-            take the first element, add to it the lowercase preposition, then
-            the remainder of the string.
+            '''If preposition in city name, split the string on preposition,
+            then take the first element, add to it the lowercase preposition,
+            and finally add the remainder of the string.
             '''
             better_city_name = city_name.split(match.group())[0] \
                                 + match.group().lower() + \
@@ -252,8 +239,7 @@ def update_city_name(city_name, re_query):
 
     return better_city_name
 
-'''
-(5) TESTING
+'''(5) TESTING
 
 On Terminal or Command Prompt, run '$ python3 clean.py' to print the output
 of the cleaning procedure.

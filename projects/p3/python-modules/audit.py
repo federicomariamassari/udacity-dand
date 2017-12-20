@@ -1,13 +1,16 @@
-'''
-Audit common features of an OpenStreetMap (XML) dataset: street names, postal
-codes, city names. Store problematic data in distinct dictionaries.
+'''Audit common features of an OpenStreetMap (XML) dataset: street names,
+postal codes, city names. Store problematic data in distinct dictionaries.
 
 Note: Use Python 3 to run this script.
+
+* Module 2 of 6
 
 References
 -------------------------------------------------------------------------------
 [1] 'Project: Wrangle OpenStreetMap Data', Data Wrangling Course, Udacity Data
-     Analyst Nanodegree
+    Analyst Nanodegree
+
+2017 - Federico Maria Massari / federico.massari@bocconialumni.it
 '''
 
 # Import required libraries
@@ -15,8 +18,7 @@ import xml.etree.cElementTree as ET
 from collections import defaultdict
 import re
 
-'''
-The name of the OpenStreetMap file to audit. Either the full OSM file or a
+'''The name of the OpenStreetMap file to audit. Either the full OSM file or a
 sample, output of 'make_sample'.
 '''
 filename = 'milan_italy_sample.osm'
@@ -24,8 +26,7 @@ filename = 'milan_italy_sample.osm'
 # Open OSM file in read mode
 OSM_FILE = open(filename, 'r')
 
-'''
-A. STREET FEATURES
+'''A. STREET FEATURES
 -------------------------------------------------------------------------------
 
 1. Street Types
@@ -42,16 +43,14 @@ street_qualifiers = set(['Comunale',
                          'Provinciale',
                          'Statale'])
 
-'''
-Join qualifiers in a single string for re.compile using list comprehension.
+'''Join qualifiers in a single string for re.compile using list comprehension.
 Look for at most one single qualifier per street name (after blank space).
 '''
 street_qualifiers_re = ''.join(['(\s{})?'.format(qualifier)
                                 for qualifier in street_qualifiers])
 
-'''
-Qualifiers, if present, strictly follow street names, e.g. <street name> +
-+ <blank space> + <qualifier>.
+'''Qualifiers, if present, strictly follow street names, e.g. <street name> +
+<blank space> + <qualifier>.
 '''
 street_type_re = re.compile(r'\S+' + street_qualifiers_re, re.IGNORECASE)
 
@@ -88,8 +87,7 @@ expected_types = set(['Alzaia',
                       'Vicolo',
                       'Vicolo privato'])
 
-'''
-Catch additional road types which are hard to clean based on the previous
+'''Catch additional road types which are hard to clean based on the previous
 regular expression. This mainly covers cases in which there is no blank space
 between an abbreviated road type and the road number, e.g. 'SP14' or 'S.P.208'.
 '''
@@ -101,8 +99,7 @@ S         # String must begin with 'S' (S or S., for 'Strada')
 \d+       # String must end with one or more digits
 ''', re.VERBOSE)
 
-'''
-2. Street Names / Historical Date in Name
+'''2. Street Names / Historical Date in Name
 
 It is not uncommon to find streets or squares named after a date in which a
 historical event took place, usually <day> + <month> [+ <year>]. Apart from
@@ -139,8 +136,7 @@ date_in_street_re = re.compile(r'''
 ''',
 re.IGNORECASE | re.VERBOSE)
 
-'''
-3. Street Names / Abbreviations
+'''3. Street Names / Abbreviations
 
 Abbreviations in street names are generally used for both common words, e.g.
 'F.lli' instead of 'Fratelli' (same as 'Bros.' for 'Brothers') and personal
@@ -156,8 +152,7 @@ abbreviations_re = re.compile(r'''
 \w*       # Optional second word
 ''', re.VERBOSE)
 
-'''
-4. Street Names / Apostrophes
+'''4. Street Names / Apostrophes
 
 This regular expression covers one bad use of apostrophes in street names, i.e.
 a trailing space between l' (letter l + apostrophe) and the word that follows.
@@ -169,8 +164,7 @@ l\'       # Preposition must end with l + apostrophe, e.g. l', dell'
 \w+       # Required word after blankspace
 ''', re.VERBOSE)
 
-'''
-5. Street Names / Street Number in Name
+'''5. Street Names / Street Number in Name
 
 This regular expression detects street numbers in street names, e.g. 'Via
 Europa 30', ignoring admissible cases such as county road numbers or years.
@@ -195,8 +189,7 @@ def is_street_name(elem):
     return (elem.tag == 'tag') & (elem.attrib['k'] == 'addr:street')
 
 
-'''
-B. POSTCODE FEATURES
+'''B. POSTCODE FEATURES
 -------------------------------------------------------------------------------
 Italy has five-digit postal codes. The Lombardy region has codes in the 2XXXX
 range although the acceptable ones, those for the Milan and Monza provinces,
@@ -214,8 +207,7 @@ def is_postcode(elem):
     return (elem.tag == 'tag') & (elem.attrib['k'] == 'addr:postcode')
 
 
-'''
-C. CITY NAMES
+'''C. CITY NAMES
 -------------------------------------------------------------------------------
 Uppercase/lowercase prepositions, e.g. 'Cernusco [Ss]ul Naviglio', special
 characters (accents, apostrophes), e.g. 'Bascapè/Bascapé', and Provinces in
@@ -244,8 +236,7 @@ def is_city_name(elem):
 
 # Define auxiliary functions
 def audit_feature(features, tag_value, compiled_re, expected=None):
-    '''
-    Add data not conforming to specified criteria to a dictionary.
+    '''Add data not conforming to specified criteria to a dictionary.
     A generalised version of 'audit_street_type' [1].
 
     Input
@@ -294,8 +285,7 @@ def audit(OSM_FILE, re_library):
                 # Audit street features
                 if is_street_name(tag):
 
-                    '''
-                    Update defaultdict with problematic street features.
+                    '''Update defaultdict with problematic street features.
                     Use list comprehension to pack all queries in a single
                     line of code.
                     '''
@@ -305,8 +295,7 @@ def audit(OSM_FILE, re_library):
 
                 # Audit postcode features
                 elif is_postcode(tag):
-                    '''
-                    If postcode length is != 5 or the code does not start
+                    '''If postcode length is != 5 or the code does not start
                     with 20, add code to defaultdict.
                     '''
                     audit_feature(postcode_features, tag.attrib['v'],

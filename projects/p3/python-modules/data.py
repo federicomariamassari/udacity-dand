@@ -1,5 +1,4 @@
-'''
-Parse the elements in an OpenStreetMap file, transforming them from document
+'''Parse the elements in an OpenStreetMap file, transforming them from document
 format to tabular format, and write the data to .csv files, to be imported to
 a SQL database as tables. Additionally, generate a 'municipality.csv' file
 including all municipalities in Lombardy, the provinces they belong to, and
@@ -20,6 +19,7 @@ function provided by [2].
 
 Note: Use Python 3 to run this script. Conversion was made using [3].
 
+* Module 4 of 6
 
 References
 -------------------------------------------------------------------------------
@@ -31,6 +31,8 @@ References
     /348188/3
 [4] https://github.com/federicomariamassari/udacity-dand/blob/master/projects/
     p2/dand-p2-investigate-a-dataset.ipynb
+
+2017 - Federico Maria Massari / federico.massari@bocconialumni.it
 '''
 
 import csv
@@ -46,15 +48,13 @@ from schema import schema
 import audit
 import clean
 
-'''
-Import the list of compiled regular expressions from audit.py, and the lists
+'''Import the list of compiled regular expressions from audit.py, and the lists
 of query_types and mappings from clean.py, all to be used in 'shape_element'.
 '''
 from audit import expected_types, re_library
 from clean import query_types, mappings
 
-'''
-A. OPENSTREETMAP DATA
+'''A. OPENSTREETMAP DATA
 -------------------------------------------------------------------------------
 '''
 
@@ -71,8 +71,7 @@ LOWER_COLON = re.compile(r'^([a-z]|_)+:([a-z]|_)+')
 
 SCHEMA = schema
 
-'''
-Make sure the field order in the csvs matches the column order in the SQL
+'''Make sure the field order in the csvs matches the column order in the SQL
 table schema.
 '''
 NODE_FIELDS = ['id', 'lat', 'lon', 'user', 'uid', 'version', 'changeset',
@@ -82,8 +81,7 @@ WAY_FIELDS = ['id', 'user', 'uid', 'version', 'changeset', 'timestamp']
 WAY_TAGS_FIELDS = ['id', 'key', 'value', 'type']
 WAY_NODES_FIELDS = ['id', 'node_id', 'position']
 
-'''
-The 'shape_element' function takes as input an iterparse Element object and
+'''The 'shape_element' function takes as input an iterparse Element object and
 returns a dictionary.
 '''
 def shape_element(element, node_attr_fields=NODE_FIELDS,
@@ -107,11 +105,9 @@ def shape_element(element, node_attr_fields=NODE_FIELDS,
             if problem_chars.search(child.attrib['k']):
                 continue
 
-
             elif lower_colon.search(child.attrib['k']):
 
-                '''
-                If tag['type'] == 'street' but tag['value'] does not contain
+                '''If tag['type'] == 'street' but tag['value'] does not contain
                 any of the street types included in 'expected_types' (audit.py),
                 e.g. 'Al Canele', ignore it.
                 '''
@@ -120,19 +116,17 @@ def shape_element(element, node_attr_fields=NODE_FIELDS,
                     continue
 
                 else:
-                    '''
-                    If tag 'k' value contains colon, set the character before
-                    colon as the tag type, and characters after it as the tag
-                    key. If there are additional colons in the 'k' value,
-                    ignore and keep as part of the tag key.
+                    '''If tag 'k' value contains colon, set the character
+                    before colon as the tag type, and characters after it as
+                    the tag key. If there are additional colons in the 'k'
+                    value, ignore and keep as part of the tag key.
                     '''
                     tag['id'] = element.attrib['id']
                     tag['type'] = child.attrib['k'].split(':', 1)[0]
                     tag['key'] = child.attrib['k'].split(':', 1)[1]
 
-                    '''
-                    Programmatically clean 'street', 'postcode', and 'city' tag
-                    values using functions from module clean.py
+                    '''Programmatically clean 'street', 'postcode', and 'city'
+                    tag values using functions from module clean.py
                     '''
                     if tag['key'] == 'street':
                         for i in range(len(query_types)):
@@ -154,9 +148,8 @@ def shape_element(element, node_attr_fields=NODE_FIELDS,
                         tag['value'] = child.attrib['v']
 
             else:
-                '''
-                Set tag type to 'regular' (default) if no colon in the tag 'k'
-                value is present.
+                '''Set tag type to 'regular' (default) if no colon in the tag
+                'k' value is present.
                 '''
                 tag['type'] = default_tag_type
                 tag['key'] = child.attrib['k']
@@ -166,9 +159,8 @@ def shape_element(element, node_attr_fields=NODE_FIELDS,
             if tag:
                 tags.append(tag)
 
-        '''
-        'way_nodes.csv' holds a list of dictionaries, one for each 'nd' child
-        tag. Each dictionary has the fields:
+        ''''way_nodes.csv' holds a list of dictionaries, one for each 'nd'
+        child tag. Each dictionary has the fields:
          - 'id': the top level element (way) id;
          - 'node_id': the ref attribute value of the 'nd' tag;
          - 'position': the index, starting at 0, of the 'nd' tag, i.e. what
@@ -182,8 +174,7 @@ def shape_element(element, node_attr_fields=NODE_FIELDS,
             way_nodes.append(way_node)
             position += 1
 
-    '''
-    Return dictionaries for 'nodes.csv', 'nodes_tags.csv', 'ways.csv', and
+    '''Return dictionaries for 'nodes.csv', 'nodes_tags.csv', 'ways.csv', and
     'ways_tags.csv'.
     '''
     if element.tag == 'node':
@@ -220,10 +211,10 @@ def validate_element(element, validator, schema=SCHEMA):
 
 # Main function
 def process_map(file_in, validate):
-    '''Iteratively process each XML element and write to csv(s)'''
-
+    '''Iteratively process each XML element and write to csv(s)
     '''
-    Replace 'wb' with 'w', and 'UnicodeDictWriter()' with 'csv.DictWriter()',
+
+    '''Replace 'wb' with 'w' and 'UnicodeDictWriter()' with 'csv.DictWriter()',
     to reflect conversion from Python 2 to Python 3 [3].
     '''
     with codecs.open(NODES_PATH, 'w') as nodes_file, \
@@ -262,15 +253,13 @@ def process_map(file_in, validate):
 
 
 if __name__ == '__main__':
-    '''
-    Note: Validation is ~ 10X slower. For the project consider using a small
+    '''Note: Validation is ~ 10X slower. For the project consider using a small
     sample of the map when validating.
     '''
     process_map(OSM_PATH, validate=False)
 
 
-'''
-B. ADDITIONAL SOURCES
+'''B. ADDITIONAL SOURCES
 -------------------------------------------------------------------------------
 Add a sixth .csv file, 'municipalities.csv', including all municipalities in
 Lombardy, together with: 1. the province they belong to; 2. the province code;
@@ -316,15 +305,15 @@ df = df.reindex(columns=sorted_cols)
 # Single out municipalities in the Lombardy Region, store in 'data'
 data = df.loc[df['region'] == 'Lombardy']
 
-'''
-Three cities in the DataFrame have multiple postcodes: Milano (201xx), Bergamo
-(241xx), and Brescia (251xx). To avoid data type inconsistencies in the SQL
-database, 'xx' is replaced with '00', the 'neutral' code, applying function
+'''Three cities in the DataFrame have multiple postcodes: Milano (201xx),
+Bergamo (241xx), and Brescia (251xx). To avoid data type inconsistencies in
+the SQL database, replace 'xx' with '00', the 'neutral' code, applying function
 'ends_with_xx', to each row in df['postcode']. The function is a variation of
 'travels_with_spouse' in [4].
 '''
 def ends_with_xx(df, postcode):
-    '''Replace the last two 'xx' digits in a postcode with '00'.'''
+    '''Replace the last two 'xx' digits in a postcode with '00'.
+    '''
     if postcode.endswith('xx'):
         df['postcode'] = df['postcode'][:-2] + '00'
     return df
