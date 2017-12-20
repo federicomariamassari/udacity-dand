@@ -594,7 +594,8 @@ eateries_by_boundaries = "SELECT nodes.lon, nodes.lat \
                                         MIN(nodes.lat) AS min_lat, \
                                         MAX(nodes.lat) AS max_lat \
                                     FROM nodes, {join_tags} \
-                                    WHERE join_tags.value = 'Milano' \
+                                    WHERE join_tags.key='city' \
+                                        AND join_tags.value = 'Milano' \
                                         AND nodes.id = join_tags.id) e \
                             WHERE nodes.lon BETWEEN e.min_lon AND e.max_lon \
                                 AND nodes.lat BETWEEN e.min_lat AND e.max_lat \
