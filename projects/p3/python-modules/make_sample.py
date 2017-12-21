@@ -1,7 +1,9 @@
 '''Take a systematic sample of elements from the original OSM region.
 Vary parameter k to obtain a coarser or finer sample. The file is slightly
 modified from [1].
+
 Note: Place the original OSM file in the same folder as this function.
+      Use Python 3 to run this script.
 
 * Module 1 of 6
 

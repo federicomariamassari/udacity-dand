@@ -1,9 +1,11 @@
-'''
-Custom schema required to validate the transformed OSM data [1]. The schema is
-stored in a .py file in order to take advantage of the int() and float() type
-coercion functions.
+'''Custom schema required to validate the transformed OSM data [1]. The schema
+is stored in a .py file in order to take advantage of the int() and float()
+type coercion functions.
 
 Note: Place this schema in the same folder as the data.py function.
+      Use Python 3 to run this script.
+
+* Auxiliary module 1 of 1
 
 References
 -------------------------------------------------------------------------------
