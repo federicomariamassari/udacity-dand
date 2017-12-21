@@ -631,12 +631,12 @@ if flag = 0.
 '''
 print('\n\nC. SAVE MAPS TO FILE\n')
 if flag != -1:
-    print("Generated: folder './img'")
+    print("Generated folder './img'")
 else:
     pass
 
 fig_list = [postcode_fig_title, parks_fig_title, ect_fig_title, ebb_fig_title]
-[print("Generated: '{}.png' in folder './img'.".format(i)) for i in fig_list]
+[print("Saved '{}.png' in folder './img'.".format(i)) for i in fig_list]
 
 # Close the Connection object (i.e. the database)
 conn.close()
