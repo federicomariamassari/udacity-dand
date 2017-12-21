@@ -232,6 +232,32 @@ def is_city_name(elem):
     return (elem.tag == 'tag') & (elem.attrib['k'] == 'addr:city')
 
 
+'''D. CUISINES
+-------------------------------------------------------------------------------
+For exploratory purpose only, cuisines are aggregated into eight categories by
+geographical area. Useful details are lost in the aggregation, so it should not
+actually be performed on the real OSM data.
+'''
+expected_cuisines = set(['african',
+                         'asian',
+                         'continental',
+                         'latin_american',
+                         'mediterranean',
+                         'middle_eastern',
+                         'north_american',
+                         'oceanic'])
+
+def is_cuisine(elem):
+    return (elem.tag == 'tag') & (elem.attrib['k'] == 'cuisine')
+
+expected_cuisines_re = ''.join(['{}|'.format(cuisine) \
+                                for cuisine in expected_cuisines]).strip('|')
+
+# Find all cuisine entries which are not single words in the expected list
+cuisine_re = re.compile(r'^(?!.*(' + expected_cuisines_re + ')$).*',
+                        re.IGNORECASE)
+
+
 # Define auxiliary functions
 def audit_feature(features, tag_value, compiled_re, expected=None):
     '''Add data not conforming to specified criteria to a dictionary.
@@ -261,20 +287,23 @@ re_library = [street_type_re,
               apostrophes_re,
               number_in_street_re,
               postcode_re,
-              city_name_re]
+              city_name_re,
+              cuisine_re]
 
 def audit(OSM_FILE, re_library):
     # Generate empty defaultdicts
     street_features = defaultdict(set)
     postcode_features = defaultdict(set)
     city_features = defaultdict(set)
+    cuisine_features = defaultdict(set)
 
     expected = [expected_types,
                 None,
                 expected_months,
                 None,
                 None,
-                None]
+                None,
+                expected_cuisines]
 
     for event, elem in ET.iterparse(OSM_FILE, events=('start',)):
         if (elem.tag == 'node') | (elem.tag == 'way'):
@@ -304,4 +333,9 @@ def audit(OSM_FILE, re_library):
                     audit_feature(city_features, tag.attrib['v'],
                                   city_name_re, None)
 
-    return street_features, postcode_features, city_features
+                # Audit cuisine features
+                elif is_cuisine(tag):
+                    audit_feature(cuisine_features, tag.attrib['v'],
+                                  cuisine_re, expected_cuisines)
+
+    return street_features, postcode_features, city_features, cuisine_features
