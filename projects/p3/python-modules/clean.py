@@ -239,7 +239,63 @@ def update_city_name(city_name, re_query):
 
     return better_city_name
 
-'''(5) TESTING
+'''(5) CLEANING CUISINES
+'''
+def update_cuisine(cuisine, re_query):
+    # Add lists to perform membership operations
+    african = ['egyptian', 'eritrean', 'moroccan']
+
+    asian = ['chinese', 'indian', 'japanese', 'korean', 'malaysian', 'noodle',
+             'ramen', 'sri_lankan', 'sri lankan', 'sushi', 'thai', 'taiwanese',
+             'vietnamese']
+
+    continental = ['buschenschank', 'danish', 'french', 'heuriger', 'german',
+                   'russian']
+
+    latin_american = ['argentinian', 'brazilian', 'cuban', 'latin', 'mexican',
+                      'peruvian']
+
+    mediterranean = ['fish', 'friture', 'greek', 'italian', 'local',
+                     'macrobiotica', 'pesce', 'piadina', 'pizza', 'pizzeria',
+                     'pugliese', 'regional', 'regionale', 'seafood', 'sicilian',
+                     'sicilian', 'spanish', 'taglieri', 'trattoria', 'tuscan',
+                     'vegan', 'vegetarian']
+
+    middle_eastern = ['kebab', 'kebap', 'kevab', 'kosher', 'lebanese',
+                      'libanese', 'persian', 'turkish']
+
+    north_american = ['barbecue', 'burger', 'chicken', 'chips', 'donut',
+                      'fast_food', 'fried_chicken', 'hotdog', 'pancake',
+                      'sandwich', 'toast']
+
+    oceanic = ['australian']
+
+    match = re_query.search(cuisine)
+    better_cuisine = cuisine
+
+    if match:
+        if cuisine.lower() in african:
+            better_cuisine = 'african'
+        elif cuisine.lower() in asian:
+            better_cuisine = 'asian'
+        elif cuisine.lower() in continental:
+            better_cuisine = 'continental'
+        elif cuisine.lower() in latin_american:
+            better_cuisine = 'latin_american'
+        elif cuisine.lower() in mediterranean:
+            better_cuisine = 'mediterranean'
+        elif cuisine.lower() in middle_eastern:
+            better_cuisine = 'middle_eastern'
+        elif cuisine.lower() in north_american:
+            better_cuisine = 'north_american'
+        elif cuisine.lower() in oceanic:
+            better_cuisine = 'oceanic'
+        else:
+            better_cuisine = 'other'
+
+    return better_cuisine
+
+'''(6) TESTING
 
 On Terminal or Command Prompt, run '$ python3 clean.py' to print the output
 of the cleaning procedure.
@@ -250,25 +306,34 @@ def print_library(dictionary, re_library, query_types=None, mappings=None):
     for dict_values in dictionary.values():
         for value in dict_values:
             better_value = value
-            if dictionary == street_features:
+            if dictionary == street:
                 for i in range(len(query_types)):
                     better_value = update_name(better_value, re_library[i],
                                                 query_types[i], mappings[i])
-            elif dictionary == postcode_features:
-                better_value = update_postcode(better_value, re_library[-2])
-            elif dictionary == city_features:
-                better_value = update_city_name(better_value, re_library[-1])
+            elif dictionary == postcode:
+                better_value = update_postcode(better_value, re_library[-3])
+            elif dictionary == city:
+                better_value = update_city_name(better_value, re_library[-2])
+            elif dictionary == cuisine:
+                better_value = update_cuisine(better_value, re_library[-1])
 
-            if value != better_value:
+            # Only print single-value tags
+            single_tag = all([char not in value for char in [';', ',']])
+
+            # Also avoid printing generic tags, like 'meat' or 'steak'
+            if (value != better_value) & (single_tag) \
+                & (value not in ['meat', 'steak', 'steak_house']):
                 print(value, '->', better_value)
 
 # Comment the remaining lines of code to suppress output
 filename = 'milan_italy_sample.osm'
-street_features, postcode_features, city_features = audit.audit(filename,
-                                                                re_library)
-print('\nStreet Features:')
-print_library(street_features, re_library, query_types, mappings)
-print('\nPostcode Features:')
-print_library(postcode_features, re_library)
-print('\nCity Features:')
-print_library(city_features, re_library)
+street, postcode, city, cuisine = audit.audit(filename, re_library)
+print('\nSTREET FEATURES:')
+print_library(street, re_library, query_types, mappings)
+print('\nPOSTCODE FEATURES:')
+print_library(postcode, re_library)
+print('\nCITY FEATURES:')
+print_library(city, re_library)
+print("\nCUISINE FEATURES:")
+print("NOTE: Multiple tags and generic words cleaned in 'data.py'.")
+print_library(cuisine, re_library)
