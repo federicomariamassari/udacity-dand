@@ -165,7 +165,7 @@ def shape_element(element, node_attr_fields=NODE_FIELDS,
                 tag['id'] = element.attrib['id']
 
                 if tag['key'] == 'cuisine':
-                    for char in [';', ',']:
+                    for char in [';', ',', ':']:
                         single_tag = char not in child.attrib['v']
                         if not single_tag:
                             # Make a list of tags splitting by delimiter
@@ -185,8 +185,10 @@ def shape_element(element, node_attr_fields=NODE_FIELDS,
                                 pass
 
                             # Only set to 'international' if multiple tags
-                            if len(unique_tags) == 1:
-                                tag['value'] = tag_list[0]
+                            if len(unique_tags) == 0:
+                                tag['value'] = 'other'
+                            elif len(unique_tags) == 1:
+                                tag['value'] = list(unique_tags)[0]
                             else:
                                 tag['value'] = 'international'
 
