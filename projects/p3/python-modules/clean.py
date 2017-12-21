@@ -245,9 +245,9 @@ def update_cuisine(cuisine, re_query):
     # Add lists to perform membership operations
     african = ['egyptian', 'eritrean', 'moroccan']
 
-    asian = ['chinese', 'indian', 'japanese', 'korean', 'malaysian', 'noodle',
-             'ramen', 'sri_lankan', 'sri lankan', 'sushi', 'thai', 'taiwanese',
-             'vietnamese']
+    asian = ['chinese', 'giapponese', 'indian', 'japanese', 'korean',
+             'malaysian', 'noodle', 'ramen', 'sri_lankan', 'sri lankan',
+             'sushi', 'thai', 'taiwanese', 'vietnamese']
 
     continental = ['buschenschank', 'danish', 'french', 'heuriger', 'german',
                    'russian']
@@ -255,18 +255,22 @@ def update_cuisine(cuisine, re_query):
     latin_american = ['argentinian', 'brazilian', 'cuban', 'latin', 'mexican',
                       'peruvian']
 
-    mediterranean = ['fish', 'friture', 'greek', 'italian', 'local',
-                     'macrobiotica', 'pesce', 'piadina', 'pizza', 'pizzeria',
-                     'pugliese', 'regional', 'regionale', 'seafood', 'sicilian',
-                     'sicilian', 'spanish', 'taglieri', 'trattoria', 'tuscan',
-                     'vegan', 'vegetarian']
+    mediterranean = ['fish', 'flatbread', 'friture', 'greek', 'italian', 
+                     '_italian', 'italian_pizza', 'local', 'macrobiotica',
+                     'pesce', 'piadina', 'pizza', 'pizza_al_trancio_da_asporto',
+                     'pizzeria', "pizzeria d'asporto", 'pugliese', 'regional',
+                     'regional_and_pizzeria', 'regionale', 'seafood',
+                     'sicilian', 'spanish', 'specialita_di_pesce', 'taglieri',
+                     'traditional', 'trattoria', 'tuscan', 'vegan',
+                     'vegetarian']
 
-    middle_eastern = ['kebab', 'kebap', 'kevab', 'kosher', 'lebanese',
-                      'libanese', 'persian', 'turkish']
+    middle_eastern = ['arab', 'kebab', 'kebap', 'kevab', 'kosher', 'lebanese',
+                      'libanese', 'oriental', 'persian', 'turkish']
 
-    north_american = ['barbecue', 'burger', 'chicken', 'chips', 'donut',
-                      'fast_food', 'fried_chicken', 'hotdog', 'pancake',
-                      'sandwich', 'toast']
+    north_american = ['american', 'barbecue', 'burger', 'chicken', 'chips',
+                      'deli', 'donut', 'fast_food', 'fried_chicken',
+                      'hamburger', 'hamurger', 'hotdog', 'pancake', 'sandwich',
+                      'toast']
 
     oceanic = ['australian']
 
@@ -322,7 +326,7 @@ def print_library(dictionary, re_library, query_types=None, mappings=None):
                 better_value = update_cuisine(better_value, re_library[-1])
 
             # Only print single-value tags
-            single_tag = all([char not in value for char in [';', ',']])
+            single_tag = all([char not in value for char in [';', ',', ':']])
 
             # Also avoid printing generic tags, like 'meat' or 'steak'
             if (value != better_value) & (single_tag) \
