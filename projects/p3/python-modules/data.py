@@ -164,6 +164,46 @@ def shape_element(element, node_attr_fields=NODE_FIELDS,
                 tag['value'] = child.attrib['v']
                 tag['id'] = element.attrib['id']
 
+                if tag['key'] == 'cuisine':
+                    for char in [';', ',']:
+                        single_tag = char not in child.attrib['v']
+                        if not single_tag:
+                            # Make a list of tags splitting by delimiter
+                            tag_list = child.attrib['v'].split(char)
+
+                            # Strip blank spaces and apply mapping
+                            tag_list = [clean.update_cuisine(tag.strip(),
+                                        re_library[-1]) for tag in tag_list]
+
+                            # Create a set of unique tags from tag_list
+                            unique_tags = set(tag_list)
+
+                            # Remove 'other', if applicable
+                            try:
+                                unique_tags.remove('other')
+                            except:
+                                pass
+
+                            # Only set to 'international' if multiple tags
+                            if len(unique_tags) == 1:
+                                tag['value'] = tag_list[0]
+                            else:
+                                tag['value'] = 'international'
+
+                    '''
+                    Convert these tags only if no stronger qualifier is
+                    available, e.g. if 'steak' -> 'north_american', but
+                    if 'brazilian;steak' do not set to 'international'.
+                    '''
+                    generic_tags = ['meat', 'steak', 'steak_house']
+                    if child.attrib['v'].strip in generic_tags:
+                        tag['value'] = 'north_american'
+
+                    tag['value'] = clean.update_cuisine(child.attrib['v']\
+                                    .strip(), re_library[-1])
+                else:
+                    tag['value'] = child.attrib['v'].strip()
+
             if tag:
                 tags.append(tag)
 
