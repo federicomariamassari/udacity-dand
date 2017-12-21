@@ -245,7 +245,8 @@ expected_cuisines = set(['african',
                          'mediterranean',
                          'middle_eastern',
                          'north_american',
-                         'oceanic'])
+                         'oceanic',
+                         'international'])
 
 def is_cuisine(elem):
     return (elem.tag == 'tag') & (elem.attrib['k'] == 'cuisine')

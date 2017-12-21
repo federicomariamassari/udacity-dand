@@ -270,6 +270,8 @@ def update_cuisine(cuisine, re_query):
 
     oceanic = ['australian']
 
+    international = ['fusion', 'pizza_kebab']
+
     match = re_query.search(cuisine)
     better_cuisine = cuisine
 
@@ -290,6 +292,8 @@ def update_cuisine(cuisine, re_query):
             better_cuisine = 'north_american'
         elif cuisine.lower() in oceanic:
             better_cuisine = 'oceanic'
+        elif cuisine.lower() in international:
+            better_cuisine = 'international'
         else:
             better_cuisine = 'other'
 
