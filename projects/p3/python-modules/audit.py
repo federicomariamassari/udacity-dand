@@ -1,5 +1,6 @@
 '''Audit common features of an OpenStreetMap (XML) dataset: street names,
-postal codes, city names. Store problematic data in distinct dictionaries.
+postal codes, city names, cuisines. Store problematic entries in distinct
+dictionaries.
 
 Note: Use Python 3 to run this script.
 
