@@ -649,6 +649,23 @@ ect_flag = street_map(eateries_by_city_tag, eateries_constr, 0.1,
 ebb_flag = street_map(eateries_by_boundaries, eateries_constr, 0.1,
                     eateries_colors, eateries_labels, ebb_title, ebb_fig_title)
 
+'''B.6 - Most popular cuisines
+'''
+most_popular_cuisines = "SELECT value, count(*) AS num \
+                            FROM {join_tags} \
+                            WHERE key='cuisine' \
+                                AND value != 'other' \
+                            GROUP BY value \
+                            ORDER BY num DESC;".format(join_tags=join_tags)
+
+cuisines_exec = execute_query(most_popular_cuisines)
+
+print('\n\nQUERY 4: Find the most popular cuisines.\n')
+print('{:<42s}{}'.format('CUISINE', 'COUNT'))
+print('-'*51)
+for cuisine, count in cuisines_exec:
+    print('{:.<40}: {}'.format(cuisine, count))
+
 '''C. SAVE MAPS TO FILE
 
 Save maps to .png and inform user. Also print folder './img' creation message
