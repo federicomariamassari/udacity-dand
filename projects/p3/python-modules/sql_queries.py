@@ -38,13 +38,13 @@ Display files list and size:
 Custom 'ORDER BY' statement:
 [6] https://stackoverflow.com/questions/3303851/sqlite-and-custom-order-by
 
-Print dots while waiting
-[7] https://mail.python.org/pipermail/python-list/2008-January/509830.html
-
 Basemap toolkit resources:
+[7] http://server.arcgisonline.com/arcgis/rest/services
 [8] https://matplotlib.org/basemap/index.html
 [9] http://basemaptutorial.readthedocs.io/en/latest/
-[10] http://server.arcgisonline.com/arcgis/rest/services
+
+Print dots while waiting:
+[10] https://mail.python.org/pipermail/python-list/2008-January/509830.html
 
 Lombardy postcodes resources:
 [11] http://www.tuttitalia.it/lombardia/
@@ -282,20 +282,14 @@ def street_map(query, query_constr, diff, colors, labels, title, fig_name, \
     query_keys: list of str, optional argument. List of constraints on tag keys.
     join_tags: str, optional argument. Auxiliary SQL query string.
     service: str, optional argument. The ArcGIS Server REST API used to get,
-             and display as plot background, an area of the world map [10].
+             and display as plot background, an area of the world map [7].
     '''
-
-    # Notify user a picture is being generated [7]
-    sys.stdout.write("\n* Generating '{}.png'".format(fig_name))
-    start = time.time()
-    time.sleep(.5)
-    while (time.time() - start) < 2:
-        sys.stdout.write('.')
-        sys.stdout.flush()
-        time.sleep(.5)
 
     # Assign convenient name to frequently used iterable object
     n = range(len(query_constr))
+
+    # Use this flag to notify user when a picture is saved in './img' folder
+    plt_flag = -1
 
     '''Generate a list of full SQL queries, each one obtained by replacing the
     {} brackets in the supplied query with the string element in 'query_constr'
@@ -316,49 +310,80 @@ def street_map(query, query_constr, diff, colors, labels, title, fig_name, \
                     for i in n]
 
     # Separately store longitudes (x-axis) and latitudes (y-axis)
-    lons = [query_res[i][:,0] for i in n]
-    lats = [query_res[i][:,1] for i in n]
+    lons, lats = [], []
 
-    # Find the minimum and maximum longitude and latitude in the set
-    concat_lons = np.concatenate([lons[i] for i in n])
-    concat_lats = np.concatenate([lats[i] for i in n])
-    min_lon, max_lon = concat_lons.min(), concat_lons.max()
-    min_lat, max_lat = concat_lats.min(), concat_lats.max()
+    # Continue in case one or more list pairs are empty
+    for i in n:
+        try:
+            lons.append(query_res[i][:,0])
+            lats.append(query_res[i][:,1])
+        except:
+            pass
 
-    plt.figure(figsize=(10,8))
+    # Check that list length is still equal to n; shorten otherwise
+    if range(len(lons)) != n:
+        n = range(len(lons))
 
-    '''The matplotlib basemap toolkit is a library for plotting 2D data on maps
-    in Python [8]. It allows to transform coordinates to map projections so that
-    matplotlib can then be used to plot on such transformed coordinates.
-    The 'Basemap' class creates the map [9]; the boundaries are set by supplying
-    minimum and maximum longitude (x-axis limits) and latitude (y-axis limits).
-    The map is centered on the data to plot, using both the previously found
-    minima and maxima, and parameter 'diff'.
+    '''If lons, lats are not empty, find the minimum and maximum longitude and
+    latitude in the set, then plot the data using basemap. Otherwise, pass.
     '''
-    m = Basemap(llcrnrlon=min_lon-diff, llcrnrlat=min_lat-diff, \
-                urcrnrlon=max_lon+diff, urcrnrlat=max_lat+diff, \
-                resolution = 'l')
+    try:
+        concat_lons = np.concatenate([lons[i] for i in n])
+        concat_lats = np.concatenate([lats[i] for i in n])
+        min_lon, max_lon = concat_lons.min(), concat_lons.max()
+        min_lat, max_lat = concat_lats.min(), concat_lats.max()
 
-    '''Retrieve a background map using the ArcGIS Server REST API and display
-    it on the plot. 'ESRI_StreetMap_World_2D' is the default map server.
-    * IMPORTANT: Internet connection required.
-    '''
-    m.arcgisimage(service=service, xpixels = 900)
+        plt.figure(figsize=(10,8))
 
-    # Supply coordinates to the Basemap object
-    x, y = m(lons, lats)
+        '''The matplotlib basemap toolkit is a library for plotting 2D data on
+        maps in Python [8]. It allows to transform coordinates to map projec-
+        tions so that matplotlib can then be used to plot on such transformed
+        coordinates. The 'Basemap' class creates the map [9]; the boundaries
+        are set by supplying minimum and maximum longitude (x-axis limits) and
+        latitude (y-axis limits). The map is centered on the data to plot,
+        using both the previously found minima and maxima, and parameter 'diff'.
+        '''
+        m = Basemap(llcrnrlon=min_lon-diff, llcrnrlat=min_lat-diff, \
+                    urcrnrlon=max_lon+diff, urcrnrlat=max_lat+diff, \
+                    resolution = 'l')
 
-    # Make scatter plot of query results in the OSM file, divided by group
-    scatterplot = [m.scatter(x[i], y[i], s=15, color=colors[i], \
-                                label=labels[i]) for i in n]
-    plt.title(title)
-    plt.legend(handles=[scatterplot[i] for i in n], loc=3)
+        '''Retrieve background map using the ArcGIS Server REST API and display
+        it on the plot. 'ESRI_StreetMap_World_2D' is the default map server.
+        * IMPORTANT: Internet connection required.
+        '''
+        m.arcgisimage(service=service, xpixels = 900)
 
-    # Store all pictures in subdirectory 'img'; set image quality with 'dpi'
-    directory = './img'
-    fig_name = fig_name
-    plt.savefig('{}/{}.png'.format(directory, fig_name), dpi=150, \
-                format='png', bbox_inches='tight')
+        # Supply coordinates to the Basemap object
+        x, y = m(lons, lats)
+
+        # Make scatter plot of query results in the OSM file, divided by group
+        scatterplot = [m.scatter(x[i], y[i], s=15, color=colors[i], \
+                                    label=labels[i]) for i in n]
+        plt.title(title)
+        plt.legend(handles=[scatterplot[i] for i in n], loc=3)
+
+        # Notify user a picture is being generated [10]
+        sys.stdout.write("\n* Generating '{}.png'".format(fig_name))
+        start = time.time()
+        time.sleep(.5)
+        while (time.time() - start) < 2:
+            sys.stdout.write('.')
+            sys.stdout.flush()
+            time.sleep(.5)
+
+        # Store all pictures in subdirectory 'img'; set image quality with 'dpi'
+        directory = './img'
+        fig_name = fig_name
+        plt.savefig('{}/{}.png'.format(directory, fig_name), dpi=150, \
+                    format='png', bbox_inches='tight')
+
+        # Increment flag in case plot generation is successful
+        plt_flag += 1
+
+    except:
+        pass
+
+    return plt_flag
 
 '''B.1 - Most represented cities
 '''
@@ -422,11 +447,11 @@ postcode_title = 'Map of postal codes in the OpenStreetMap sample file for \
 Milan, Italy'
 
 '''Create a visual map of all postcodes in the OSM sample file for Milan, Italy.
-Store the output figure in './img' folder, with name 'postcode.png'.
+Store output figure in './img' folder with name 'postcode.png', if flag != -1.
 '''
 postcode_fig_title = 'postcodes'
-street_map(query, postcode_constr, 0.18, postcode_colors, postcode_labels, \
-            postcode_title, postcode_fig_title, postcode_keys)
+postcode_flag = street_map(query, postcode_constr, 0.18, postcode_colors,
+            postcode_labels, postcode_title, postcode_fig_title, postcode_keys)
 
 '''If (postcode < 20010) | (postcode > 20900), find which city and province it
 refers to:
@@ -560,8 +585,8 @@ parks_title = 'Location of parks in the OpenStreetMap sample file for Milan, \
 Italy'
 
 parks_fig_title = 'parks'
-street_map(query, parks_constr, 0.05, parks_colors, parks_labels, parks_title, \
-            parks_fig_title, parks_keys)
+parks_flag = street_map(query, parks_constr, 0.05, parks_colors, parks_labels,
+                        parks_title, parks_fig_title, parks_keys)
 
 '''B.5 - Eateries in Milan
 
@@ -618,16 +643,16 @@ ebb_title = 'Eateries by boundaries in Milan, Italy, OpenStreetMap sample'
 ect_fig_title = 'eateries_by_city_tag'
 ebb_fig_title = 'eateries_by_boundaries'
 
-street_map(eateries_by_city_tag, eateries_constr, 0.1, eateries_colors, \
-            eateries_labels, ect_title, ect_fig_title)
+ect_flag = street_map(eateries_by_city_tag, eateries_constr, 0.1,
+                    eateries_colors, eateries_labels, ect_title, ect_fig_title)
 
-street_map(eateries_by_boundaries, eateries_constr, 0.1, eateries_colors, \
-            eateries_labels, ebb_title, ebb_fig_title)
+ebb_flag = street_map(eateries_by_boundaries, eateries_constr, 0.1,
+                    eateries_colors, eateries_labels, ebb_title, ebb_fig_title)
 
 '''C. SAVE MAPS TO FILE
 
 Save maps to .png and inform user. Also print folder './img' creation message
-if flag = 0.
+if not already present.
 '''
 print('\n\nC. SAVE MAPS TO FILE\n')
 if flag != -1:
@@ -635,8 +660,13 @@ if flag != -1:
 else:
     pass
 
+flag_list = [postcode_flag, parks_flag, ect_flag, ebb_flag]
 fig_list = [postcode_fig_title, parks_fig_title, ect_fig_title, ebb_fig_title]
-[print("Saved '{}.png' in folder './img'.".format(i)) for i in fig_list]
+
+# Only notify user whenever a picture is actually saved
+for i in range(len(flag_list)):
+    if flag_list[i] != -1:
+        print("Saved '{}.png' in folder './img'.".format(fig_list[i]))
 
 # Close the Connection object (i.e. the database)
 conn.close()
