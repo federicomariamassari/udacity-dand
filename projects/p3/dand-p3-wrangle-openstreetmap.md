@@ -70,7 +70,8 @@ if len(match.group()) < 5:
 elif len(match.group()) > 5:
     better_postcode = match.group().replace('0', '', 1)
 ```
-<div>
-  <img src="https://github.com/federicomariamassari/udacity-dand/blob/master/projects/p3/python-modules/img/eateries_by_city_tag.png" align="middle" width="435"/>
-  <img src="https://github.com/federicomariamassari/udacity-dand/blob/master/projects/p3/python-modules/img/eateries_by_boundaries.png" align="middle" width="435"/>
-</div>
+__Figure 3: Eateries in Milan__
+<p float>
+  <img src="https://github.com/federicomariamassari/udacity-dand/blob/master/projects/p3/python-modules/img/eateries_by_city_tag.png" width="434"/>
+  <img src="https://github.com/federicomariamassari/udacity-dand/blob/master/projects/p3/python-modules/img/eateries_by_boundaries.png" width="434"/>
+</p>
