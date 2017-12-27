@@ -45,7 +45,7 @@ if match.group() in mapping.keys():
 ```
 SP 227 -> Strada Provinciale 227
 ```
-otherwise, I split the string on the matched key and joined the replaced value to a blank space and the string remainder:
+Otherwise, I split the string on the matched key and joined the replaced value to a blank space and the string remainder:
 ```python
 for key, value in mapping.items():
     if key in match.group():
@@ -55,7 +55,11 @@ for key, value in mapping.items():
 ```
 SP14 Rivoltana -> Strada Provinciale 14 Rivoltana
 ```
-__Historical dates.__
+__Historical dates.__ Common issues with this kind were days as one- or two-digit numbers, spelled-out numbers, and lowercase months. The first and last issues were easy to fix, I simply mapped Latin numbers to Roman numerals (apart from _"1°"_), and titlecased month names:
+```
+Piazza 25 aprile -> Piazza XXV Aprile
+```
+However, I did not incorporate spelled-out numbers into regular expressions: a full mapping would have required both ordinal (e.g., _"Primo Maggio"_, _"May 1st"_) and cardinal (e.g., _"Due Giugno"_, _"June 2"_) numbers, and the added complexity of the regular expression would have been unjustified, given that few numbers are actually spelled-out.
 ```
 via primo maggio -> Via Primo Maggio
 ```
