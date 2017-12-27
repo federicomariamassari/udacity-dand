@@ -63,3 +63,14 @@ However, I did not incorporate spelled-out numbers into regular expressions: a f
 ```
 via primo maggio -> Via Primo Maggio
 ```
+### Postal codes
+```python
+if len(match.group()) < 5:
+    better_postcode = match.group() + '0' * (5-len(match.group()))
+elif len(match.group()) > 5:
+    better_postcode = match.group().replace('0', '', 1)
+```
+<div>
+  <img src="https://github.com/federicomariamassari/udacity-dand/blob/master/projects/p3/python-modules/img/eateries_by_city_tag.png" align="middle" width="435"/>
+  <img src="https://github.com/federicomariamassari/udacity-dand/blob/master/projects/p3/python-modules/img/eateries_by_boundaries.png" align="middle" width="435"/>
+</div>
