@@ -16,7 +16,7 @@ To audit the OSM file I used Python's `re` (regular expressions) module. I conce
 - __Wrongly formatted date in street name__: e.g., _"Via 20 settembre"_ instead of _"Via XX Settembre"_.
 ### Postal codes
 - __Mistyped postcode__: either too short (_2013_ instead of _2013x_) or too long (_200149_ instead of _20149_);
-- __Postcode related to another province__: any code outside the _20010-20900_ range (related to the Milan metropolitan area and the Monza-Brianza province).
+- __Postcode related to another province__: any code outside the _20010-20900_ range (related to the Metropolitan City of Milan and the Province of Monza and Brianza).
 ### City names
 - __Titlecase preposition__: e.g., _"Cernusco Sul Naviglio"_ instead of _"Cernusco sul Naviglio"_;
 - __Province in city name__: e.g., _"Origgio (VA)"_ instead of _"Origgio"_;
@@ -64,13 +64,17 @@ However, I did not incorporate spelled-out numbers into regular expressions: a f
 via primo maggio -> Via Primo Maggio
 ```
 ### Postal codes
-Admissible postal codes had to satisfy two constraints: being five digits long, and having format _20xxx_ (_2_: Region Code for Lombardy; _0_: County Code for Milan and Monza-Brianza). Codes which did not meet the first condition were either four (e.g., _2013_) or six (e.g., _200149_) digits long. I padded the former with trailing zeros (e.g., _20130_) and stripped the latter of the redundant digits (e.g., _20149_).
+Admissible postal codes had to be five digits long, and have format _20xxx_ (_2_: Region Code for Lombardy; _0_: County Code for the Metropolitan City of Milan and the Province of Monza and Brianza).
+
+__Unusual code length.__ A few codes were either four (e.g., _2013_) or six (e.g., _200149_) digits long. I padded the former with trailing zeros (e.g., _20130_) and stripped the latter of the redundant digits (e.g., _20149_):
 ```python
 if len(match.group()) < 5:
     better_postcode = match.group() + '0' * (5-len(match.group()))
 elif len(match.group()) > 5:
     better_postcode = match.group().replace('0', '', 1)
 ```
+__Wrong code format.__ All codes in the OSM file related to Lombardy (i.e., _2xxxx_), but a significant number belonged to different provinces (e.g., _21xxx_: Varese).
+
 
 __Figure 3: Eateries in Milan__
 <p float>
