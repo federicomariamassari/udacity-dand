@@ -64,7 +64,7 @@ However, I did not incorporate spelled-out numbers into regular expressions: a f
 via primo maggio -> Via Primo Maggio
 ```
 ### Postal codes
-Admissible postal codes had to be five digits long, and have format _20xxx_ (_2_: Region Code for Lombardy; _0_: County Code for the Metropolitan City of Milan and the Province of Monza and Brianza).
+Admissible postal codes are five digits long, and have format _20xxx_ (_2_: Region Code for Lombardy; _0_: County Code for the Metropolitan City of Milan and the Province of Monza and Brianza).
 
 __Unusual code length.__ A few codes were either four (e.g., _2013_) or six (e.g., _200149_) digits long. I padded the former with trailing zeros (e.g., _20130_) and stripped the latter of the redundant digits (e.g., _20149_):
 ```python
@@ -74,7 +74,6 @@ elif len(match.group()) > 5:
     better_postcode = match.group().replace('0', '', 1)
 ```
 __Wrong code format.__ All codes in the OSM file related to Lombardy (i.e., _2xxxx_), but a significant number belonged to different provinces (e.g., _21xxx_: Varese).
-
 
 __Figure 3: Eateries in Milan__
 <p float>
