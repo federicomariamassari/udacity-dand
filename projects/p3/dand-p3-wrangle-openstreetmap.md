@@ -75,11 +75,9 @@ elif len(match.group()) > 5:
 ```
 __Wrong code format.__ All codes in the OSM file related to Lombardy (i.e., _2xxxx_), but a significant number belonged to different provinces (e.g., _21xxx_: Varese).
 
-__Figure 1: Map of postcodes__ __Figure 2: Location of parks__
-<p float>
-  <img src="https://github.com/federicomariamassari/udacity-dand/blob/master/projects/p3/python-modules/img/postcodes.png" width="434"/>
-  <img src="https://github.com/federicomariamassari/udacity-dand/blob/master/projects/p3/python-modules/img/parks.png" width="434"/>
-</p>
+|__Figure 1: Map of postcodes__|__Figure 2: Location of parks__|
+|-|-|
+|<img src="https://github.com/federicomariamassari/udacity-dand/blob/master/projects/p3/python-modules/img/postcodes.png" width="434"/>|<img src="https://github.com/federicomariamassari/udacity-dand/blob/master/projects/p3/python-modules/img/parks.png" width="434"/>|
 
 __Figure 3: Eateries in Milan__
 <p float>
