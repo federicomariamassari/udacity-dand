@@ -64,12 +64,14 @@ However, I did not incorporate spelled-out numbers into regular expressions: a f
 via primo maggio -> Via Primo Maggio
 ```
 ### Postal codes
+Admissible postal codes had to satisfy two constraints: being five digits long, and having format _20xxx_ (_2_: Region Code for Lombardy; _0_: County Code for Milan and Monza-Brianza). Codes which did not meet the first condition were either four (e.g., _2013_) or six (e.g., _200149_) digits long. I padded the former with trailing zeros (e.g., _20130_) and stripped the latter of the redundant digits (e.g., _20149_).
 ```python
 if len(match.group()) < 5:
     better_postcode = match.group() + '0' * (5-len(match.group()))
 elif len(match.group()) > 5:
     better_postcode = match.group().replace('0', '', 1)
 ```
+
 __Figure 3: Eateries in Milan__
 <p float>
   <img src="https://github.com/federicomariamassari/udacity-dand/blob/master/projects/p3/python-modules/img/eateries_by_city_tag.png" width="434"/>
