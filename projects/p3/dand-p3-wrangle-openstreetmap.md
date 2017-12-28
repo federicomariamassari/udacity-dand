@@ -75,12 +75,27 @@ elif len(match.group()) > 5:
 ```
 __Wrong code format.__ All codes in the OSM file related to Lombardy (i.e., _2xxxx_), but a significant number belonged to different provinces (e.g., _21xxx_: Varese).
 
-|__Figure 1: Map of postcodes__|__Figure 2: Location of parks__|
-|-|-|
-|<img src="https://github.com/federicomariamassari/udacity-dand/blob/master/projects/p3/python-modules/img/postcodes.png" width="434"/>|<img src="https://github.com/federicomariamassari/udacity-dand/blob/master/projects/p3/python-modules/img/parks.png" width="434"/>|
+<table>
+  <tr>
+      <td align="center"><b>Figure 1: Map of postcodes</b></td>
+      <td align="center"><b>Figure 2: Location of parks</b></td>
+  </tr>
+  <tr>
+  </tr>
+  <tr>
+    <td><img src="https://github.com/federicomariamassari/udacity-dand/blob/master/projects/p3/python-modules/img/postcodes.png"/></td>
+    <td><img src="https://github.com/federicomariamassari/udacity-dand/blob/master/projects/p3/python-modules/img/parks.png"/></td>
+  </tr>
+</table>
 
-__Figure 3: Eateries in Milan__
-<p float>
-  <img src="https://github.com/federicomariamassari/udacity-dand/blob/master/projects/p3/python-modules/img/eateries_by_city_tag.png" width="434"/>
-  <img src="https://github.com/federicomariamassari/udacity-dand/blob/master/projects/p3/python-modules/img/eateries_by_boundaries.png" width="434"/>
-</p>
+<table>
+  <tr>
+      <td align="center" colspan="2"><b>Figure 3: Eateries in Milan</b></td>
+  </tr>
+  <tr>
+  </tr>
+  <tr>
+    <td><img src="https://github.com/federicomariamassari/udacity-dand/blob/master/projects/p3/python-modules/img/eateries_by_city_tag.png"/></td>
+    <td><img src="https://github.com/federicomariamassari/udacity-dand/blob/master/projects/p3/python-modules/img/eateries_by_boundaries.png"/></td>
+  </tr>
+</table>
