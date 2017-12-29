@@ -8,6 +8,8 @@ Milan, Italy
 
 Milan is my hometown and the city I currently live in, so I'm curious to find out how large the local OpenStreetMap community is, and, from a broader perspective, how seriously the project is taken in Italy.
 
+The sample used for this project was one-tenth the size of the original OSM file (i.e., _k_ = 10) [see: [make_sample.py](https://github.com/federicomariamassari/udacity-dand/blob/master/projects/p3/python-modules/make_sample.py)].
+
 ## Data auditing and main problems encountered
 To audit the OSM file I used Python's `re` (regular expressions) module. I concentrated on four key features: street names `key=addr:street`, postal codes `key=addr:postcode`, city names `key=addr:city` and cuisines `key=cuisine`. The following are the main issues I encountered [see: [audit.py](https://github.com/federicomariamassari/udacity-dand/blob/master/projects/p3/python-modules/audit.py)].
 ### Street names
@@ -87,6 +89,84 @@ if "'" in match.group():
 This way, I correctly discriminated between names such as _"Cassina de' Pecchi"_ and those like _"Torre d'Isola"_.
 ### Cuisines
 Cuisines were grouped into eight categories by geographical area: `african`, `asian`, `continental`, `latin american`, `mediterranean`, `middle eastern`, `north american`, and `oceanic`. Another one, `international`, was used for restaurants offering more cuisines. The aggregation was made for explanatory analysis: I would advise against applying the same mapping to the original OSM file, since the ability to summarise the data does not make up for the significant loss of detail (whether an Asian restaurant serves Japanese or Indian dishes is actually very useful information).
+## Data exploration
+After the data were cleaned and stored into csv files, they were imported into the SQL database `milan_italy.db` for querying [see: [csv_to_sql.py](https://github.com/federicomariamassari/udacity-dand/blob/master/projects/p3/python-modules/csv_to_sql.py)]. Query output can be accessed from any command-line interface [see: [sql_queries.py](https://github.com/federicomariamassari/udacity-dand/blob/master/projects/p3/python-modules/sql_queries.py)].
+
+### Size of files in the current working directory
+The SQL database is the most effective way to store data: it is ~54% the size of the sample OSM document, and it is lighter than the csv files combined (~51.28 MB).
+```
+FILENAME                                  SIZE
+---------------------------------------------------
+milan_italy.osm.........................: 830.97 MB
+milan_italy_sample.osm..................: 84.08 MB
+milan_italy.db..........................: 45.04 MB
+nodes.csv...............................: 29.79 MB
+ways_nodes.csv..........................: 11.01 MB
+ways_tags.csv...........................: 4.54 MB
+ways.csv................................: 3.35 MB
+nodes_tags.csv..........................: 2.52 MB
+municipalities.csv......................: 64.84 kB
+```
+### Number of nodes and ways
+The ratio of nodes to ways in the dataset was approximately 6.5 to 1.
+```sql
+SELECT count(*) FROM nodes;
+SELECT count(*) FROM ways;
+```
+```
+Number of nodes: 369964
+Number of ways: 56992
+```
+### Number of unique users
+To find the number of unique users, I counted all distinct `user` and `uid` (user id) tags across the two tables `nodes` and `ways`. I supposed there would be a one-to-one link between the tag types; however, the result was puzzling:
+```
+No. of unique users, 'user' tag: 1546
+No. of unique users, 'uid' tag: 1545
+```
+Curious, I checked for the incongruous record, and discovered it is in table `ways`: one user registered with two names but a single id. Interestingly, this is the only odd entry in the full OSM file.
+```sql
+SELECT a.uid, b.uid, a.user, b.user
+    FROM (SELECT uid, user FROM ways GROUP BY uid) a,
+         (SELECT uid, user FROM ways GROUP BY user) b
+    WHERE a.uid = b.uid AND a.user != b.user;
+```
+```
+Table: 'ways'
+(1726553, 1726553, 'Tommasky', 'Tommaso Abbate')
+count: 1
+```
+### Top 5 contributing users
+Contribution data exhibit left skewness, a property often seen in OSM files, with very few users committing most entries.
+```sql
+SELECT all_users.user, count(*) AS num
+    FROM (SELECT user FROM nodes UNION ALL SELECT user FROM ways) all_users
+    GROUP BY all_users.user
+    ORDER BY num DESC
+        LIMIT 5;
+```
+```
+USER                                      NO.
+---------------------------------------------------
+Alecs01.................................: 70665
+ilrobi..................................: 28800
+adirricor...............................: 28366
+fedc....................................: 25543
+Guido_RL................................: 23044
+```
+### Number of tags that require fixing
+`fixme` tags are used to mark objects and places that need further attention. There are approximately 500 such tags in the sample. `LIKE '%fixme'` allows to cover all possible cases, notably `key=fixme` and `key=note`, `value=FIXME`.
+
+```sql
+SELECT count(*)
+    FROM (SELECT * FROM nodes_tags UNION ALL SELECT * FROM ways_tags) join_tags
+    WHERE join_tags.key LIKE '%fixme'
+        OR join_tags.value LIKE '%fixme'
+        OR join_tags.type LIKE '%fixme';
+```
+```
+Number of 'fixme' tags: 497
+```
+
 <table>
   <tr>
       <td align="center"><b>Figure 1: Map of postal codes</b></td>
