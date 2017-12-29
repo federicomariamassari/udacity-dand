@@ -141,8 +141,7 @@ Contribution data exhibit left skewness, a property often seen in OSM files, wit
 SELECT all_users.user, count(*) AS num
     FROM (SELECT user FROM nodes UNION ALL SELECT user FROM ways) all_users
     GROUP BY all_users.user
-    ORDER BY num DESC
-        LIMIT 5;
+    ORDER BY num DESC LIMIT 5;
 ```
 ```
 USER                                      NO.
@@ -166,7 +165,22 @@ SELECT count(*)
 ```
 Number of 'fixme' tags: 497
 ```
-
+### Most represented cities
+```sql
+SELECT join_tags.value, municipalities.province, count(*)
+    FROM (SELECT * FROM nodes_tags UNION ALL SELECT * FROM ways_tags) join_tags, municipalities
+    WHERE join_tags.value = municipalities.municipality
+    GROUP BY join_tags.value
+    ORDER BY count(*) DESC LIMIT 15;
+```
+```
+MUNICIPALITY             PROVINCE         COUNT
+---------------------------------------------------
+Milano                   Milano           2228
+Monza                    Monza-Brianza    845
+...
+Busto Arsizio            Varese           76          <- Significant but unrelated
+```
 <table>
   <tr>
       <td align="center"><b>Figure 1: Map of postal codes</b></td>
@@ -191,3 +205,23 @@ Number of 'fixme' tags: 497
     <td><img src="https://github.com/federicomariamassari/udacity-dand/blob/master/projects/p3/python-modules/img/eateries_by_boundaries.png"/></td>
   </tr>
 </table>
+
+### Most represented cuisines
+```sql
+SELECT value, count(*) AS num
+    FROM (SELECT * FROM nodes_tags UNION ALL SELECT * FROM ways_tags) join_tags
+    WHERE key = 'cuisine' AND value != 'other'
+    GROUP BY value
+    ORDER BY num DESC;
+```
+```
+CUISINE                                   COUNT
+---------------------------------------------------
+mediterranean...........................: 117
+asian...................................: 19
+north_american..........................: 19
+middle_eastern..........................: 6
+latin_american..........................: 2
+continental.............................: 1
+international...........................: 1
+```
