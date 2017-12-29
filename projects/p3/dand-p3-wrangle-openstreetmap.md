@@ -73,7 +73,19 @@ if len(match.group()) < 5:
 elif len(match.group()) > 5:
     better_postcode = match.group().replace('0', '', 1)
 ```
-__Code misplacement.__ A considerable number of postal codes belonged to different provinces of Lombardy, such as Varese (_21xxx_) or Como (_22xxx_). I did not remove these codes; instead, I included them in the SQL database for further exploration.
+__Code misplacement.__ A considerable number of postal codes belonged to different provinces of Lombardy, such as Varese (_21xxx_) or Como (_22xxx_). I did not remove these codes; instead, I added them to the SQL database for further exploration.
+### City names
+City names were made consistent with the entries of a csv file containing information on all municipalities of Italy. The file is used, among the others, to associate towns with the corresponding provinces [see: [data.py](https://github.com/federicomariamassari/udacity-dand/blob/master/projects/p3/python-modules/data.py)]:
+- Municipalities of Italy (compressed): http://lab.comuni-italiani.it/files/listacomuni.zip
+
+Recurring problems at this stage were titlecase propositions and misspelled truncations. In the first case, I singled out the matched prepositions and converted them to lowercase before concatenation with the string remainder. In the other, I checked whether the last letter before the apostrophe was _"e"_, and if so, I added a blank space after the apostrophe:
+```python
+if "'" in match.group():
+    if city_name.split("'")[0][-1] == 'e':
+        better_city_name = better_city_name.replace("'", "' ")
+```
+This way, I correctly discriminated between names such as _"Cassina de' Pecchi"_ and those like _"Torre d'Isola"_.
+### Cuisines
 
 <table>
   <tr>
