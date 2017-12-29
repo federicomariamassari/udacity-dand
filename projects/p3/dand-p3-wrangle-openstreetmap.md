@@ -64,16 +64,16 @@ However, I did not incorporate spelled-out numbers into regular expressions: a f
 via primo maggio -> Via Primo Maggio
 ```
 ### Postal codes
-Admissible postal codes had to be five digits long, and have format _20xxx_ (_2_: Region Code for Lombardy; _0_: County Code for the Metropolitan City of Milan and the Province of Monza and Brianza).
+Admissible postal codes had to be five digits long, and have format _20xxx_ (with _2_ the Region Code for Lombardy, and _0_ the County Code for the Metropolitan City of Milan and the Province of Monza and Brianza). Although most codes were consistent, for a significant group two problems arose: unusual length (rare) and misplacement (quite common).
 
-__Unusual code length.__ Most codes met the first condition. However, I noticed that a few of them were either four (e.g., _2013_) or six (e.g., _200149_) digits long. I padded the former with trailing zeros (e.g., _20130_) and stripped the latter of the redundant digits (e.g., _20149_):
+__Unusual code length.__ A few codes were four (e.g., _2013_), and one was six (i.e., _200149_) digits long. I padded the former with a trailing zero, since all began with _2_ (e.g., _20130_), and stripped the latter of the redundant digit (e.g., _20149_):
 ```python
 if len(match.group()) < 5:
     better_postcode = match.group() + '0' * (5-len(match.group()))
 elif len(match.group()) > 5:
     better_postcode = match.group().replace('0', '', 1)
 ```
-__Wrong code format.__ All codes in the OSM file related to Lombardy (i.e., _2xxxx_), but a significant number belonged to different provinces (e.g., _21xxx_: Varese).
+__Code misplacement.__ A considerable number of postal codes belonged to different provinces of Lombardy, such as Varese (_21xxx_) or Como (_22xxx_). I did not remove these codes; instead, I included them in the SQL database for further exploration.
 
 <table>
   <tr>
