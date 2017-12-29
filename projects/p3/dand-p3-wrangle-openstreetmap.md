@@ -64,7 +64,7 @@ However, I did not incorporate spelled-out numbers into regular expressions: a f
 via primo maggio -> Via Primo Maggio
 ```
 ### Postal codes
-Admissible postal codes had to be five digits long, and have format _20xxx_ (with _2_ the Region Code for Lombardy, and _0_ the County Code for the Metropolitan City of Milan and the Province of Monza and Brianza). Although most codes were consistent, for a significant group two problems arose: unusual length (rare) and misplacement (quite common).
+Admissible postal codes had to be five digits long, and have format _20xxx_ (with _2_ the Region Code for Lombardy, and _0_ the County Code for the Metropolitan City of Milan and the Province of Monza and Brianza). Even though most codes were consistent, for a significant group two problems arose: unusual length (rare) and misplacement (quite common).
 
 __Unusual code length.__ A few codes were four (e.g., _2013_), and one was six (i.e., _200149_) digits long. I padded the former with a trailing zero, since all began with _2_ (e.g., _20130_), and stripped the latter of the redundant digit (e.g., _20149_):
 ```python
@@ -75,7 +75,7 @@ elif len(match.group()) > 5:
 ```
 __Code misplacement.__ A considerable number of postal codes belonged to different provinces of Lombardy, such as Varese (_21xxx_) or Como (_22xxx_). I did not remove these codes; instead, I added them to the SQL database for further exploration.
 ### City names
-City names were made consistent with the entries of a csv file containing information on all municipalities of Italy. The file is used, among the others, to associate towns with the corresponding provinces [see: [data.py](https://github.com/federicomariamassari/udacity-dand/blob/master/projects/p3/python-modules/data.py)]:
+City names were made consistent with the entries of a csv file containing information on all municipalities of Italy. The file was used, among the others, to associate towns with the corresponding provinces in SQL queries [see: [data.py](https://github.com/federicomariamassari/udacity-dand/blob/master/projects/p3/python-modules/data.py)]:
 - Municipalities of Italy (compressed): http://lab.comuni-italiani.it/files/listacomuni.zip
 
 Recurring problems at this stage were titlecase propositions and misspelled truncations. In the first case, I singled out the matched prepositions and converted them to lowercase before concatenation with the string remainder. In the other, I checked whether the last letter before the apostrophe was _"e"_, and if so, I added a blank space after the apostrophe:
@@ -86,7 +86,7 @@ if "'" in match.group():
 ```
 This way, I correctly discriminated between names such as _"Cassina de' Pecchi"_ and those like _"Torre d'Isola"_.
 ### Cuisines
-
+Cuisines were grouped into eight categories by geographical area: `african`, `asian`, `continental`, `latin american`, `mediterranean`, `middle eastern`, `north american`, and `oceanic`. Another one, `international`, was used for restaurants offering more cuisines. The aggregation was made for explanatory analysis: I would advise against applying the same mapping to the original OSM file, since the ability to summarise the data does not make up for the significant loss of detail (whether an Asian restaurant serves Japanese or Indian dishes is actually very useful information).
 <table>
   <tr>
       <td align="center"><b>Figure 1: Map of postal codes</b></td>
