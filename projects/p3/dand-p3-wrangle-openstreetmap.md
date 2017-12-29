@@ -9,7 +9,7 @@ Milan, Italy
 Milan is my hometown and the city I currently live in, so I'm curious to find out how large the local OpenStreetMap community is, and, from a broader perspective, how seriously the project is taken in Italy.
 
 ## Data auditing and main problems encountered
-To audit the OSM file I used Python's `re` (regular expressions) module. I concentrated on four key features: street names `key=addr:street`, postal codes `key=addr:postcode`, city names `key=addr:city` and cuisines `key=cuisine`. The following are the main issues encountered [see: [audit.py](https://github.com/federicomariamassari/udacity-dand/blob/master/projects/p3/python-modules/audit.py)].
+To audit the OSM file I used Python's `re` (regular expressions) module. I concentrated on four key features: street names `key=addr:street`, postal codes `key=addr:postcode`, city names `key=addr:city` and cuisines `key=cuisine`. The following are the main issues I encountered [see: [audit.py](https://github.com/federicomariamassari/udacity-dand/blob/master/projects/p3/python-modules/audit.py)].
 ### Street names
 - __Lowercase or abbreviated street type__: e.g., _"piazza"_ instead of _"Piazza"_ or _"V.le"_ instead of _"Viale"_;
 - __House number in street name__: e.g., _"Via Europa 30"_ instead of _"Via Europa"_;
@@ -64,9 +64,9 @@ However, I did not incorporate spelled-out numbers into regular expressions: a f
 via primo maggio -> Via Primo Maggio
 ```
 ### Postal codes
-Admissible postal codes are five digits long, and have format _20xxx_ (_2_: Region Code for Lombardy; _0_: County Code for the Metropolitan City of Milan and the Province of Monza and Brianza).
+Admissible postal codes had to be five digits long, and have format _20xxx_ (_2_: Region Code for Lombardy; _0_: County Code for the Metropolitan City of Milan and the Province of Monza and Brianza).
 
-__Unusual code length.__ A few codes were either four (e.g., _2013_) or six (e.g., _200149_) digits long. I padded the former with trailing zeros (e.g., _20130_) and stripped the latter of the redundant digits (e.g., _20149_):
+__Unusual code length.__ Most codes met the first condition. However, I noticed that a few of them were either four (e.g., _2013_) or six (e.g., _200149_) digits long. I padded the former with trailing zeros (e.g., _20130_) and stripped the latter of the redundant digits (e.g., _20149_):
 ```python
 if len(match.group()) < 5:
     better_postcode = match.group() + '0' * (5-len(match.group()))
@@ -77,7 +77,7 @@ __Wrong code format.__ All codes in the OSM file related to Lombardy (i.e., _2xx
 
 <table>
   <tr>
-      <td align="center"><b>Figure 1: Map of postcodes</b></td>
+      <td align="center"><b>Figure 1: Map of postal codes</b></td>
       <td align="center"><b>Figure 2: Location of parks</b></td>
   </tr>
   <tr>
