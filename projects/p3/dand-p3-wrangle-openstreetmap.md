@@ -153,8 +153,7 @@ fedc....................................: 25543
 Guido_RL................................: 23044
 ```
 ### Number of tags that require fixing
-`fixme` tags are used to mark objects and places that need further attention. There are approximately 500 such tags in the sample. `LIKE '%fixme'` allows to cover all possible cases, notably `key=fixme` and `key=note`, `value=FIXME`.
-
+Approximately 500 `fixme` tags needing further attention exist in the sample file. `LIKE '%fixme'` allows to cover all possible cases, notably `key=fixme` and `key=note`, `value=FIXME`.
 ```sql
 SELECT count(*)
     FROM (SELECT * FROM nodes_tags UNION ALL SELECT * FROM ways_tags) join_tags
