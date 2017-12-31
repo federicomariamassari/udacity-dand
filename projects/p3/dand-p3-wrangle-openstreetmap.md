@@ -183,8 +183,10 @@ Busto Arsizio            Varese           76          <- Significant but unrelat
 ```
 So, how "dirty" is the OSM file? Two maps can help answer this question.
 ### Map of postal codes
-_Figure 1_ is a scatter plot of all postal codes in the sample. It was made with the [Basemap Toolkit](https://matplotlib.org/basemap/). Blue and green dots symbolise Milan and its metropolitan area, so they are definitely pertinent. Orange dots belong to the Province of Monza and Brianza: they are accepted (the latter was "officially created by splitting the north-eastern part from the Province of Milan, and became executive after June 2009"), though in the future they should be removed. Red dots are out of place: the big clusters are Busto Arsizio (NW) and Saronno (NNW), both belonging to Varese, and a group of municipalities in the Province of Lecco (NE). To the South, a few spots belong to Pavia and Lodi.
+_Figure 1_ is a scatter plot of all postal codes in the sample. It was made with the [Basemap Toolkit](https://matplotlib.org/basemap/). Blue and green dots symbolise Milan and its metropolitan area, so they are definitely pertinent. Orange dots belong to the Province of Monza and Brianza: they are accepted (the latter was "officially created by splitting the north-eastern part from the Province of Milan, and became executive after June 2009"), though in the future they should be discarded. Red dots are out of place: the big clusters are Busto Arsizio (NW) and Saronno (NNW), both belonging to Varese, and a group of municipalities in the Province of Lecco (NE). To the South, a few spots relate to Pavia and Lodi.
 ### Map of parks
+_Figure 2_ maps all parks (i.e., the set of trees, benches, waste baskets, and drinking fountains) in the document. Apart from a few spots referring to the red clusters analysed above, the surprise is a huge green area to the South-East, clearly part of the Province of Lodi.  This area, which makes for half the parks in the file, should be removed.
+
 <table>
   <tr>
       <td align="center"><b>Figure 1: Map of postal codes</b></td>
@@ -197,6 +199,8 @@ _Figure 1_ is a scatter plot of all postal codes in the sample. It was made with
     <td><img src="https://github.com/federicomariamassari/udacity-dand/blob/master/projects/p3/python-modules/img/parks.png"/></td>
   </tr>
 </table>
+
+### Eateries in the City of Milan
 
 <table>
   <tr>
@@ -229,3 +233,4 @@ latin_american..........................: 2
 continental.............................: 1
 international...........................: 1
 ```
+## Ideas for improvement
