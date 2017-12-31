@@ -165,7 +165,7 @@ SELECT count(*)
 Number of 'fixme' tags: 497
 ```
 ### Most represented cities
-Unsurprisingly, the most represented city is Milan, followed by Monza (the second largest, and capital of the homonym province) and, at a great distance, by other municipalities. All centers in the list belong to either of the two provinces, aside from one, Busto Arsizio (position 14), which is part of Varese. The latter is clearly misplaced, and it is also rather significant (~1.43% of `key=city` tags in the table have such value).
+Unsurprisingly, the most represented city is Milan, followed by Monza (the second largest, and capital of the homonym province) and, at a great distance, by other municipalities. All centers in the list belong to either of the two provinces, aside from one, Busto Arsizio (position 14), which is part of Varese. The latter is clearly misplaced, and also rather significant (~1.43% of `key=city` tags in the table have such value).
 ```sql
 SELECT join_tags.value, municipalities.province, count(*) AS num
     FROM (SELECT * FROM nodes_tags UNION ALL SELECT * FROM ways_tags) join_tags, municipalities
@@ -181,6 +181,10 @@ Monza                    Monza-Brianza    845
 ...
 Busto Arsizio            Varese           76          <- Significant but unrelated
 ```
+So, how "dirty" is the OSM file? Two maps can help answer this question.
+### Map of postal codes
+_Figure 1_ is a scatter plot of all postal codes in the sample. It was made with the [Basemap Toolkit](https://matplotlib.org/basemap/). Blue and green dots symbolise Milan and its metropolitan area, so they are definitely pertinent. Orange dots belong to the Province of Monza and Brianza: they are accepted (the latter was "officially created by splitting the north-eastern part from the Province of Milan, and became executive after June 2009"), though in the future they should be removed. Red dots are out of place: the big clusters are Busto Arsizio (NW) and Saronno (NNW), both belonging to Varese, and a group of municipalities in the Province of Lecco (NE). To the South, a few spots belong to Pavia and Lodi.
+### Map of parks
 <table>
   <tr>
       <td align="center"><b>Figure 1: Map of postal codes</b></td>
