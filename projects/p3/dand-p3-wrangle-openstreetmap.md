@@ -153,7 +153,7 @@ fedc....................................: 25543
 Guido_RL................................: 23044
 ```
 ### Number of tags that require fixing
-Approximately 500 `fixme` tags needing further attention exist in the sample file. `LIKE '%fixme'` allows to cover all possible cases, notably `key=fixme` and `key=note`, `value=FIXME`.
+Approximately 500 `fixme` tags needing further attention exist in the sample file. `LIKE '%fixme'` covers all possible cases, notably `key=fixme` and `key=note`, `value=FIXME`.
 ```sql
 SELECT count(*)
     FROM (SELECT * FROM nodes_tags UNION ALL SELECT * FROM ways_tags) join_tags
@@ -165,12 +165,13 @@ SELECT count(*)
 Number of 'fixme' tags: 497
 ```
 ### Most represented cities
+Unsurprisingly, the most represented city is Milan, followed by Monza (the second largest, and capital of the homonym province) and, at a great distance, by other municipalities. All centers in the list belong to either of the two provinces, aside from one, Busto Arsizio (position 14), which is part of Varese. The latter is clearly misplaced, and it is also rather significant (~1.43% of `key=city` tags in the table have such value).
 ```sql
-SELECT join_tags.value, municipalities.province, count(*)
+SELECT join_tags.value, municipalities.province, count(*) AS num
     FROM (SELECT * FROM nodes_tags UNION ALL SELECT * FROM ways_tags) join_tags, municipalities
     WHERE join_tags.value = municipalities.municipality
     GROUP BY join_tags.value
-    ORDER BY count(*) DESC LIMIT 15;
+    ORDER BY num DESC LIMIT 15;
 ```
 ```
 MUNICIPALITY             PROVINCE         COUNT
