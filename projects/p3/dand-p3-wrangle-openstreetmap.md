@@ -200,8 +200,8 @@ _Figure 2_ maps all parks (i.e., the set of trees, benches, waste baskets, and d
   </tr>
 </table>
 
-### Eateries in the City of Milan
-To mark the location of all eateries (i.e., restaurants, bars, cafés, and fast food places) in Milan, I traced the coordinates of all nodes and ways related to the desired amenities and also including the tag pair `key=city`, `value=Milano`. The result (_Figure 3.A_) was far from expected: does the sample file really feature so few places? As it turned out, amenity elements rarely incorporate the `key=city` tag; rather, they let the coordinates indicate the position:
+### Eateries in Milan
+To find the location of all eateries (i.e., restaurants, bars, cafés, and fast food places) in Milan, I plotted the coordinates of all nodes and ways that corresponded to such amenities and included the tag pair `key=city`, `value=Milano`. The spots, however, were fewer than expected (_Figure 3.A_). Why? As it turned out, amenity elements rarely feature the `key=city` tag; rather, they let the coordinates indicate the position:
 ```xml
 <node changeset="43304255" id="1301095604" lat="45.4804683" lon="9.1716521"
    timestamp="2016-10-31T13:37:43Z" uid="417672" user="Guidus" version="2">
@@ -210,7 +210,7 @@ To mark the location of all eateries (i.e., restaurants, bars, cafés, and fast 
   <tag k="cuisine" v="pizza" />
 </node>
 ```
-Therefore, a better course of action was to extract the boundary coordinates (i.e., minimum and maximum latitude and longitude) from the set of tags having the `<tag k="addr:city" v="Milano" />` line, then plot all eateries within the boundaries (_Figure 3.B_):
+Therefore, I extracted the boundary coordinates (i.e., minimum and maximum latitude and longitude) from the set of tags having the `<tag k="addr:city" v="Milano" />` line, and mapped out all eateries within the boundaries (_Figure 3.B_):
 <table>
   <tr>
       <td align="center" colspan="2"><b>Figure 3: Eateries in Milan</b></td>
