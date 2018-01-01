@@ -22,9 +22,9 @@ To audit the OSM file I used Python's `re` (regular expressions) module. I conce
 ### City names
 - __Titlecase preposition__: e.g., _"Cernusco Sul Naviglio"_ instead of _"Cernusco sul Naviglio"_;
 - __Province in city name__: e.g., _"Origgio (VA)"_ instead of _"Origgio"_;
-- __Missing blank space after truncation__: e.g. _"Cassina de'Pecchi"_ instead of _"Cassina de' Pecchi"_.
+- __Missing blank space after truncation__: e.g., _"Cassina de'Pecchi"_ instead of _"Cassina de' Pecchi"_.
 ### Cuisines
-- __Too granular set of cuisines__: in order to produce insightful summaries, the `key=cuisine` tag required a bit of aggregation, e.g., by mapping values _"pizza"_, _"italian"_, and _"greek"_ to label _"mediterranean"_.
+- __Too granular set of cuisines__: in order to produce insightful summaries, the `key=cuisine` tag required a bit of aggregation (e.g., by mapping values _"pizza"_, _"italian"_, and _"greek"_ to label _"mediterranean"_).
 
 ## Data cleaning
 The OSM file proved remarkably clean for its size (~831 MB), with very few typos. Most modifications I made related to either applying uniform formatting to tag values (street names, city names) or grouping the latter into broader categories (cuisines) [see: [clean.py](https://github.com/federicomariamassari/udacity-dand/blob/master/projects/p3/python-modules/clean.py)].
@@ -136,7 +136,7 @@ Table: 'ways'
 count: 1
 ```
 ### Top 5 contributing users
-Contribution data exhibit left skewness, a property often seen in OSM files, with very few users committing most entries.
+Contribution data exhibit skewness, a property often seen in OSM files, with very few users committing most entries.
 ```sql
 SELECT all_users.user, count(*) AS num
     FROM (SELECT user FROM nodes UNION ALL SELECT user FROM ways) all_users
@@ -183,7 +183,7 @@ Busto Arsizio            Varese           76          <- Significant but unrelat
 ```
 So, how "dirty" is the OSM file? Two maps can help answer this question.
 ### Map of postal codes
-_Figure 1_ is a scatter plot of all postal codes in the sample. It was made with the [Basemap Toolkit](https://matplotlib.org/basemap/). Blue and green dots symbolise Milan and its metropolitan area, so they are definitely pertinent. Orange dots belong to the Province of Monza and Brianza: they are accepted (the latter was "officially created by splitting the north-eastern part from the Province of Milan, and became executive after June 2009"), though in the future they should be discarded. Red dots are out of place: the big clusters are Busto Arsizio (NW) and Saronno (NNW), both belonging to Varese, and a group of municipalities in the Province of Lecco (NE). To the South, a few spots relate to Pavia and Lodi.
+_Figure 1_ is a scatter plot of all postal codes in the sample. It was made with the [Basemap Toolkit](https://matplotlib.org/basemap/). Blue and green dots symbolise Milan and its metropolitan area, so they are definitely pertinent. Orange dots belong to the Province of Monza and Brianza: they are accepted (the latter was "officially created by splitting the north-eastern part from the Province of Milan, and became executive after June 2009"), though in the future they should be discarded. Red dots are out of place: the big clusters are Busto Arsizio (NW) and Saronno (NNW), both belonging to Varese, and Verderio (NE), in the Province of Lecco. To the South, a few spots relate to Pavia and Lodi.
 ### Map of parks
 _Figure 2_ maps all parks (i.e., the set of trees, benches, waste baskets, and drinking fountains) in the document. Apart from a few spots referring to the red clusters analysed above, the surprise is a huge green area to the South-East, clearly part of the Province of Lodi.  This area, which makes for half the parks in the file, should be removed.
 
@@ -195,12 +195,22 @@ _Figure 2_ maps all parks (i.e., the set of trees, benches, waste baskets, and d
   <tr>
   </tr>
   <tr>
-    <td><img src="https://github.com/federicomariamassari/udacity-dand/blob/master/projects/p3/python-modules/img/postcodes.png"/></td>
-    <td><img src="https://github.com/federicomariamassari/udacity-dand/blob/master/projects/p3/python-modules/img/parks.png"/></td>
+    <td><img align="center" src="https://github.com/federicomariamassari/udacity-dand/blob/master/projects/p3/python-modules/img/postcodes.png"/></td>
+    <td><img align="center" src="https://github.com/federicomariamassari/udacity-dand/blob/master/projects/p3/python-modules/img/parks.png"/></td>
   </tr>
 </table>
 
 ### Eateries in the City of Milan
+To mark the location of all eateries (i.e., restaurants, bars, cafés, and fast food places) in Milan, I traced the coordinates of all nodes and ways related to the desired amenities and also including the tag pair `key=city`, `value=Milano`.
+
+```xml
+<node changeset="43304255" id="1301095604" lat="45.4804683" lon="9.1716521"
+   timestamp="2016-10-31T13:37:43Z" uid="417672" user="Guidus" version="2">
+  <tag k="name" v="Pizzeria da Mimmo" />
+  <tag k="amenity" v="restaurant" />
+  <tag k="cuisine" v="pizza" />
+</node>
+```
 
 <table>
   <tr>
@@ -209,8 +219,8 @@ _Figure 2_ maps all parks (i.e., the set of trees, benches, waste baskets, and d
   <tr>
   </tr>
   <tr>
-    <td><img src="https://github.com/federicomariamassari/udacity-dand/blob/master/projects/p3/python-modules/img/eateries_by_city_tag.png"/></td>
-    <td><img src="https://github.com/federicomariamassari/udacity-dand/blob/master/projects/p3/python-modules/img/eateries_by_boundaries.png"/></td>
+    <td align="center"><img align="center" src="https://github.com/federicomariamassari/udacity-dand/blob/master/projects/p3/python-modules/img/eateries_by_city_tag.png"/><b>Figure 3.A</b>: Eateries by <code>key=city</code></td>
+    <td align="center"><img align="center" src="https://github.com/federicomariamassari/udacity-dand/blob/master/projects/p3/python-modules/img/eateries_by_boundaries.png"/><b>Figure 3.B</b>: Eateries by boundaries</td>
   </tr>
 </table>
 
