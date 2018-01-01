@@ -201,8 +201,7 @@ _Figure 2_ maps all parks (i.e., the set of trees, benches, waste baskets, and d
 </table>
 
 ### Eateries in the City of Milan
-To mark the location of all eateries (i.e., restaurants, bars, cafés, and fast food places) in Milan, I traced the coordinates of all nodes and ways related to the desired amenities and also including the tag pair `key=city`, `value=Milano`.
-
+To mark the location of all eateries (i.e., restaurants, bars, cafés, and fast food places) in Milan, I traced the coordinates of all nodes and ways related to the desired amenities and also including the tag pair `key=city`, `value=Milano`. However, the outcome (_Figure 3.A_) was far from expected: why were the points so few? As it turns out, amenity elements rarely incorporate a `key=city` tag; rather, they let the coordinates (latitude, longitude) speak for themselves:
 ```xml
 <node changeset="43304255" id="1301095604" lat="45.4804683" lon="9.1716521"
    timestamp="2016-10-31T13:37:43Z" uid="417672" user="Guidus" version="2">
