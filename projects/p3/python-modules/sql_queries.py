@@ -62,7 +62,7 @@ import matplotlib.pyplot as plt
 from mpl_toolkits.basemap import Basemap
 import seaborn as sns
 
-# Time script execution time
+# Time script execution
 tic = time.time()
 
 '''Make directory img to store output figures [2] if not already present.
@@ -388,12 +388,12 @@ def street_map(query, query_constr, diff, colors, labels, title, fig_name, \
 '''B.1 - Most represented cities
 '''
 most_represented_cities = "SELECT join_tags.value, \
-                                    municipalities.province, count(*) \
+                                    municipalities.province, count(*) AS num \
                             FROM municipalities, {join_tags} \
                             WHERE join_tags.value \
                                     = municipalities.municipality \
                             GROUP BY join_tags.value \
-                            ORDER BY count(*) DESC \
+                            ORDER BY num DESC \
                                 LIMIT 15;".format(join_tags=join_tags)
 
 top_15_cities = execute_query(most_represented_cities)
