@@ -68,7 +68,7 @@ via primo maggio -> Via Primo Maggio
 ### Postal codes
 Admissible postal codes had to be five digits long, and have format _20xxx_ (with _2_ the Region Code for Lombardy, and _0_ the County Code for the Metropolitan City of Milan and the Province of Monza and Brianza). Even though most codes were consistent, for a significant group two problems arose: unusual length (rare) and misplacement (quite common).
 
-__Unusual code length.__ A few codes were four (e.g., _2013_), and one was six (i.e., _200149_) digits long. I padded the former with a trailing zero, since all began with _2_ (e.g., _20130_), and stripped the latter of the redundant digit (e.g., _20149_):
+__Unusual code length.__ A few codes were four (e.g., _2013_), and one was six (i.e., _200149_) digits long. I padded the former with a trailing zero, since they all began with _2_ (e.g., _20130_), and stripped the latter of the redundant digit (e.g., _20149_):
 ```python
 if len(match.group()) < 5:
     better_postcode = match.group() + '0' * (5-len(match.group()))
@@ -183,7 +183,7 @@ Busto Arsizio            Varese           76          <- Significant but unrelat
 ```
 So, how "dirty" is the OSM file? Two maps can help answer this question.
 ### Map of postal codes
-_Figure 1_ is a scatter plot of all postal codes in the sample. It was made with the [Basemap Toolkit](https://matplotlib.org/basemap/). Blue and green dots symbolise Milan and its metropolitan area, so they are definitely pertinent. Orange dots belong to the Province of Monza and Brianza: they are accepted (the latter was "officially created by splitting the north-eastern part from the Province of Milan, and became executive after June 2009"), though in the future they should be discarded. Red dots are out of place: the big clusters are Busto Arsizio (NW) and Saronno (NNW), both belonging to Varese, and Verderio (NE), in the Province of Lecco. To the South, a few spots relate to Pavia and Lodi.
+_Figure 1_ is a scatter plot of all postal codes in the sample. It was made with the [Basemap Toolkit](https://matplotlib.org/basemap/). Blue and green dots symbolise Milan and its metropolitan area, so they are definitely pertinent. Orange dots belong to the Province of Monza and Brianza: they are accepted (the latter was "officially created by splitting the north-eastern part from the Province of Milan, and became executive after June 2009"), though in the future they should be discarded. Red dots are out of place: the big clusters are Busto Arsizio (NW) and Saronno (NNW), both belonging to Varese, as well as Verderio (NE), in the Province of Lecco. To the South, a few spots relate to Pavia and Lodi.
 ### Map of parks
 _Figure 2_ maps all parks (i.e., the set of trees, benches, waste baskets, and drinking fountains) in the document. Apart from a few spots referring to the red clusters analysed above, the surprise is a huge green area to the South-East, clearly part of the Province of Lodi.  This area, which makes for half the parks in the file, should be removed.
 
@@ -201,7 +201,7 @@ _Figure 2_ maps all parks (i.e., the set of trees, benches, waste baskets, and d
 </table>
 
 ### Eateries in Milan
-To find the location of all eateries (i.e., restaurants, bars, cafés, and fast food places) in Milan, I plotted the coordinates of all nodes and ways that corresponded to such amenities and included the tag pair `key=city`, `value=Milano`. The spots, however, were fewer than expected (_Figure 3.A_). Why? As it turned out, amenity elements rarely feature the `key=city` tag; rather, they let the coordinates indicate the position:
+To locate all the eateries (i.e., restaurants, bars, cafés, and fast food places) in Milan, I traced the coordinates of all nodes and ways corresponding to the desired amenities and having the `key=city`, `value=Milano` tag pair. The spots, however, were far fewer than expected (_Figure 3.A_). Why? As it turned out, amenity elements rarely include the `key=city` tag, and simply let the coordinates hint at the municipality:
 ```xml
 <node changeset="43304255" id="1301095604" lat="45.4804683" lon="9.1716521"
    timestamp="2016-10-31T13:37:43Z" uid="417672" user="Guidus" version="2">
@@ -210,7 +210,7 @@ To find the location of all eateries (i.e., restaurants, bars, cafés, and fast 
   <tag k="cuisine" v="pizza" />
 </node>
 ```
-Therefore, I extracted the boundary coordinates (i.e., minimum and maximum latitude and longitude) from the set of tags having the `<tag k="addr:city" v="Milano" />` line, and mapped out all eateries within the boundaries (_Figure 3.B_):
+Therefore, I extracted the boundary coordinates (i.e., minimum and maximum latitude and longitude) from the set of tags with the string `<tag k="addr:city" v="Milano" />`, and mapped out all eateries within the boundaries (_Figure 3.B_):
 <table>
   <tr>
       <td align="center" colspan="2"><b>Figure 3: Eateries in Milan</b></td>
@@ -224,12 +224,13 @@ Therefore, I extracted the boundary coordinates (i.e., minimum and maximum latit
 </table>
 
 ### Most represented cuisines
+Mediterranean cuisine, by far the most popular, mainly encompasses pizzerias and traditional Italian restaurants.
 ```sql
 SELECT value, count(*) AS num
     FROM (SELECT * FROM nodes_tags UNION ALL SELECT * FROM ways_tags) join_tags
     WHERE key = 'cuisine' AND value != 'other'
     GROUP BY value
-    ORDER BY num DESC;
+    ORDER BY num DESC LIMIT 5;
 ```
 ```
 CUISINE                                   COUNT
@@ -239,7 +240,6 @@ asian...................................: 19
 north_american..........................: 19
 middle_eastern..........................: 6
 latin_american..........................: 2
-continental.............................: 1
-international...........................: 1
 ```
 ## Ideas for improvement
+The information contained in the OSM file for Milan, Italy is, at best, outdated. The two biggest issues seem to be the huge amount of data related to the Province of Monza and Brianza (several nodes and ways date back to 2006-2009, when the province was still part of Milan) and the vast park area belonging to the Province of Lodi. In my opinion, the most effective way to deal with the misplaced data is the two-step procedure outlined in the previous section: query the database to find the boundary coordinates of the Metropolitan City of Milan, then remove all elements outside the region borders. A limit of this procedure is the need to manually delete the unrelated points within the area boundaries, and a large number of these belong to the first category. Yet, with this method, the irrelevant park data should be effortlessly cleared away. As for the `addr:<type>` tags, I believe these have been successfully cleaned.
