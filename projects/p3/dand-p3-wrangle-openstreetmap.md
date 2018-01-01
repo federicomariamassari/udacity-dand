@@ -11,7 +11,7 @@ Milan is my hometown and the city I currently live in, so I'm curious to find ou
 The sample used for this project was one-tenth the size of the original OSM file (i.e., _k_ = 10) [see: [make_sample.py](https://github.com/federicomariamassari/udacity-dand/blob/master/projects/p3/python-modules/make_sample.py)].
 
 ## Data auditing and main problems encountered
-To audit the OSM file I used Python's `re` (regular expressions) module. I concentrated on four key features: street names `key=addr:street`, postal codes `key=addr:postcode`, city names `key=addr:city` and cuisines `key=cuisine`. The following are the main issues I encountered [see: [audit.py](https://github.com/federicomariamassari/udacity-dand/blob/master/projects/p3/python-modules/audit.py)].
+To audit the OSM file I used Python's `re` (regular expressions) module. I concentrated on four key features: street names `k="addr:street"`, postal codes `k="addr:postcode"`, city names `k="addr:city"` and cuisines `k="cuisine"`. The following are the main issues I encountered [see: [audit.py](https://github.com/federicomariamassari/udacity-dand/blob/master/projects/p3/python-modules/audit.py)].
 ### Street names
 - __Lowercase or abbreviated street type__: e.g., _"piazza"_ instead of _"Piazza"_ or _"V.le"_ instead of _"Viale"_;
 - __House number in street name__: e.g., _"Via Europa 30"_ instead of _"Via Europa"_;
@@ -201,7 +201,7 @@ _Figure 2_ maps all parks (i.e., the set of trees, benches, waste baskets, and d
 </table>
 
 ### Eateries in the City of Milan
-To mark the location of all eateries (i.e., restaurants, bars, cafés, and fast food places) in Milan, I traced the coordinates of all nodes and ways related to the desired amenities and also including the tag pair `key=city`, `value=Milano`. However, the outcome (_Figure 3.A_) was far from expected: why were the points so few? As it turns out, amenity elements rarely incorporate a `key=city` tag; rather, they let the coordinates (latitude, longitude) speak for themselves:
+To mark the location of all eateries (i.e., restaurants, bars, cafés, and fast food places) in Milan, I traced the coordinates of all nodes and ways related to the desired amenities and also including the tag pair `key=city`, `value=Milano`. The result (_Figure 3.A_) was far from expected: does the sample file really feature so few places? As it turned out, amenity elements rarely incorporate the `key=city` tag; rather, they let the coordinates indicate the position:
 ```xml
 <node changeset="43304255" id="1301095604" lat="45.4804683" lon="9.1716521"
    timestamp="2016-10-31T13:37:43Z" uid="417672" user="Guidus" version="2">
@@ -210,7 +210,7 @@ To mark the location of all eateries (i.e., restaurants, bars, cafés, and fast 
   <tag k="cuisine" v="pizza" />
 </node>
 ```
-
+Therefore, a better course of action was to extract the boundary coordinates (i.e., minimum and maximum latitude and longitude) from the set of tags having the `<tag k="addr:city" v="Milano" />` line, then plot all eateries within the boundaries (_Figure 3.B_):
 <table>
   <tr>
       <td align="center" colspan="2"><b>Figure 3: Eateries in Milan</b></td>
@@ -218,8 +218,8 @@ To mark the location of all eateries (i.e., restaurants, bars, cafés, and fast 
   <tr>
   </tr>
   <tr>
-    <td align="center"><img align="center" src="https://github.com/federicomariamassari/udacity-dand/blob/master/projects/p3/python-modules/img/eateries_by_city_tag.png"/><b>Figure 3.A</b>: Eateries by <code>key=city</code></td>
-    <td align="center"><img align="center" src="https://github.com/federicomariamassari/udacity-dand/blob/master/projects/p3/python-modules/img/eateries_by_boundaries.png"/><b>Figure 3.B</b>: Eateries by boundaries</td>
+    <td align="center"><b>Figure 3.A</b>: Eateries by <code>key=city</code><img align="center" src="https://github.com/federicomariamassari/udacity-dand/blob/master/projects/p3/python-modules/img/eateries_by_city_tag.png"/></td>
+    <td align="center"><b>Figure 3.B</b>: Eateries by boundaries<img align="center" src="https://github.com/federicomariamassari/udacity-dand/blob/master/projects/p3/python-modules/img/eateries_by_boundaries.png"/></td>
   </tr>
 </table>
 
