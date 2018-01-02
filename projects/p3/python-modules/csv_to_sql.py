@@ -53,12 +53,15 @@ def csv_to_sql(csv_file, directory=''):
     """Import the content of a csv file into a SQL database table, whose name
     is specified by the csv filename (without extension).
 
-    Input
-    ---------------------------------------------------------------------------
-    csv_file: str, required argument. The full name of the csv file, e.g.
-              'nodes.csv';
-    directory: str, optional argument. The folder containing the csv file.
-               Must include forward slash at the end, e.g. './'.
+    Arguments:
+        csv_file -- str. The full name of the csv file, e.g., 'nodes.csv';
+
+    Keyword arguments:
+        directory -- str. The folder containing the csv file. Must include
+            forward slash at the end, e.g. './' (default '').
+
+    Returns:
+        Updated SQL tables, with entries from the supplied csv files.
     """
     file_path = directory + csv_file
 

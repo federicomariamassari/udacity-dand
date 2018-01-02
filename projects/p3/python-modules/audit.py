@@ -188,6 +188,7 @@ Km|SP|SS  # Other street names with admissible number at the end
 """, re.VERBOSE | re.IGNORECASE)
 
 def is_street_name(elem):
+    """Return True if element is tag and key is 'addr:street'."""
     return (elem.tag == 'tag') & (elem.attrib['k'] == 'addr:street')
 
 
@@ -204,6 +205,7 @@ postcode_re = re.compile(r"""
 """, re.VERBOSE)
 
 def is_postcode(elem):
+    """Return True if element is tag and key is 'addr:postcode'."""
     return (elem.tag == 'tag') & (elem.attrib['k'] == 'addr:postcode')
 
 
@@ -231,6 +233,7 @@ city_name_re = re.compile(r"""
 """, re.VERBOSE)
 
 def is_city_name(elem):
+    """Return True if element is tag and key is 'addr:city'."""
     return (elem.tag == 'tag') & (elem.attrib['k'] == 'addr:city')
 
 
@@ -251,6 +254,7 @@ expected_cuisines = set(['african',
                          'international'])
 
 def is_cuisine(elem):
+    """Return True if element is tag and key is 'cuisine'."""
     return (elem.tag == 'tag') & (elem.attrib['k'] == 'cuisine')
 
 expected_cuisines_re = ''.join(['{}|'.format(cuisine) \
@@ -264,14 +268,20 @@ cuisine_re = re.compile(r'^(?!.*(' + expected_cuisines_re + ')$).*',
 # Define auxiliary functions
 def audit_feature(features, tag_value, compiled_re, expected=None):
     """Add data not conforming to specified criteria to a dictionary.
-    A generalised version of 'audit_street_type' [1].
 
-    Input
-    ---------------------------------------------------------------------------
-    features: dict, required. The dictionary to store problematic data.
-    tag_value: str, required. Tag value of 'addr:<tag>'.
-    compiled_re: _sre.SRE_Pattern, required. Compiled regex object.
-    expected: list or set, optional. Expected data features.
+    This function generalises: 'audit_street_type' [1].
+
+    Arguments:
+        features -- dict. The dictionary to store problematic data.
+        tag_value -- str. Tag value related to key 'addr:<tag>'.
+        compiled_re -- _sre.SRE_Pattern. Compiled regular expression.
+
+    Keyword arguments:
+        expected -- list or set. Expected data features (default None).
+
+    Returns:
+        A defaultdict augmented if and only if the entry matches any of the
+        regular expressions and is not in the list of expected values.
     """
     match = compiled_re.search(tag_value)
     if match:
@@ -294,6 +304,21 @@ re_library = [street_type_re,
               cuisine_re]
 
 def audit(OSM_FILE, re_library):
+    """Fill an empty dictionary with entries matching regular expressions.
+
+    Arguments:
+        OSM_FILE -- str. Name of the OSM file to audit, including extension.
+        re_library -- (list of) _sre.SRE_Pattern. Single regular expression
+            or list of regular expressions.
+
+    Returns:
+        A modified 'features' dictionary containing the matched key and a
+        dictionary of associated values in the dataset. For example:
+
+        defaultdict(set,
+                    {'25 Aprile': {'Piazzale 25 Aprile', 'Via 25 Aprile'},
+                     'C.na': {'C.na Bragosa', 'Strada per la C.na Gogna'}})
+    """
     # Generate empty defaultdicts
     street_features = defaultdict(set)
     postcode_features = defaultdict(set)

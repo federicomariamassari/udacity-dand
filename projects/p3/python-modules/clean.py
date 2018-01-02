@@ -81,6 +81,22 @@ mappings = [street_type_mapping,
 
 # Clean street types and names
 def update_name(name, re_query, query_type, mapping=None):
+    """Update inconsistent OSM tag values if related key is k="addr:street".
+
+    Arguments:
+        name -- str. Tag value to update, if its key is k="addr:street".
+        re_query -- _sre.SRE_Pattern. Compiled regular expression object.
+        query_type -- str or list of str. Label(s) to discriminate among
+            updating algorithms.
+
+    Keyword arguments:
+        mapping -- dict. Dictionary with 'key', 'value' respectively the
+            substring to replace and its updated version (default None).
+
+    Returns:
+        An updated k="addr:street" tag value, processed with the desired
+        algorithm and using the provided mapping, if applicable.
+    """
     match = re_query.search(name)
     better_name = name
     if match:
@@ -165,6 +181,15 @@ def update_name(name, re_query, query_type, mapping=None):
 """(3) CLEANING POSTAL CODES
 """
 def update_postcode(postcode, re_query):
+    """Update inconsistent OSM tag values if related key is k="addr:postcode".
+
+    Arguments:
+        postcode -- str. Tag value to update, if its key is k="addr:postcode".
+        re_query -- _sre.SRE_Pattern. Compiled regular expression object.
+
+    Returns:
+        An updated k="addr:postcode" tag value.
+    """
     match = re_query.search(postcode)
     better_postcode = postcode
     if match:
@@ -187,6 +212,15 @@ def update_postcode(postcode, re_query):
 """(4) CLEANING CITY NAMES
 """
 def update_city_name(city_name, re_query):
+    """Update inconsistent OSM tag values if related key is k="addr:city".
+
+    Arguments:
+        city_name -- str. Tag value to update, if its key is k="addr:city".
+        re_query -- _sre.SRE_Pattern. Compiled regular expression object.
+
+    Returns:
+        An updated k="addr:city" tag value.
+    """
     match = re_query.search(city_name)
     better_city_name = city_name
     if match:
@@ -242,6 +276,21 @@ def update_city_name(city_name, re_query):
 """(5) CLEANING CUISINES
 """
 def update_cuisine(cuisine, re_query):
+    """Update inconsistent OSM tag values if related key is k="cuisine".
+
+    Aggregate cuisine values into eight distinct categories by geographical
+    area. Include a ninth label, 'international', for eateries offering more
+    cuisines. The aggregation is made for explanatory analysis, and should
+    not be applied to the original OSM document.
+
+    Arguments:
+        cuisine -- str. Tag value to update, if its key is k="cuisine".
+        re_query -- _sre.SRE_Pattern. Compiled regular expression object.
+
+    Returns:
+        An updated k="cuisine" tag value.
+    """
+
     # Add lists to perform membership operations
     african = ['egyptian', 'eritrean', 'moroccan']
 
@@ -311,6 +360,25 @@ Note: depending on 'k', the parameter governing the size of the sample file
 in 'make_sample.py', some dictionaries may be empty.
 """
 def print_library(dictionary, re_library, query_types=None, mappings=None):
+    """Update and print values from a supplied dictionary of problematic data.
+
+    Arguments:
+        dictionary -- dict. Dictionary of problematic data, output of the
+            audit.py function 'audit'.
+        re_library -- (list of) _sre.SRE_Pattern. Single regular expression
+            or list of regular expressions.
+
+    Keyword arguments:
+        query_types -- str. or list of str. Label(s) to discriminate among
+            updating algorithms (default None).
+        mapping -- dict. Dictionary with 'key', 'value' respectively the
+            substring to replace and its updated version (default None).
+
+    Prints:
+        The list of all updated entries in the provided dictionary, in the
+        form: original value -> updated value. Only display pairs for which
+        original value != updated value.
+    """
     for dict_values in dictionary.values():
         for value in dict_values:
             better_value = value

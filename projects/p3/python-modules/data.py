@@ -95,13 +95,33 @@ returns a dictionary.
 def shape_element(element, node_attr_fields=NODE_FIELDS,
                   way_attr_fields=WAY_FIELDS, problem_chars=PROBLEMCHARS,
                   lower_colon=LOWER_COLON, default_tag_type='regular'):
+    """Shape OSM element into dictionaries, to later store in csv documents.
+
+    Arguments:
+        element -- iterparse Element object. The element to process, output
+            of the xml.etree.cElementTree 'iterparse' function.
+
+    Keyword arguments:
+        node_attr_fields, way_attr_fields -- lists of str. Lists of fields,
+            to become the headers of, respectively, nodes.csv and ways.csv.
+        problem_chars -- _sre.SRE_Pattern. Compiled regular expression to
+            detect problematic characters.
+        lower_colon -- _sre.SRE_Pattern. Compiled regular expression to detect
+            tags with colon, e.g., "addr:street".
+        default_tag_type -- str. Placeholder for all tags with empty type.
+
+    Returns:
+        A dictionary of the form {'field': 'element'} for the csv documents:
+        'nodes.csv', 'nodes_tags.csv', 'ways.csv', 'ways_nodes.csv', and
+        'ways_tags.csv'.
+    """
 
     node_attribs = {}
     way_attribs = {}
     way_nodes = []
     tags = []
 
-    # The starting index of the 'nd' tag in 'way_nodes.csv', see below
+    # The starting index of the 'nd' tag in 'ways_nodes.csv', see below
     position = 0
 
     # For each child (secondary tag) of <node> or <way>, look for <tag>
@@ -209,7 +229,7 @@ def shape_element(element, node_attr_fields=NODE_FIELDS,
             if tag:
                 tags.append(tag)
 
-        """'way_nodes.csv' holds a list of dictionaries, one for each 'nd'
+        """'ways_nodes.csv' holds a list of dictionaries, one for each 'nd'
         child tag. Each dictionary has the fields:
          - 'id': the top level element (way) id;
          - 'node_id': the ref attribute value of the 'nd' tag;
@@ -241,7 +261,6 @@ def shape_element(element, node_attr_fields=NODE_FIELDS,
 # Helper functions
 def get_element(osm_file, tags=('node', 'way', 'relation')):
     """Yield element if it is the right type of tag"""
-
     context = ET.iterparse(osm_file, events=('start', 'end'))
     _, root = next(context)
     for event, elem in context:
@@ -261,8 +280,7 @@ def validate_element(element, validator, schema=SCHEMA):
 
 # Main function
 def process_map(file_in, validate):
-    """Iteratively process each XML element and write to csv(s)
-    """
+    """Iteratively process each XML element and write to csv(s)"""
 
     """Replace 'wb' with 'w' and 'UnicodeDictWriter()' with 'csv.DictWriter()',
     to reflect conversion from Python 2 to Python 3 [3].
@@ -362,8 +380,7 @@ the SQL database, replace 'xx' with '00', the 'neutral' code, applying function
 'travels_with_spouse' in [5].
 """
 def ends_with_xx(df, postcode):
-    """Replace the last two 'xx' digits in a postcode with '00'.
-    """
+    """Replace the last two 'xx' digits in a postcode with '00'."""
     if postcode.endswith('xx'):
         df['postcode'] = df['postcode'][:-2] + '00'
     return df

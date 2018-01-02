@@ -34,8 +34,7 @@ document. As of November 2017, the sample size is ~850/k MB.
 k = 100     # Resulting sample ~8.5 MB.
 
 def get_element(osm_file, tags=('node', 'way', 'relation')):
-    """Yield element if it is the right type of tag [2].
-    """
+    """Yield element if it is the right type of tag [2]."""
     context = iter(ET.iterparse(osm_file, events=('start', 'end')))
     _, root = next(context)
     for event, elem in context:

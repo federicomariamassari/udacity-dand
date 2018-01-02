@@ -124,7 +124,7 @@ conn = sqlite3.connect(sqlite_database)
 c = conn.cursor()
 
 def execute_query(query):
-    # Execute SQL query and return a list of fetched results (in string format)
+    """Execute SQL query and return a list of fetched results as strings."""
     c.execute(query)
     return c.fetchall()
 
@@ -258,31 +258,35 @@ print("Number of 'fixme' tags: {}".format(number_of_fixme_tags[0][0]))
 def street_map(query, query_constr, diff, colors, labels, title, fig_name, \
                 query_keys=None, join_tags=join_tags, \
                 service='ESRI_StreetMap_World_2D'):
-
     """Scatter plot OpenStreetMap data on top of a 2D world map.
 
-    Input
-    ---------------------------------------------------------------------------
-    query: str, required argument. The SQL query to process. Must produce
-           a table of coordinates (longitude, latitude). Must contain a pair
-           of brackets {}, in which case list 'query_constr' must also be
-           provided. If an additional pair of brackets is present, also supply
-           'query_keys'.
-    query_constr: list of str, required argument. The list of constraints on
-                  tag values.
-    diff: float, required argument. Parameter added to the max, or subtracted
-          to the min, longitude and latitude values to zoom on the map, which
-          is centered on the data.
-    colors, labels: lists of str, required arguments. List of colors and labels
-                    for the scatter plot.
-    title: str, required argument. Title of the plot.
-    fig_name: str, required argument. The name of the saved figure, without
-              extension (default='png'). The figures are stored in directory
-              'img', which is generated if not already present.
-    query_keys: list of str, optional argument. List of constraints on tag keys.
-    join_tags: str, optional argument. Auxiliary SQL query string.
-    service: str, optional argument. The ArcGIS Server REST API used to get,
-             and display as plot background, an area of the world map [7].
+    Arguments:
+        query -- str. The SQL query to process. Must produce a table of
+            coordinates (longitude, latitude). Must contain a pair of brackets
+            {}, in which case list 'query_constr' must also be provided. If an
+            additional pair of brackets is present, also supply 'query_keys'.
+        query_constr -- list of str.. The list of constraints on tag values.
+        diff -- float. Parameter added to the max, or subtracted to the min,
+            longitude and latitude values to zoom on the map, which is centered
+            on the data.
+        colors, labels -- lists of str. List of colors and labels for the
+            scatter plot.
+        title -- str. Title of the plot.
+        fig_name -- str. The name of the saved figure, without extension
+        (default 'png'). The figures are stored in directory 'img', which is
+        generated if not already present.
+
+    Keyword arguments:
+        query_keys -- list of str. List of constraints on tag keys.
+        join_tags -- str. Auxiliary SQL query string.
+        service -- str. The ArcGIS Server REST API used to get, and display as
+            plot background, an area of the world map [7].
+
+    Returns:
+        plt_flag -- A flag used to notify the user whenever map creation is
+            successful (i.e., there is at least one mark to plot).
+        A png figure (2D world map with scattered OSM data) available in the
+        'img' folder, if applicable.
     """
 
     # Assign convenient name to frequently used iterable object
