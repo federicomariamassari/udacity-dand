@@ -1,4 +1,4 @@
-'''Parse the elements in an OpenStreetMap file, transforming them from document
+"""Parse the elements in an OpenStreetMap file, transforming them from document
 format to tabular format, and write the data to .csv files, to be imported to
 a SQL database as tables. Additionally, generate a 'municipality.csv' file
 including all municipalities in Lombardy, the provinces they belong to, and
@@ -35,7 +35,7 @@ References
     p2/dand-p2-investigate-a-dataset.ipynb
 
 2017 - Federico Maria Massari / federico.massari@bocconialumni.it
-'''
+"""
 
 import os
 import csv
@@ -51,15 +51,15 @@ from schema import schema
 import audit
 import clean
 
-'''Import the list of compiled regular expressions from audit.py, and the lists
+"""Import the list of compiled regular expressions from audit.py, and the lists
 of query_types and mappings from clean.py, all to be used in 'shape_element'.
-'''
+"""
 from audit import expected_types, re_library
 from clean import query_types, mappings
 
-'''A. OPENSTREETMAP DATA
+"""A. OPENSTREETMAP DATA
 -------------------------------------------------------------------------------
-'''
+"""
 
 OSM_PATH = 'milan_italy_sample.osm'
 
@@ -79,9 +79,9 @@ LOWER_COLON = re.compile(r'^([a-z]|_)+:([a-z]|_)+')
 
 SCHEMA = schema
 
-'''Make sure the field order in the csvs matches the column order in the SQL
+"""Make sure the field order in the csvs matches the column order in the SQL
 table schema.
-'''
+"""
 NODE_FIELDS = ['id', 'lat', 'lon', 'user', 'uid', 'version', 'changeset',
                'timestamp']
 NODE_TAGS_FIELDS = ['id', 'key', 'value', 'type']
@@ -89,9 +89,9 @@ WAY_FIELDS = ['id', 'user', 'uid', 'version', 'changeset', 'timestamp']
 WAY_TAGS_FIELDS = ['id', 'key', 'value', 'type']
 WAY_NODES_FIELDS = ['id', 'node_id', 'position']
 
-'''The 'shape_element' function takes as input an iterparse Element object and
+"""The 'shape_element' function takes as input an iterparse Element object and
 returns a dictionary.
-'''
+"""
 def shape_element(element, node_attr_fields=NODE_FIELDS,
                   way_attr_fields=WAY_FIELDS, problem_chars=PROBLEMCHARS,
                   lower_colon=LOWER_COLON, default_tag_type='regular'):
@@ -115,27 +115,27 @@ def shape_element(element, node_attr_fields=NODE_FIELDS,
 
             elif lower_colon.search(child.attrib['k']):
 
-                '''If tag['type'] == 'street' but tag['value'] does not contain
+                """If tag['type'] == 'street' but tag['value'] does not contain
                 any of the street types included in 'expected_types' (audit.py),
                 e.g. 'Al Canele', ignore it.
-                '''
+                """
                 if (child.attrib['k'].split(':', 1)[1] == 'street') & \
                 (child.attrib['v'].split(' ', 1)[0] not in expected_types):
                     continue
 
                 else:
-                    '''If tag 'k' value contains colon, set the character
+                    """If tag 'k' value contains colon, set the character
                     before colon as the tag type, and characters after it as
                     the tag key. If there are additional colons in the 'k'
                     value, ignore and keep as part of the tag key.
-                    '''
+                    """
                     tag['id'] = element.attrib['id']
                     tag['type'] = child.attrib['k'].split(':', 1)[0]
                     tag['key'] = child.attrib['k'].split(':', 1)[1]
 
-                    '''Programmatically clean 'street', 'postcode', and 'city'
+                    """Programmatically clean 'street', 'postcode', and 'city'
                     tag values using functions from module clean.py
-                    '''
+                    """
                     if tag['key'] == 'street':
                         for i in range(len(query_types)):
                             child.attrib['v'] = \
@@ -156,9 +156,9 @@ def shape_element(element, node_attr_fields=NODE_FIELDS,
                         tag['value'] = child.attrib['v']
 
             else:
-                '''Set tag type to 'regular' (default) if no colon in the tag
+                """Set tag type to 'regular' (default) if no colon in the tag
                 'k' value is present.
-                '''
+                """
                 tag['type'] = default_tag_type
                 tag['key'] = child.attrib['k']
                 tag['value'] = child.attrib['v']
@@ -192,11 +192,11 @@ def shape_element(element, node_attr_fields=NODE_FIELDS,
                             else:
                                 tag['value'] = 'international'
 
-                    '''
+                    """
                     Convert these tags only if no stronger qualifier is
                     available, e.g. if 'steak' -> 'north_american', but
                     if 'brazilian;steak' do not set to 'international'.
-                    '''
+                    """
                     generic_tags = ['meat', 'steak', 'steak_house']
                     if child.attrib['v'].strip in generic_tags:
                         tag['value'] = 'north_american'
@@ -209,13 +209,13 @@ def shape_element(element, node_attr_fields=NODE_FIELDS,
             if tag:
                 tags.append(tag)
 
-        ''''way_nodes.csv' holds a list of dictionaries, one for each 'nd'
+        """'way_nodes.csv' holds a list of dictionaries, one for each 'nd'
         child tag. Each dictionary has the fields:
          - 'id': the top level element (way) id;
          - 'node_id': the ref attribute value of the 'nd' tag;
          - 'position': the index, starting at 0, of the 'nd' tag, i.e. what
             order the 'nd' tag appears within the way element.
-        '''
+        """
         way_node = {}
         if child.tag == 'nd':
             way_node['id'] = element.attrib['id']
@@ -224,9 +224,9 @@ def shape_element(element, node_attr_fields=NODE_FIELDS,
             way_nodes.append(way_node)
             position += 1
 
-    '''Return dictionaries for 'nodes.csv', 'nodes_tags.csv', 'ways.csv', and
+    """Return dictionaries for 'nodes.csv', 'nodes_tags.csv', 'ways.csv', and
     'ways_tags.csv'.
-    '''
+    """
     if element.tag == 'node':
         for field in NODE_FIELDS:
             node_attribs[field] = element.attrib[field]
@@ -240,7 +240,7 @@ def shape_element(element, node_attr_fields=NODE_FIELDS,
 
 # Helper functions
 def get_element(osm_file, tags=('node', 'way', 'relation')):
-    '''Yield element if it is the right type of tag'''
+    """Yield element if it is the right type of tag"""
 
     context = ET.iterparse(osm_file, events=('start', 'end'))
     _, root = next(context)
@@ -250,7 +250,7 @@ def get_element(osm_file, tags=('node', 'way', 'relation')):
             root.clear()
 
 def validate_element(element, validator, schema=SCHEMA):
-    '''Raise ValidationError if element does not match schema'''
+    """Raise ValidationError if element does not match schema"""
     if validator.validate(element, schema) is not True:
         field, errors = next(validator.errors.items())
         message_string = "\nElement of type '{0}' has following errors:\n{1}"
@@ -261,12 +261,12 @@ def validate_element(element, validator, schema=SCHEMA):
 
 # Main function
 def process_map(file_in, validate):
-    '''Iteratively process each XML element and write to csv(s)
-    '''
+    """Iteratively process each XML element and write to csv(s)
+    """
 
-    '''Replace 'wb' with 'w' and 'UnicodeDictWriter()' with 'csv.DictWriter()',
+    """Replace 'wb' with 'w' and 'UnicodeDictWriter()' with 'csv.DictWriter()',
     to reflect conversion from Python 2 to Python 3 [3].
-    '''
+    """
     with codecs.open(NODES_PATH, 'w') as nodes_file, \
          codecs.open(NODE_TAGS_PATH, 'w') as nodes_tags_file, \
          codecs.open(WAYS_PATH, 'w') as ways_file, \
@@ -303,13 +303,13 @@ def process_map(file_in, validate):
 
 
 if __name__ == '__main__':
-    '''Note: Validation is ~ 10X slower. For the project consider using a small
+    """Note: Validation is ~ 10X slower. For the project consider using a small
     sample of the map when validating.
-    '''
+    """
     process_map(OSM_PATH, validate=False)
 
 
-'''B. ADDITIONAL SOURCES
+"""B. ADDITIONAL SOURCES
 -------------------------------------------------------------------------------
 Add a sixth .csv file, 'municipalities.csv', including all municipalities in
 Lombardy, together with: 1. the province they belong to; 2. the province code;
@@ -319,7 +319,7 @@ in the 'nodes_tags' table with its province. A copy of the raw .txt file used
 is available in the GitHub repository where this script is located. Original
 zipped file available at: http://lab.comuni-italiani.it/files/listacomuni.zip
 Unzip before running this script.
-'''
+"""
 
 # Store the content of the txt file in a Pandas DataFrame object
 df = pd.read_csv('listacomuni.txt', delimiter=';', encoding='latin-1')
@@ -355,15 +355,15 @@ df = df.reindex(columns=sorted_cols)
 # Single out municipalities in the Lombardy Region, store in 'data'
 data = df.loc[df['region'] == 'Lombardy']
 
-'''Three cities in the DataFrame have multiple postcodes: Milano (201xx),
+"""Three cities in the DataFrame have multiple postcodes: Milano (201xx),
 Bergamo (241xx), and Brescia (251xx). To avoid data type inconsistencies in
 the SQL database, replace 'xx' with '00', the 'neutral' code, applying function
 'ends_with_xx', to each row in df['postcode']. The function is a variation of
 'travels_with_spouse' in [5].
-'''
+"""
 def ends_with_xx(df, postcode):
-    '''Replace the last two 'xx' digits in a postcode with '00'.
-    '''
+    """Replace the last two 'xx' digits in a postcode with '00'.
+    """
     if postcode.endswith('xx'):
         df['postcode'] = df['postcode'][:-2] + '00'
     return df

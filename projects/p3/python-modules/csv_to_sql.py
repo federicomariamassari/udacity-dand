@@ -1,4 +1,4 @@
-'''Import the content of the .csv files into a SQL database.
+"""Import the content of the .csv files into a SQL database.
 
 Note: Use Python 3 to run this script.
 
@@ -16,7 +16,7 @@ References
 [5] https://en.wikipedia.org/wiki/Prepared_statement
 
 2017 - Federico Maria Massari / federico.massari@bocconialumni.it
-'''
+"""
 
 import sqlite3
 import csv
@@ -35,22 +35,22 @@ c = conn.cursor()
 dw_schema = 'data_wrangling_schema.sql'
 query = open(dw_schema, 'r').read()
 
-'''Import data wrangling schema into the open database. Using .execute() will
+"""Import data wrangling schema into the open database. Using .execute() will
 raise 'Warning: You can only execute one statement at a time.' .executescript()
 allows instead to execute multiple SQL statements with one single call [3].
-'''
+"""
 c.executescript(query)
 
-'''The database now contains five empty tables accessible via Terminal or
+"""The database now contains five empty tables accessible via Terminal or
 Command Prompt:
 $ sqlite3 milan_italy.db
 sqlite> .tables                 <- For a list of tables in the database
 sqlite> .schema <tablename>     <- For the schema of individual tables
-'''
+"""
 
 # Fill database tables with the content of the csv files output of data.py [4]
 def csv_to_sql(csv_file, directory=''):
-    '''Import the content of a csv file into a SQL database table, whose name
+    """Import the content of a csv file into a SQL database table, whose name
     is specified by the csv filename (without extension).
 
     Input
@@ -59,7 +59,7 @@ def csv_to_sql(csv_file, directory=''):
               'nodes.csv';
     directory: str, optional argument. The folder containing the csv file.
                Must include forward slash at the end, e.g. './'.
-    '''
+    """
     file_path = directory + csv_file
 
     # Read header from csv file and store it in a list
@@ -71,7 +71,7 @@ def csv_to_sql(csv_file, directory=''):
         # For 'nodes', the inner list comprehension gives i['id'], i['lat'], ...
         to_db = [[i[field] for field in fields] for i in dr]
 
-    '''Use .executemany() to execute an SQL command against all parameter
+    """Use .executemany() to execute an SQL command against all parameter
     sequences or mappings found in the sequence 'to_db' [2].
 
     The syntax for executemany() [2] is executemany(SQL, [parameters]), where
@@ -88,7 +88,7 @@ def csv_to_sql(csv_file, directory=''):
                            space; then strip the last comma and blank space,
                            e.g. len(fields) = 8 -> '?, '*8 -> '?, ?, ?, ...,
                            ?, ' -> (rstrip) '?, ...., ?'.
-    '''
+    """
     c.executemany('INSERT INTO {} ({}) VALUES ({});'\
                 .format(csv_file.split('.')[0], ', '.join(fields), \
                         ('?, '*len(fields)).rstrip(', ')), to_db)

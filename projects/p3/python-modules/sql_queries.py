@@ -1,4 +1,4 @@
-'''Provide a statistical overview of the dataset using SQL queries.
+"""Provide a statistical overview of the dataset using SQL queries.
 
 Note: Use Python 3 to run this script.
 
@@ -51,7 +51,7 @@ Lombardy postcodes resources:
 [12] https://en.wikipedia.org/wiki/Province_of_Monza_and_Brianza
 
 2017 - Federico Maria Massari / federico.massari@bocconialumni.it
-'''
+"""
 
 import os
 import time
@@ -65,9 +65,9 @@ import seaborn as sns
 # Time script execution
 tic = time.time()
 
-'''Make directory img to store output figures [2] if not already present.
+"""Make directory img to store output figures [2] if not already present.
 If so, set flag = 0, whith 'flag' a variable used when saving maps to file.
-'''
+"""
 directory = './img'
 flag = -1
 if not os.path.exists(directory):
@@ -79,7 +79,7 @@ import warnings
 import matplotlib.cbook
 warnings.filterwarnings('ignore', category=matplotlib.cbook.mplDeprecation)
 
-'''A. REQUIRED QUERIES
+"""A. REQUIRED QUERIES
 -------------------------------------------------------------------------------
 
 A.1 - Size of files in the current working directory (Python script)
@@ -87,7 +87,7 @@ A.1 - Size of files in the current working directory (Python script)
 This Python script, slightly modified from [4] and [5], prints both names and
 size (in descending order) of all .csv, .db, and .osm files in the current
 working directory.
-'''
+"""
 files_list = []
 
 # The files are supposed to be in the same directory. Modify path otherwise
@@ -128,8 +128,8 @@ def execute_query(query):
     c.execute(query)
     return c.fetchall()
 
-'''A.2 - Number of unique users (modified from [1])
-'''
+"""A.2 - Number of unique users (modified from [1])
+"""
 unique = "SELECT count(DISTINCT e.{0}) AS num \
             FROM (SELECT nodes.{0} FROM nodes \
                 UNION ALL \
@@ -142,9 +142,9 @@ print('\n\nQUERY 2: Find the number of unique users.\n')
 print("No. of unique users, 'user' tag: {}".format(n_unique_users[0][0]))
 print("No. of unique users, 'uid' tag: {}".format(n_unique_uids[0][0]))
 
-'''If the results above are different, separately look for discrepancies in the
+"""If the results above are different, separately look for discrepancies in the
 two tables 'nodes', 'ways'.
-'''
+"""
 if n_unique_users != n_unique_uids:
     print('\nIf the numbers above differ, find incongruous records:\n')
 
@@ -169,8 +169,8 @@ if n_unique_users != n_unique_uids:
             # Also print the total number of incongruous entries in the table
             print('count: {}'.format(len(table)))
 
-'''A.3 - Top 15 contributing users (taken from [1])
-'''
+"""A.3 - Top 15 contributing users (taken from [1])
+"""
 top_contributing = "SELECT all_users.user, count(*) AS num \
                         FROM (SELECT user FROM nodes \
                                 UNION ALL \
@@ -187,8 +187,8 @@ print('{:<42s}{}'.format('USER','NO.')), print('-'*51)
 for username, contributions in top_15:
     print('{:.<40s}: {}'.format(username, contributions))
 
-'''A.4 - Number of nodes and ways in the dataset [1]
-'''
+"""A.4 - Number of nodes and ways in the dataset [1]
+"""
 number_of_nodes = execute_query("SELECT count(*) FROM nodes;")
 number_of_ways = execute_query("SELECT count(*) FROM ways;")
 
@@ -196,19 +196,19 @@ print('\n\nQUERY 4: Find the total number of nodes and ways.\n')
 print('Number of nodes: {}'.format(number_of_nodes[0][0]))
 print('Number of ways: {}'.format(number_of_ways[0][0]))
 
-'''A.5 - Number of educational establishments by level
+"""A.5 - Number of educational establishments by level
 
 Find all kindergartens (age: 0-4), schools (5-18), universities, and colleges.
 'university' refers to institutions of higher education, 'college' for further
 education. In the query, include both key tags 'amenity', 'building'. Despite
 some overlapping, the result is more reasonable than with 'amenity' alone.
-'''
+"""
 
-'''Auxiliary SQL query string: join tables 'nodes_tags', 'ways_tags' and name
+"""Auxiliary SQL query string: join tables 'nodes_tags', 'ways_tags' and name
 the output 'join_tags'. Factor out as it is frequently used and to make queries
 more readable. Every time {join_tags} appears in a query, replace it with this
 string.
-'''
+"""
 join_tags = '(SELECT * FROM nodes_tags \
                 UNION ALL \
                 SELECT * FROM ways_tags) join_tags'
@@ -235,12 +235,12 @@ print('{:<42s}{}'.format('ESTABLISHMENT','COUNT')), print('-'*51)
 for establishment, count_school in school_by_type:
     print('{:.<40s}: {}'.format(establishment, count_school))
 
-'''A.6 - Number of 'fixme' tags
+"""A.6 - Number of 'fixme' tags
 
 Count the number of 'fixme' key, value, and type tags. Use LIKE '%fixme' to
 cover all possible cases: 1) key='fixme'; 2) key='note', value='FIXME'; 3)
 key='note', value='FIXME: ...'. '%<text>' finds any value starting with <text>.
-'''
+"""
 fixme = "SELECT count(*) \
             FROM {join_tags} \
             WHERE join_tags.key LIKE '%fixme' \
@@ -252,14 +252,14 @@ number_of_fixme_tags = execute_query(fixme)
 print('\n\nQUERY 6: Find the number of tags that require fixing.\n')
 print("Number of 'fixme' tags: {}".format(number_of_fixme_tags[0][0]))
 
-'''B. ADDITIONAL STATISTICS
+"""B. ADDITIONAL STATISTICS
 -------------------------------------------------------------------------------
-'''
+"""
 def street_map(query, query_constr, diff, colors, labels, title, fig_name, \
                 query_keys=None, join_tags=join_tags, \
                 service='ESRI_StreetMap_World_2D'):
 
-    '''Scatter plot OpenStreetMap data on top of a 2D world map.
+    """Scatter plot OpenStreetMap data on top of a 2D world map.
 
     Input
     ---------------------------------------------------------------------------
@@ -283,7 +283,7 @@ def street_map(query, query_constr, diff, colors, labels, title, fig_name, \
     join_tags: str, optional argument. Auxiliary SQL query string.
     service: str, optional argument. The ArcGIS Server REST API used to get,
              and display as plot background, an area of the world map [7].
-    '''
+    """
 
     # Assign convenient name to frequently used iterable object
     n = range(len(query_constr))
@@ -291,10 +291,10 @@ def street_map(query, query_constr, diff, colors, labels, title, fig_name, \
     # Use this flag to notify user when a picture is saved in './img' folder
     plt_flag = -1
 
-    '''Generate a list of full SQL queries, each one obtained by replacing the
+    """Generate a list of full SQL queries, each one obtained by replacing the
     {} brackets in the supplied query with the string element in 'query_constr'
     (and 'query_keys', if applicable).
-    '''
+    """
     if query_keys != None:
         full_query = [query.format(query_keys[i], query_constr[i], \
                         join_tags=join_tags) for i in n]
@@ -303,9 +303,9 @@ def street_map(query, query_constr, diff, colors, labels, title, fig_name, \
         full_query = [query.format(query_constr[i], join_tags=join_tags) \
                         for i in n]
 
-    '''Store query results into NumPy arrays, convert string elements into
+    """Store query results into NumPy arrays, convert string elements into
     floating point values (dtype=np.float).
-    '''
+    """
     query_res = [np.array(execute_query(full_query[i]), dtype=np.float) \
                     for i in n]
 
@@ -324,9 +324,9 @@ def street_map(query, query_constr, diff, colors, labels, title, fig_name, \
     if range(len(lons)) != n:
         n = range(len(lons))
 
-    '''If lons, lats are not empty, find the minimum and maximum longitude and
+    """If lons, lats are not empty, find the minimum and maximum longitude and
     latitude in the set, then plot the data using basemap. Otherwise, pass.
-    '''
+    """
     try:
         concat_lons = np.concatenate([lons[i] for i in n])
         concat_lats = np.concatenate([lats[i] for i in n])
@@ -335,22 +335,22 @@ def street_map(query, query_constr, diff, colors, labels, title, fig_name, \
 
         plt.figure(figsize=(10,8))
 
-        '''The matplotlib basemap toolkit is a library for plotting 2D data on
+        """The matplotlib basemap toolkit is a library for plotting 2D data on
         maps in Python [8]. It allows to transform coordinates to map projec-
         tions so that matplotlib can then be used to plot on such transformed
         coordinates. The 'Basemap' class creates the map [9]; the boundaries
         are set by supplying minimum and maximum longitude (x-axis limits) and
         latitude (y-axis limits). The map is centered on the data to plot,
         using both the previously found minima and maxima, and parameter 'diff'.
-        '''
+        """
         m = Basemap(llcrnrlon=min_lon-diff, llcrnrlat=min_lat-diff, \
                     urcrnrlon=max_lon+diff, urcrnrlat=max_lat+diff, \
                     resolution = 'l')
 
-        '''Retrieve background map using the ArcGIS Server REST API and display
+        """Retrieve background map using the ArcGIS Server REST API and display
         it on the plot. 'ESRI_StreetMap_World_2D' is the default map server.
         * IMPORTANT: Internet connection required.
-        '''
+        """
         m.arcgisimage(service=service, xpixels = 900)
 
         # Supply coordinates to the Basemap object
@@ -385,8 +385,8 @@ def street_map(query, query_constr, diff, colors, labels, title, fig_name, \
 
     return plt_flag
 
-'''B.1 - Most represented cities
-'''
+"""B.1 - Most represented cities
+"""
 most_represented_cities = "SELECT join_tags.value, \
                                     municipalities.province, count(*) AS num \
                             FROM municipalities, {join_tags} \
@@ -407,7 +407,7 @@ print('-'*51)
 for municipality, province, count in top_15_cities:
     print('{:<25}{:<17}{}'.format(municipality, province, count))
 
-'''B.2 - Postal Codes
+"""B.2 - Postal Codes
 
 Admissible postcodes in the OSM file for Milan, Italy are [11]:
 
@@ -419,11 +419,11 @@ Admissible postcodes in the OSM file for Milan, Italy are [11]:
 north-eastern part from the province of Milan [...] and became executive after
 [...] June 2009' [12]. Postcodes related to this province are very common in
 the OSM file; however, these do not belong in the dataset anymore.
-'''
+"""
 
-'''SQL query to find the coordinates of a set of OpenStreetMap nodes, given
+"""SQL query to find the coordinates of a set of OpenStreetMap nodes, given
 input constraints on tag keys and values. Valid for 'postcodes', 'parks'.
-'''
+"""
 query = "SELECT nodes.lon, nodes.lat \
             FROM nodes, {join_tags} \
             WHERE join_tags.id = nodes.id \
@@ -446,16 +446,16 @@ postcode_labels = ['City of Milan', 'Municipalities in the MCM area', \
 postcode_title = 'Map of postal codes in the OpenStreetMap sample file for \
 Milan, Italy'
 
-'''Create a visual map of all postcodes in the OSM sample file for Milan, Italy.
+"""Create a visual map of all postcodes in the OSM sample file for Milan, Italy.
 Store output figure in './img' folder with name 'postcode.png', if flag != -1.
-'''
+"""
 postcode_fig_title = 'postcodes'
 postcode_flag = street_map(query, postcode_constr, 0.18, postcode_colors,
             postcode_labels, postcode_title, postcode_fig_title, postcode_keys)
 
-'''If (postcode < 20010) | (postcode > 20900), find which city and province it
+"""If (postcode < 20010) | (postcode > 20900), find which city and province it
 refers to:
-'''
+"""
 postcode_by_province = "SELECT municipalities.postcode AS postcode, \
                                 join_tags.value AS city_name, \
                                 municipalities.province AS province \
@@ -479,8 +479,8 @@ for postcode, municipality, province in pbp:
 # Print total number of entries in the table
 print('count: {}'.format(len(pbp)))
 
-'''B.3 - Most popular shops
-'''
+"""B.3 - Most popular shops
+"""
 shops = "SELECT value, count(*) AS num \
             FROM {join_tags} \
             WHERE key = 'shop' \
@@ -496,15 +496,15 @@ print('-'*51)
 for shop, count in shops_exec:
     print('{:.<40}: {}'.format(shop, count))
 
-'''A prominent tag value related to shops is value='yes'. Use of this tag is
+"""A prominent tag value related to shops is value='yes'. Use of this tag is
 considered bad practice by wiki.openstreetmap.org: find out where, when, and
 by whom it was used. Only return the most recent 15 entries.
-'''
+"""
 
-'''Print date (YYYY-MM-DD), user, municipality, and province of all entries
+"""Print date (YYYY-MM-DD), user, municipality, and province of all entries
 where key='shop' and value='yes'. Date is extracted by selecting the first 10
 characters from 'timestamp' using SUBSTR().
-'''
+"""
 shops_yes = "SELECT SUBSTR(join_nodes.timestamp, -10,-10) AS date, \
                     join_nodes.user, join_tags.value, municipalities.province \
                 FROM {join_tags}, (SELECT id, timestamp, user FROM nodes \
@@ -562,7 +562,7 @@ print('-'*51)
 for location, count in disused_shops_exec:
     print('{:.<40}: {}'.format(location, count))
 
-'''B.4 - Parks
+"""B.4 - Parks
 
 Find the location of all parks in the OpenStreetMap file.
 Look for the following tags (after joining tables 'nodes_tags', 'ways_tags'):
@@ -571,7 +571,7 @@ Look for the following tags (after joining tables 'nodes_tags', 'ways_tags'):
  - Waste baskets: 'waste_basket';
  - Benches: 'bench';
  - Fountains: 'drinking_water'.
-'''
+"""
 parks_keys = ["'natural'", "'amenity'", "'amenity'", "'amenity'"]
 
 parks_constr = ["join_tags.value IN ('tree', 'tree_row', 'tree_group')", \
@@ -588,7 +588,7 @@ parks_fig_title = 'parks'
 parks_flag = street_map(query, parks_constr, 0.05, parks_colors, parks_labels,
                         parks_title, parks_fig_title, parks_keys)
 
-'''B.5 - Eateries in Milan
+"""B.5 - Eateries in Milan
 
 To display all eateries in the City of Milan only, two methods are used:
 
@@ -601,7 +601,7 @@ To display all eateries in the City of Milan only, two methods are used:
                         city boundaries of Milan, as determined by the min, max
                         longitude and latitude for all tags with value='Milano'
                         associated to tag key='city'. This is the right method.
-'''
+"""
 eateries_by_city_tag = "SELECT nodes.lon, nodes.lat \
                             FROM nodes, {join_tags} \
                             WHERE nodes.id IN (SELECT id FROM {join_tags} \
@@ -649,8 +649,8 @@ ect_flag = street_map(eateries_by_city_tag, eateries_constr, 0.1,
 ebb_flag = street_map(eateries_by_boundaries, eateries_constr, 0.1,
                     eateries_colors, eateries_labels, ebb_title, ebb_fig_title)
 
-'''B.6 - Most popular cuisines
-'''
+"""B.6 - Most popular cuisines
+"""
 most_popular_cuisines = "SELECT value, count(*) AS num \
                             FROM {join_tags} \
                             WHERE key='cuisine' \
@@ -666,11 +666,11 @@ print('-'*51)
 for cuisine, count in cuisines_exec:
     print('{:.<40}: {}'.format(cuisine, count))
 
-'''C. SAVE MAPS TO FILE
+"""C. SAVE MAPS TO FILE
 
 Save maps to .png and inform user. Also print folder './img' creation message
 if not already present.
-'''
+"""
 print('\n\nC. SAVE MAPS TO FILE\n')
 if flag != -1:
     print("Generated folder './img'")

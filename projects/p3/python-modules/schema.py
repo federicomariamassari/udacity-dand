@@ -1,4 +1,4 @@
-'''Custom schema required to validate the transformed OSM data [1]. The schema
+"""Custom schema required to validate the transformed OSM data [1]. The schema
 is stored in a .py file in order to take advantage of the int() and float()
 type coercion functions.
 
@@ -11,7 +11,7 @@ References
 -------------------------------------------------------------------------------
 [1] 'Project: Wrangle OpenStreetMap Data', Data Wrangling Course, Udacity
     Data Analyst Nanodegree
-'''
+"""
 
 schema = {
     'node': {
