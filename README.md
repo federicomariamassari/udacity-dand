@@ -1,6 +1,8 @@
 # Udacity Data Analyst Nanodegree
 My Udacity Data Analyst Nanodegree projects. In Python, unless otherwise stated.
 
+__Featured project:__ [Explore what I consider my best project to date!](https://github.com/federicomariamassari/udacity-dand/blob/master/projects/p3/dand-p3-wrangle-openstreetmap.md)
+
 ## P1 [Compute Statistics from Card Draws](https://nbviewer.jupyter.org/github/federicomariamassari/udacity-dand/blob/master/projects/p1/dand-p1-compute-statistics-from-card-draws.ipynb)
 
 __Completion time:__ 5 days
@@ -39,10 +41,17 @@ Function `association`, which returns phi coefficients (if applicable), Cramér'
 
 ## P3 [Wrangle OpenStreetMap Data](https://github.com/federicomariamassari/udacity-dand/blob/master/projects/p3/dand-p3-wrangle-openstreetmap.md)
 
-__Completion time:__
+__Completion time:__ 45 days
 
 ### Overview
+_Choose an area of the world you care about in [OpenStreetMap.org](https://www.openstreetmap.org) and use data munging techniques to clean the related OSM file (XML). Import the file into a SQL or MongoDB database and run queries to inspect the cleaned data._
+
+This project is all about __data wrangling__.
 
 ### What was the biggest challenge?
+Understanding the structure of the provided version of `data.py` was surprisingly hard, and I spent several days doing this task. The most difficult part was grasping the syntax of `xml.etree.cElementTree`, the Python module to parse the OSM document. However, after this obstacle was overcome, the remaining steps of the process—polishing the XML elements, importing the data into SQL, exploring the database, and producing the pdf report—were thoroughly enjoyable! 
 
 ### Which part of the code do you like best?
+My first Basemap representation.
+
+[Link to Python modules](/projects/p3/python-modules/)
