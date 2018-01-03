@@ -254,12 +254,12 @@ __Anticipated problems.__ A limit of this procedure is the need to manually dele
 As for the `addr:<type>` tags, I believe these have been successfully cleaned.
 
 ### Enhance OSM data in general
-I tried the [OSM Editing API](http://api.openstreetmap.org/) (specifically, the iD Editor), and I admit that it is not only immediate, but also feels like a good game: it is both engaging and rewarding. Yet, as seen before, systematic contributions to OpenStreetMap are made by a very small group of users, probably because the project is not marketed to the general public in the most effective way. How could the site grow its active user base?
+I tried the [OSM Editing API](http://api.openstreetmap.org/) (specifically, the iD Editor), and I admit that not only it is immediate, but also feels like a good game: it is both engaging and rewarding. Yet, as seen before, systematic contributions to OpenStreetMap are made by a very small group of users, probably because the project is not marketed to the general public in the most effective way. How could the site grow its active user base and improve the quality of the data provided?
 
 __Proposed solutions.__ In my opinion, two roads worth exploring are:
 - Embedding OSM data into augmented reality (AR) applications;
-- Using the [blockchain technology](https://www.gim-international.com/content/blog/blockchain-in-geospatial-applications-2) to contribute and validate the data.
+- Using the [blockchain technology](https://www.gim-international.com/content/blog/blockchain-in-geospatial-applications-2) to verify contributions.
 
-__Benefits.__
+__Benefits.__ Feeding real-time, easy to modify geospatial information to AR applications for outdoor activities (e.g., trekking, gaming) would not only make input and validation simple and fun steps, but also enrich the data supplied. For example, [_Pokémon GO_](https://www.bustle.com/articles/172317-how-does-pokemon-go-work-heres-everything-we-know-about-the-tech-behind-the-augmented-reality) collects statistics on climate and soil kind to define the type of pocket monsters that players can encounter: if it used OpenStreetMap, these data would effectively enter the OSM database; in turn, up-to-date information would improve safety while playing. Using a public, immutable, decentralised ledger like blockchain to unmistakably record contributions and rewarding active mappers with tokens would definitely stimulate competition and boost data quality.
 
-__Anticipated problems.__
+__Anticipated problems.__ privacy and safety issues.
