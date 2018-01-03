@@ -242,4 +242,19 @@ middle_eastern..........................: 6
 latin_american..........................: 2
 ```
 ## Ideas for improvement
-The information contained in the OSM file for Milan, Italy is, at best, outdated. The two biggest issues seem to be the huge amount of data related to the Province of Monza and Brianza (several nodes and ways date back to 2006-2009, when the province was still part of Milan) and the vast park area belonging to the Province of Lodi. In my opinion, the most effective way to deal with the misplaced data is the two-step procedure outlined in the previous section: query the database to find the boundary coordinates of the Metropolitan City of Milan, then remove all elements outside the region borders. A limit of this procedure is the need to manually delete the unrelated points within the area boundaries, and a large number of these belong to the first category. Yet, with this method, the irrelevant park data should be effortlessly cleared away. As for the `addr:<type>` tags, I believe these have been successfully cleaned.
+### Enhance this OSM document
+The information contained in the OSM file for Milan, Italy is, at best, outdated. The two biggest issues seem to be the huge amount of data related to the Province of Monza and Brianza (several nodes and ways date back to 2006-2009, when the province was still part of Milan) and the vast park area belonging to the Province of Lodi.
+
+__Proposed solution.__ In my opinion, the most effective way to deal with the misplaced data is the two-step procedure outlined in the previous section: query the database to find the boundary coordinates of the Metropolitan City of Milan, then remove all elements outside the region borders.
+
+__Benefits.__ With this method, several elements in the first category, as well as the irrelevant park data, should be effortlessly cleared away.
+
+__Anticipated problems.__ A limit of this procedure is the need to manually delete the unrelated points within the area boundaries, and a large number of these, unfortunately, lie in the Province of Monza and Brianza.
+
+As for the `addr:<type>` tags, I believe these have been successfully cleaned.
+
+### Enhance OSM data in general
+
+
+- Embed OSM data into augmented reality (AR) applications;
+- Use the [blockchain technology](https://www.gim-international.com/content/blog/blockchain-in-geospatial-applications-2) to contribute and validate the data.
