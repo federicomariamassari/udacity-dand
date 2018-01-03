@@ -254,7 +254,12 @@ __Anticipated problems.__ A limit of this procedure is the need to manually dele
 As for the `addr:<type>` tags, I believe these have been successfully cleaned.
 
 ### Enhance OSM data in general
+I tried the [OSM Editing API](http://api.openstreetmap.org/) (specifically, the iD Editor), and I admit that it is not only immediate, but also feels like a good game: it is both engaging and rewarding. Yet, as seen before, systematic contributions to OpenStreetMap are made by a very small group of users, probably because the project is not marketed to the general public in the most effective way. How could the site grow its active user base?
 
+__Proposed solutions.__ In my opinion, two roads worth exploring are:
+- Embedding OSM data into augmented reality (AR) applications;
+- Using the [blockchain technology](https://www.gim-international.com/content/blog/blockchain-in-geospatial-applications-2) to contribute and validate the data.
 
-- Embed OSM data into augmented reality (AR) applications;
-- Use the [blockchain technology](https://www.gim-international.com/content/blog/blockchain-in-geospatial-applications-2) to contribute and validate the data.
+__Benefits.__
+
+__Anticipated problems.__
