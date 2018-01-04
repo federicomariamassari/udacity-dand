@@ -1,3 +1,4 @@
+Previous: [P2 Investigate a Dataset](https://nbviewer.jupyter.org/github/federicomariamassari/udacity-dand/blob/master/projects/p2/dand-p2-investigate-a-dataset.ipynb) | [Table of Contents](https://github.com/federicomariamassari/udacity-dand/blob/master/README.md) | Next:
 # Data Analyst Nanodegree: P3 Wrangle OpenStreetMap
 __Federico Maria Massari / federico.massari@bocconialumni.it__
 ## Map area
@@ -263,3 +264,7 @@ __Proposed solutions.__ In my opinion, the site could grow its active user base 
 __Benefits.__ Feeding real-time, easy to modify geospatial information to AR applications for outdoor activities (e.g., trekking, gaming) would not only make input and validation simple and fun steps, but also enrich the data supplied. For example, [_Pokémon GO_](https://www.bustle.com/articles/172317-how-does-pokemon-go-work-heres-everything-we-know-about-the-tech-behind-the-augmented-reality) collects statistics on climate and soil kind to define the type of pocket monsters that players can encounter: if it used OpenStreetMap, these data would effectively enter the OSM database; in turn, up-to-date information would improve safety while playing. Using a public, immutable, decentralised ledger like blockchain to unmistakably record contributions, and rewarding active mappers with tokens, would definitely stimulate competition and boost data quality.
 
 __Anticipated problems.__ Open data need a robust network of users to be fully trustable. AR applications may result unsafe (e.g., if malicious users provide fraudolent directions), and the blockchain technology vulnerable (e.g., if attackers succeed in rewriting history) when the base is too narrow. However, these issues should become less relevant with time.
+
+#
+
+Previous: [P2 Investigate a Dataset](https://nbviewer.jupyter.org/github/federicomariamassari/udacity-dand/blob/master/projects/p2/dand-p2-investigate-a-dataset.ipynb) | [Table of Contents](https://github.com/federicomariamassari/udacity-dand/blob/master/README.md) | Next:
