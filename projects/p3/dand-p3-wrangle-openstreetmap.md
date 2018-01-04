@@ -196,8 +196,8 @@ _Figure 2_ maps all parks (i.e., the set of trees, benches, waste baskets, and d
   <tr>
   </tr>
   <tr>
-    <td><img align="center" src="https://github.com/federicomariamassari/udacity-dand/blob/master/projects/p3/python-modules/img/postcodes.png"/></td>
-    <td><img align="center" src="https://github.com/federicomariamassari/udacity-dand/blob/master/projects/p3/python-modules/img/parks.png"/></td>
+    <td><img align="center" src="https://github.com/federicomariamassari/udacity-dand/blob/master/projects/p3/img/postcodes.png"/></td>
+    <td><img align="center" src="https://github.com/federicomariamassari/udacity-dand/blob/master/projects/p3/img/parks.png"/></td>
   </tr>
 </table>
 
@@ -219,8 +219,8 @@ Therefore, I extracted the boundary coordinates (i.e., minimum and maximum latit
   <tr>
   </tr>
   <tr>
-    <td align="center"><b>Figure 3.A</b>: Eateries by <code>key=city</code><img align="center" src="https://github.com/federicomariamassari/udacity-dand/blob/master/projects/p3/python-modules/img/eateries_by_city_tag.png"/></td>
-    <td align="center"><b>Figure 3.B</b>: Eateries by boundaries<img align="center" src="https://github.com/federicomariamassari/udacity-dand/blob/master/projects/p3/python-modules/img/eateries_by_boundaries.png"/></td>
+    <td align="center"><b>Figure 3.A</b>: Eateries by <code>key=city</code><img align="center" src="https://github.com/federicomariamassari/udacity-dand/blob/master/projects/p3/img/eateries_by_city_tag.png"/></td>
+    <td align="center"><b>Figure 3.B</b>: Eateries by boundaries<img align="center" src="https://github.com/federicomariamassari/udacity-dand/blob/master/projects/p3/img/eateries_by_boundaries.png"/></td>
   </tr>
 </table>
 
