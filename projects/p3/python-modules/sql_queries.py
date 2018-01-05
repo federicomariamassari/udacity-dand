@@ -265,7 +265,7 @@ def street_map(query, query_constr, diff, colors, labels, title, fig_name, \
             coordinates (longitude, latitude). Must contain a pair of brackets
             {}, in which case list 'query_constr' must also be provided. If an
             additional pair of brackets is present, also supply 'query_keys'.
-        query_constr -- list of str.. The list of constraints on tag values.
+        query_constr -- list of str. The list of constraints on tag values.
         diff -- float. Parameter added to the max, or subtracted to the min,
             longitude and latitude values to zoom on the map, which is centered
             on the data.
