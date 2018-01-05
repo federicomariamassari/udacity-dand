@@ -14,7 +14,7 @@ def age_of_majority(df, age, new_column_name='Minor/Adult'):
         age -- int or float. The age of the passenger, in years.
 
     Keyword arguments:
-        new_column_name: str. Title of column to add (default 'Minor/Adult').
+        new_column_name -- str. Title of column to add (default 'Minor/Adult').
     """
     import pandas as pd
 
@@ -143,13 +143,13 @@ def association(x, y, df, yates_correction=False, bias_correction=False):
 
     # Store the dimensions of the contingency table and the total sample size
     n_rows, n_cols = n.shape
-    N = n[-1,-1]
+    N = n[-1, -1]
 
     # Calculate phi coefficient iff the shape of the contingency table
     # (marginals excluded) is 2 x 2
-    if (n_rows-1, n_cols-1) == (2, 2):
-        phi = (n[1,1]*n[0,0] - (n[1,0]*n[0,1])) / \
-            np.sqrt(n[-1,0]*n[-1,1]*n[0,-1]*n[1,-1])
+    if (n_rows - 1, n_cols - 1) == (2, 2):
+        phi = (n[1, 1] * n[0, 0] - (n[1, 0] * n[0, 1])) / \
+                np.sqrt(n[-1, 0] * n[-1, 1] * n[0, -1] * n[1, -1])
 
         print("Phi coefficient for binary variables '{}' == '{}' and '{}': \
 {:.4f}".format(x, tab.index[0], y, -phi))
@@ -160,15 +160,15 @@ def association(x, y, df, yates_correction=False, bias_correction=False):
     i, j = np.ogrid[range(n_rows - 1), range(n_cols - 1)]
 
     # Compute chi-squared statistic
-    chi_squared = np.sum((n[i,j] - (n[i,-1]*n[-1,j]) / N) ** 2 / \
-        ((n[i,-1]*n[-1,j]) / N))
+    chi_squared = np.sum((n[i, j] - (n[i, -1] * n[-1, j]) / N) ** 2 / \
+        ((n[i, -1] * n[-1, j]) / N))
 
     # If True, calculate bias-corrected version of Cramér's V
     if bias_correction:
         phi_squared = np.max([chi_squared / N \
-            - (n_cols - 1)*(n_rows - 1) / (N-1), 0])
+            - (n_cols - 1) * (n_rows - 1) / (N - 1), 0])
         V = np.sqrt(phi_squared / np.min([n_cols - (n_cols - 2) ** 2 / \
-            (N - 1) - 2, n_rows - (n_rows - 2)** 2 / (N - 1) - 2]))
+            (N - 1) - 2, n_rows - (n_rows - 2) ** 2 / (N - 1) - 2]))
         print("Cramér's V for variables '{}' and '{}' (Bias-Corrected): \
 {:.4f}".format(x, y, V))
 

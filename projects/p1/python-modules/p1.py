@@ -47,7 +47,7 @@ def draw(n_cards, replacement=False):
 
         # Add n unique cards to the hand, if n is less than or equal to total
         # deck size (52)
-        if n_cards > len(suits)*len(cards):
+        if n_cards > len(suits) * len(cards):
             raise ValueError('Not enough cards in the deck.')
         else:
             while len(hand) < n_cards:
@@ -142,7 +142,7 @@ def histogram(values, title, xlabel, ylabel, step=1, rotation=0, density=False,
     import seaborn as sns
 
     # Define figure size and Axes class (use object-oriented methods)
-    plt.figure(figsize=(6,6))
+    plt.figure(figsize=(6, 6))
     ax = plt.axes()
 
     # If True, fit a Gaussian density to data and plot it against the histogram
@@ -150,7 +150,7 @@ def histogram(values, title, xlabel, ylabel, step=1, rotation=0, density=False,
 
         # Automatically normalise the histogram to ensure correct density
         # visualisation
-        bins = np.arange(0, np.max(values) + 2, step) - 0.5*step
+        bins = np.arange(0, np.max(values) + 2, step) - 0.5 * step
         ax.hist(values, bins=bins, edgecolor='k', normed=True)
 
         # Retrieve density parameters mu and sigma from input data
@@ -158,8 +158,8 @@ def histogram(values, title, xlabel, ylabel, step=1, rotation=0, density=False,
 
         # Generate x-axis values for the density, set to 1000 to ensure
         # smoothness
-        x = np.linspace(np.min(values) - 0.5*step, np.max(values) + 0.5*step, \
-                        1000)
+        x = np.linspace(np.min(values) - 0.5 * step, np.max(values) \
+            + 0.5 * step, 1000)
 
         # Generate density values for each provided x-axis value
         y = mlab.normpdf(x, mu, sigma)
@@ -171,7 +171,7 @@ def histogram(values, title, xlabel, ylabel, step=1, rotation=0, density=False,
 
         # Return either normalised or non-normalised histogram, based on user
         # input
-        bins = np.arange(0, np.max(values) + 2, step) - 0.5*step
+        bins = np.arange(0, np.max(values) + 2, step) - 0.5 * step
         ax.hist(values, bins=bins, edgecolor='k', normed=normalised)
 
     # Add title and axes labels
@@ -180,7 +180,7 @@ def histogram(values, title, xlabel, ylabel, step=1, rotation=0, density=False,
     ax.set_ylabel(ylabel)
 
     # Define x-axis limits
-    ax.set_xlim(np.min(values) - 0.5*step, np.max(values) + 0.5*step)
+    ax.set_xlim(np.min(values) - 0.5 * step, np.max(values) + 0.5 * step)
 
     # Set x-axis ticks and rotate labels, if applicable
     xticks = np.arange(np.min(values), np.max(values) + 1, step)
@@ -251,14 +251,14 @@ def confidence_interval(m, s, n, alpha):
 
     # Compute one-tailed Student's t quantile with (0.5 * alpha) significance
     # per tail, n - 1 degrees of freedom
-    t = stats.t.ppf(1 - (0.5*alpha), n - 1)
+    t = stats.t.ppf(1 - (0.5 * alpha), n - 1)
 
     # Compute lower and upper confidence intervals for the mean
-    lower = m - t * s/np.sqrt(n)
-    upper = m + t * s/np.sqrt(n)
+    lower = m - t * s / np.sqrt(n)
+    upper = m + t * s / np.sqrt(n)
 
     print('{:.0f}% confidence interval for the population mean:\n'\
-          .format((1-alpha) * 100))
+          .format((1 - alpha) * 100))
     print('Sample size: {:.0f}'.format(n))
     print('Sample mean: {:.2f}'.format(m))
     print('Sample standard deviation: {:.2f}'.format(s))
