@@ -72,7 +72,7 @@ Admissible postal codes had to be five digits long, and have format _20xxx_ (wit
 __Unusual code length.__ A few codes were four (e.g., _2013_), and one was six (i.e., _200149_) digits long. I padded the former with a trailing zero, since they all began with _2_ (e.g., _20130_), and stripped the latter of the redundant digit (e.g., _20149_):
 ```python
 if len(match.group()) < 5:
-    better_postcode = match.group() + '0' * (5-len(match.group()))
+    better_postcode = match.group() + '0' * (5 - len(match.group()))
 elif len(match.group()) > 5:
     better_postcode = match.group().replace('0', '', 1)
 ```
