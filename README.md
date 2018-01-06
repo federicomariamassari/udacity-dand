@@ -41,6 +41,8 @@ Function `association`, which returns phi coefficients (if applicable), Cramér'
 
 ## P3 [Wrangle OpenStreetMap Data](https://github.com/federicomariamassari/udacity-dand/blob/master/projects/p3/dand-p3-wrangle-openstreetmap.md)
 
+__Programming Languages:__ Python, SQL
+
 __Completion time:__ 45 days
 
 ### Overview
