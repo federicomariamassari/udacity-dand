@@ -105,7 +105,7 @@ print('\nQUERY 1: Find the total size of all .csv, .db, and .osm files')
 print(' '*9 + 'in the current working directory (Python script).\n')
 
 # Add header to 'files_list' table
-print('{:<42s}{}'.format('FILENAME','SIZE')), print('-'*51)
+print('{:<42s}{}'.format('FILENAME','SIZE')), print('-' * 51)
 
 for filename, size in files_list:
 
@@ -113,10 +113,10 @@ for filename, size in files_list:
     if filename.split('.')[-1] in ['csv', 'db', 'osm']:
 
         # Convert size to MB or kb (if file size smaller than 1 MB)
-        if (size*1e-6 < 1) & (size*1e-3 >= 1):
-            print('{:.<40s}: {:.2f} kB'.format(filename, size*1e-3))
+        if (size * 1e-6 < 1) & (size * 1e-3 >= 1):
+            print('{:.<40s}: {:.2f} kB'.format(filename, size * 1e-3))
         else:
-            print('{:.<40s}: {:.2f} MB'.format(filename, size*1e-6))
+            print('{:.<40s}: {:.2f} MB'.format(filename, size * 1e-6))
 
 # Create Connection object representing SQL database and Cursor
 sqlite_database = 'milan_italy.db'
@@ -182,7 +182,7 @@ top_contributing = "SELECT all_users.user, count(*) AS num \
 top_15 = execute_query(top_contributing)
 
 print('\n\nQUERY 3: Find the top 15 contributing users.\n')
-print('{:<42s}{}'.format('USER','NO.')), print('-'*51)
+print('{:<42s}{}'.format('USER','NO.')), print('-' * 51)
 
 for username, contributions in top_15:
     print('{:.<40s}: {}'.format(username, contributions))
@@ -230,7 +230,7 @@ schools = "SELECT value, count(*) \
 school_by_type = execute_query(schools)
 
 print('\n\nQUERY 5: Find the number of educational establishments by level.\n')
-print('{:<42s}{}'.format('ESTABLISHMENT','COUNT')), print('-'*51)
+print('{:<42s}{}'.format('ESTABLISHMENT','COUNT')), print('-' * 51)
 
 for establishment, count_school in school_by_type:
     print('{:.<40s}: {}'.format(establishment, count_school))
@@ -319,8 +319,8 @@ def street_map(query, query_constr, diff, colors, labels, title, fig_name, \
     # Continue in case one or more list pairs are empty
     for i in n:
         try:
-            lons.append(query_res[i][:,0])
-            lats.append(query_res[i][:,1])
+            lons.append(query_res[i][:, 0])
+            lats.append(query_res[i][:, 1])
         except:
             pass
 
@@ -337,7 +337,7 @@ def street_map(query, query_constr, diff, colors, labels, title, fig_name, \
         min_lon, max_lon = concat_lons.min(), concat_lons.max()
         min_lat, max_lat = concat_lats.min(), concat_lats.max()
 
-        plt.figure(figsize=(10,8))
+        plt.figure(figsize=(10, 8))
 
         """The matplotlib basemap toolkit is a library for plotting 2D data on
         maps in Python [8]. It allows to transform coordinates to map projec-
@@ -347,15 +347,15 @@ def street_map(query, query_constr, diff, colors, labels, title, fig_name, \
         latitude (y-axis limits). The map is centered on the data to plot,
         using both the previously found minima and maxima, and parameter 'diff'.
         """
-        m = Basemap(llcrnrlon=min_lon-diff, llcrnrlat=min_lat-diff, \
-                    urcrnrlon=max_lon+diff, urcrnrlat=max_lat+diff, \
+        m = Basemap(llcrnrlon=min_lon - diff, llcrnrlat=min_lat - diff, \
+                    urcrnrlon=max_lon + diff, urcrnrlat=max_lat + diff, \
                     resolution = 'l')
 
         """Retrieve background map using the ArcGIS Server REST API and display
         it on the plot. 'ESRI_StreetMap_World_2D' is the default map server.
         * IMPORTANT: Internet connection required.
         """
-        m.arcgisimage(service=service, xpixels = 900)
+        m.arcgisimage(service=service, xpixels=900)
 
         # Supply coordinates to the Basemap object
         x, y = m(lons, lats)
@@ -404,10 +404,10 @@ top_15_cities = execute_query(most_represented_cities)
 
 print('\n\nB. ADDITIONAL STATISTICS')
 print('\nQUERY 1: Print a list of the 15 most represented municipalities')
-print(' '*9 + 'and associated provinces.\n')
+print(' ' * 9 + 'and associated provinces.\n')
 
 print('{:<25s}{:<17}{}'.format('MUNICIPALITY', 'PROVINCE', 'COUNT'))
-print('-'*51)
+print('-' * 51)
 for municipality, province, count in top_15_cities:
     print('{:<25}{:<17}{}'.format(municipality, province, count))
 
@@ -473,10 +473,10 @@ postcode_by_province = "SELECT municipalities.postcode AS postcode, \
 pbp = execute_query(postcode_by_province)
 
 print('\n\nQUERY 2: Print postal code, municipality, and province for all')
-print(' '*9 + 'the entries which should not belong in the Milan OSM file.\n')
+print(' ' * 9 + 'the entries which should not belong in the Milan OSM file.\n')
 
 print('{:<12s}{:<30}{}'.format('POSTCODE','MUNICIPALITY','PROVINCE'))
-print('-'*51)
+print('-' * 51)
 for postcode, municipality, province in pbp:
     print('{:<12}{:<30}{}'.format(postcode, municipality, province))
 
@@ -496,7 +496,7 @@ shops_exec = execute_query(shops)
 
 print('\n\nQUERY 3.A: Print a list of the 15 most popular shop types.\n')
 print('{:<42s}{}'.format('SHOP', 'COUNT'))
-print('-'*51)
+print('-' * 51)
 for shop, count in shops_exec:
     print('{:.<40}: {}'.format(shop, count))
 
@@ -526,10 +526,10 @@ shops_yes = "SELECT SUBSTR(join_nodes.timestamp, -10,-10) AS date, \
 shops_yes_exec = execute_query(shops_yes)
 
 print('\n\nQUERY 3.B: Print date, user, municipality, and province of the')
-print(' '*11 + "most recent 15 entries where key='shop' and value='yes'.\n")
+print(' ' * 11 + "most recent 15 entries where key='shop' and value='yes'.\n")
 print('{:<15s}{:<19s}{:<25s}{}'.format('DATE', 'USER', 'MUNICIPALITY', \
                                         'PROVINCE')),
-print('-'*75)
+print('-' * 75)
 for date, user, city, province in shops_yes_exec:
     print('{:<15}{:<19}{:<25}{}'.format(date, user, city, province))
 
@@ -543,7 +543,7 @@ yes_shop_types = "SELECT key, value, type, count(*) AS num \
 shop_yes_type_exec = execute_query(yes_shop_types)
 print("\n\nQUERY 3.C: Breakdown of shop='yes' tag by type.\n")
 print('{:<12s}{:<13}{:<17}{}'.format('KEY', 'VALUE', 'TYPE', 'COUNT'))
-print('-'*51)
+print('-' * 51)
 for key, value, typology, count in shop_yes_type_exec:
     print('{:<12}{:<13}{:<17}{}'.format(key, value, typology, count))
 
@@ -562,7 +562,7 @@ disused_shops = "SELECT value, count(*) AS num \
 disused_shops_exec = execute_query(disused_shops)
 print('\n\nQUERY 3.D: Location of disused yes shops.\n')
 print('{:<42s}{}'.format('MUNICIPALITY', 'COUNT'))
-print('-'*51)
+print('-' * 51)
 for location, count in disused_shops_exec:
     print('{:.<40}: {}'.format(location, count))
 
@@ -666,7 +666,7 @@ cuisines_exec = execute_query(most_popular_cuisines)
 
 print('\n\nQUERY 4: Find the most popular cuisines.\n')
 print('{:<42s}{}'.format('CUISINE', 'COUNT'))
-print('-'*51)
+print('-' * 51)
 for cuisine, count in cuisines_exec:
     print('{:.<40}: {}'.format(cuisine, count))
 

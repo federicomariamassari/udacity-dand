@@ -154,8 +154,7 @@ def update_name(name, re_query, query_type, mapping=None):
                 split_string = match.group().split(' ')
                 full_word = ' '.join((mapping[split_string[0]] + ' ' \
                 + ' '.join(split_string[1:])).split())
-                better_name = re_query.sub(full_word, name,
-                                           count=1)
+                better_name = re_query.sub(full_word, name, count=1)
 
             """For apostrophes, remove blank spaces between apostrophe and the
             following word, and capitalize all words, e.g. "dell' artigianato"
@@ -164,8 +163,7 @@ def update_name(name, re_query, query_type, mapping=None):
             """
         elif query_type == 'apostrophes':
             better_apostrophe_use = ''.join(match.group().title().split())
-            better_name = re_query.sub(better_apostrophe_use, name,
-                                       count=1)
+            better_name = re_query.sub(better_apostrophe_use, name, count=1)
 
             """For street numbers embedded in street names, split string on
             blank spaces, then join all but the last element, e.g. 'Europa 30'
@@ -198,7 +196,7 @@ def update_postcode(postcode, re_query):
             the end, e.g. '2013' -> '20130'. This is the most reasonable way to
             fix the problem, without additional information.
             """
-            better_postcode = match.group() + '0' * (5-len(match.group()))
+            better_postcode = match.group() + '0' * (5 - len(match.group()))
 
         elif len(match.group()) > 5:
             """The only postal code longer than 5 digits in the full OSM file

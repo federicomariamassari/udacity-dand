@@ -346,7 +346,7 @@ def audit(OSM_FILE, re_library):
                     """
                     [audit_feature(street_features, tag.attrib['v'],
                                   re_library[i], expected[i]) for i \
-                                  in range(len(re_library)-2)]
+                                  in range(len(re_library) - 2)]
 
                 # Audit postcode features
                 elif is_postcode(tag):

@@ -94,7 +94,7 @@ def csv_to_sql(csv_file, directory=''):
     """
     c.executemany('INSERT INTO {} ({}) VALUES ({});'\
                 .format(csv_file.split('.')[0], ', '.join(fields), \
-                        ('?, '*len(fields)).rstrip(', ')), to_db)
+                        ('?, ' * len(fields)).rstrip(', ')), to_db)
 
 # Store filenames and lists of fields into separate lists, for neater code
 directory = './csv/'
