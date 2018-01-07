@@ -3,6 +3,14 @@ My Udacity Data Analyst Nanodegree projects. In Python, unless otherwise stated.
 
 __Featured project:__ [Explore what I consider my best project to date!](https://github.com/federicomariamassari/udacity-dand/blob/master/projects/p3/dand-p3-wrangle-openstreetmap.md)
 
+## P0 [Bay Area Bike Share Analysis](./projects/p0/dand-p0-bay-area-bike-share-analysis.md)
+
+__Completion time:__
+
+### Overview
+
+### Which part of the code do you like best?
+
 ## P1 [Compute Statistics from Card Draws](https://nbviewer.jupyter.org/github/federicomariamassari/udacity-dand/blob/master/projects/p1/dand-p1-compute-statistics-from-card-draws.ipynb)
 
 __Completion time:__ 5 days
@@ -57,3 +65,17 @@ Understanding the structure of the provided version of `data.py` was surprisingl
 Map generation via the Basemap toolkit. My first experiment with the module, a scatter plot of postal codes in the OSM file on top of a 2D chart of Milan and its surroundings, made me really ecstatic!
 
 [Link to Python modules](/projects/p3/python-modules/)
+
+## P4 [Explore and Summarise Data]()
+
+__Language:__ R
+
+__Completion time:__
+
+### Overview
+
+### What was the biggest challenge?
+
+### Which part of the code do you like best?
+
+[Link to R module]()
