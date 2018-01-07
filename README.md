@@ -9,6 +9,13 @@ __Completion time:__
 
 ### Overview
 
+<table>
+  <tr>
+    <td align="center"><img align="center" src="./projects/p0/img/babs-full.png"/></td>
+    <td align="center"><img align="center" src="./projects/p0/img/babs-sf.png"/></td>
+  </tr>
+</table>
+
 ### Which part of the code do you like best?
 
 ## P1 [Compute Statistics from Card Draws](https://nbviewer.jupyter.org/github/federicomariamassari/udacity-dand/blob/master/projects/p1/dand-p1-compute-statistics-from-card-draws.ipynb)
@@ -19,6 +26,13 @@ __Completion time:__ 5 days
 _In this project, you will demonstrate your knowledge of descriptive statistics by conducting an experiment dealing with drawing from a deck of playing cards and creating a write up containing your findings._
 
 This is a practical application of the __central limit theorem__. I generate a deck of cards, draw randomly from it, analyse the distribution of outcomes, compute basic statistics and, if applicable, provide confidence intervals for the population mean when only sample moments are available, as well as the cumulative distribution function for a random variable X, F(x) = P(X ≤ x), the probability of it being below a certain threshold value x.
+
+<table>
+  <tr>
+    <td align="center"><img align="center" src="./projects/p1/img/single_draw.png"/></td>
+    <td align="center"><img align="center" src="./projects/p1/img/large_sample.png"/></td>
+  </tr>
+</table>
 
 ### What was the biggest challenge?
 Dealing with the replacement option, which impacts on the random card drawing algorithm. I took advantage of Python's definition of `set` and `list` as collections of, respectively, unique and repeatable objects. For `replacement == False`, I initialised the hand to the empty set, so that no two identical cards could be drawn; I also limited the maximum number of cards to pick to 52. For `replacement == True`, instead, I initialised the hand to the empty list, so that the same card could be drawn multiple times; I also removed the 52-card constraint.
@@ -39,6 +53,17 @@ _Choose one of Udacity's curated datasets and investigate it using NumPy and Pan
 
 Digging into the __Titanic dataset__, I go through all the steps involved in a typical data analysis process: formulate questions, wrangle (acquire and clean data), explore, draw conclusions, and communicate findings. I mainly use Pandas to store and handle data in tables, SciPy to detect statistical association among variables, and Seaborn to produce plots.
 
+<table>
+  <tr>
+    <td align="center"><img align="center" src="./projects/p2/img/swarmplot.png"/></td>
+  </tr>
+  <tr>
+  </tr>
+  <tr>
+    <td align="center"><img align="center" src="./projects/p2/img/violinplot.png"/></td>
+  </tr>
+</table>
+
 ### What was the biggest challenge?
 Performing meaningful tests of association between _binary variables_ and plotting the results, offering enough plot variety. Binary variables are challenging for two reasons: on one hand, they make the correlation coefficient difficult to interpret; on the other, very few plot types are suitable to visualise their relationship. To measure the degree of association between variables, I resorted to _contingency tables_, _phi coefficients_ (binary-to-binary) and _Cramér's V_ (nominal-to-binary). To display such association, I experimented with various Seaborn plots: swarm, strip, violin, and joint, among the others.
 
@@ -57,6 +82,13 @@ __Completion time:__ 45 days
 _Choose an area of the world you care about in [OpenStreetMap.org](https://www.openstreetmap.org) and use data munging techniques to clean the related OSM file (XML). Import the file into a SQL or MongoDB database and run queries to inspect the cleaned data._
 
 This project focuses on the __wrangling__ step of the data analysis process: auditing (using regular expressions) and cleaning an XML document, writing its updated entries on csv files, creating a SQL database and importing the files in it, querying the database, and, finally, producing a report.
+
+<table>
+  <tr>
+    <td align="center"><img align="center" src="./projects/p3/img/postcodes.png"/></td>
+    <td align="center"><img align="center" src="./projects/p3/img/parks.png"/></td>
+  </tr>
+</table>
 
 ### What was the biggest challenge?
 Understanding the structure of the provided version of `data.py` was surprisingly hard, and I spent several days doing this task. The most difficult part was grasping the syntax of `xml.etree.cElementTree`, the Python module to parse the OSM document. However, after this obstacle was overcome, the remaining steps of the process—polishing the XML elements, importing the data into SQL, exploring the database, and producing the pdf report—were thoroughly enjoyable!
