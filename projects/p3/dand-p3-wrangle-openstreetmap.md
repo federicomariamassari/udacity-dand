@@ -1,6 +1,8 @@
 Previous: [P2 Investigate a Dataset](https://nbviewer.jupyter.org/github/federicomariamassari/udacity-dand/blob/master/projects/p2/dand-p2-investigate-a-dataset.ipynb) | [Table of Contents](https://github.com/federicomariamassari/udacity-dand/blob/master/README.md) | Next:
 # Data Analyst Nanodegree: P3 Wrangle OpenStreetMap
 __Federico Maria Massari / federico.massari@bocconialumni.it__
+
+The project is connected to the course _[Data Wrangling with MongoDB](https://eu.udacity.com/course/data-wrangling-with-mongodb--ud032)_.
 ## Map area
 Milan, Italy
 - Milan county boundaries: https://www.openstreetmap.org/relation/44881#map=10/45.4028/9.1290
