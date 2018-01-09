@@ -151,7 +151,8 @@ def histogram(values, title, xlabel, ylabel, step=1, rotation=0, density=False,
         # Automatically normalise the histogram to ensure correct density
         # visualisation
         bins = np.arange(0, np.max(values) + 2, step) - 0.5 * step
-        ax.hist(values, bins=bins, edgecolor='k', normed=True)
+        ax.hist(values, bins=bins, color='#31678dff', edgecolor='k',
+                normed=True)
 
         # Retrieve density parameters mu and sigma from input data
         mu, sigma = stats.norm.fit(values)
@@ -165,14 +166,15 @@ def histogram(values, title, xlabel, ylabel, step=1, rotation=0, density=False,
         y = mlab.normpdf(x, mu, sigma)
 
         # Plot the density over the histogram
-        density = ax.plot(x, y)
+        density = ax.plot(x, y, color='#5cc863ff')
 
     else:
 
         # Return either normalised or non-normalised histogram, based on user
         # input
         bins = np.arange(0, np.max(values) + 2, step) - 0.5 * step
-        ax.hist(values, bins=bins, edgecolor='k', normed=normalised)
+        ax.hist(values, bins=bins, color='#31678dff', edgecolor='k',
+                normed=normalised)
 
     # Add title and axes labels
     ax.set_title(title)
