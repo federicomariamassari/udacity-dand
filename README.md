@@ -5,9 +5,14 @@ __Featured project:__ [Explore what I consider my best project to date!](https:/
 
 ## P0 [Bay Area Bike Share Analysis](./projects/p0/dand-p0-bay-area-bike-share-analysis.md)
 
-__Completion time:__
+__Completion time:__ 5 days
+
+__Supporting lesson content:__ _[Introduction to Python Programming](https://eu.udacity.com/course/introduction-to-python--ud1110)_ (Beginner)
 
 ### Overview
+_Analyse data from Ford GoBike, a bike sharing company in the San Francisco Bay Area, using Python. Clean the dataset, create visualisations from the wrangled data, uncover and explore trends._
+
+This is a rework of the original __introductory project__, to complete within the first week of enrolment in the Data Analyst Nanodegree program. Using Pandas, Seaborn, and Basemap I explore two years of daily trip data across five US cities (Mountain View, Palo Alto, Redwood City, San Francisco, and San Jose), and for two types of users (annual subscribers and customers).
 
 <table>
   <tr>
@@ -16,16 +21,22 @@ __Completion time:__
   </tr>
 </table>
 
+### What was the biggest challenge?
+Although I had just finished the _Python introductory course_, I found the provided code difficult to grasp. To read and write text files, for example, the assignment made extensive use of the `csv` module (which I would later review for P2 and P3), in place of the more intuitive Pandas. The dataset, however, was extremely interesting, so digging into it was definitely an enriching experience.
+
 ### Which part of the code do you like best?
+Revealing that a small group of annual subscribers, possibly unaware of overtime fees, keep the bike for an entire working day; discovering that Ford GoBike, in accordance with my findings, decided to drop the program in three out of five cities.
 
 ## P1 [Compute Statistics from Card Draws](https://nbviewer.jupyter.org/github/federicomariamassari/udacity-dand/blob/master/projects/p1/dand-p1-compute-statistics-from-card-draws.ipynb)
 
 __Completion time:__ 5 days
 
+__Supporting lesson content:__ _[Intro to Descriptive Statistics](https://eu.udacity.com/course/intro-to-descriptive-statistics--ud827)_ (Beginner)
+
 ### Overview
 _In this project, you will demonstrate your knowledge of descriptive statistics by conducting an experiment dealing with drawing from a deck of playing cards and creating a write up containing your findings._
 
-This is a practical application of the __central limit theorem__. I generate a deck of cards, draw randomly from it, analyse the distribution of outcomes, compute basic statistics and, if applicable, provide confidence intervals for the population mean when only sample moments are available, as well as the cumulative distribution function for a random variable X, F(x) = P(X ≤ x), the probability of it being below a certain threshold value x.
+This is a practical application of the __central limit theorem__. I generate a deck of cards, draw randomly from it, analyse the distribution of outcomes, compute basic statistics and, if applicable, provide confidence intervals for the population mean when only sample moments are available, as well as the cumulative distribution function for a random variable _X_, _F(x)_ = _P(X_ ≤ _x)_, the probability of it being below a certain threshold value _x_.
 
 <table>
   <tr>
@@ -45,6 +56,8 @@ The deck generating process. In particular, the way suits and values are stored 
 ## P2 [Investigate a Dataset](https://nbviewer.jupyter.org/github/federicomariamassari/udacity-dand/blob/master/projects/p2/dand-p2-investigate-a-dataset.ipynb)
 
 __Completion time:__ 21 days
+
+__Supporting lesson content:__ _[Intro to Data Analysis](https://eu.udacity.com/course/intro-to-data-analysis--ud170)_ (Beginner)
 
 __Textbook:__ Jake VanderPlas, [_Python Data Science Handbook. Essential Tools for Working with Data_](http://shop.oreilly.com/product/0636920034919.do), O'Reilly Media, 2016
 
@@ -78,6 +91,8 @@ __Languages:__ Python, SQL
 
 __Completion time:__ 45 days
 
+__Supporting lesson content:__ _[Data Wrangling with MongoDB](https://eu.udacity.com/course/data-wrangling-with-mongodb--ud032)_ (Intermediate)
+
 ### Overview
 _Choose an area of the world you care about in [OpenStreetMap.org](https://www.openstreetmap.org) and use data munging techniques to clean the related OSM file (XML). Import the file into a SQL or MongoDB database and run queries to inspect the cleaned data._
 
@@ -103,6 +118,8 @@ Map generation via the Basemap toolkit. My first experiment with the module, a s
 __Language:__ R
 
 __Completion time:__
+
+__Supporting lesson content:__ _[Data Analysis with R](https://eu.udacity.com/course/data-analysis-with-r--ud651)_ (Intermediate)
 
 ### Overview
 
