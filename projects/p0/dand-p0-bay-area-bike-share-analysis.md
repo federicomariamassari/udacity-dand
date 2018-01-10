@@ -335,7 +335,7 @@ With regard to the first point, I previously stated that most annual subscribers
 </table>
 
 #### Smaller cities less knowledgeable about the "no inter-city trip" rule
-With respect to the second point, users in smaller places seem to more frequently rent the bike in one city and leave it in a different one, despite the rule that prohibits such behaviour. For example, about 7% of trips in Palo Alto, 3% in Redwood City, and 2.3% in Mountain View were inter-city trips. This might have been one of the reasons these cities were subsequently dropped. By contrast, only about 6 every 10,000 in San Jose and ~3 every 100,000 in San Francisco were inter-city. Of course, these cities are much bigger, so the chance to leave the city is not so high.
+With respect to the second point, users in smaller places seem to more frequently rent the bike in one city and leave it in a different one, despite the rule that prohibits such behaviour. For example, about 7% of trips in Palo Alto, 3% in Redwood City, and 2.3% in Mountain View were inter-city trips. This might have been one of the reasons these cities were later dropped. By contrast, only about 6 every 10,000 in San Jose and ~3 every 100,000 in San Francisco were inter-city trips. Of course, these cities are much bigger, so the chance to leave the city is not so high.
 
 <table>
   <tr>
