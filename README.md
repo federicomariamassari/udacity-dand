@@ -22,7 +22,7 @@ This is a rework of the original __introductory project__, to complete within th
 </table>
 
 ### What was the biggest challenge?
-Although I had just finished the _Python introductory course_, I found the provided code difficult to grasp. To read and write text files, for example, the assignment made extensive use of the `csv` module (which I would later review for P2 and P3), in place of the more intuitive Pandas. The dataset, however, was extremely interesting, so digging into it was definitely an enriching experience.
+Although I had just finished the _Python introductory course_, I found the provided code quite difficult to grasp. To read and write text files, for example, the assignment made extensive use of the `csv` module (which I would later review for P2 and P3), in place of the more intuitive Pandas. The dataset, however, was extremely interesting, so digging into it was definitely an enriching experience.
 
 ### Which part of the code do you like best?
 Revealing that a small group of annual subscribers, possibly unaware of overtime fees, keep the bike for an entire working day; discovering that Ford GoBike, in accordance with my findings, decided to drop the program in three out of five cities.
