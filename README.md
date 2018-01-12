@@ -114,19 +114,3 @@ Understanding the structure of the provided version of `data.py` was surprisingl
 Map generation via the Basemap toolkit. My first experiment with the module, a scatter plot of postal codes in the OSM file on top of a 2D chart of Milan and its surroundings, made me really ecstatic!
 
 [Link to Python modules](/projects/p3/python-modules/)
-
-## P4 [Explore and Summarise Data]()
-
-__Language:__ R
-
-__Completion time:__
-
-__Supporting lesson content:__ _[Data Analysis with R](https://eu.udacity.com/course/data-analysis-with-r--ud651)_ (Intermediate)
-
-### Overview
-
-### What was the biggest challenge?
-
-### Which part of the code do you like best?
-
-[Link to R module]()
