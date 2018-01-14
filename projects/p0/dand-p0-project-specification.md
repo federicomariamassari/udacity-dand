@@ -1,4 +1,4 @@
-[Table of Contents](../../README.md) | Next: [P1 Project Specification]()
+[Table of Contents](../../README.md) | Next: [P2 Project Specification](../p2/dand-p2-project-specification.md)
 # Data Analyst Nanodegree: P0 Bay Area Bike Share Analysis
 ## Project Specification
 Since the document included in this repository is a rework, this rubric is also different from that of the original project submission.
@@ -64,4 +64,4 @@ Since the document included in this repository is a rework, this rubric is also 
     </tr>
 </table>
 
-[Table of Contents](../../README.md) | Next: [P1 Project Specification]()
+[Table of Contents](../../README.md) | Next: [P2 Project Specification](../p2/dand-p2-project-specification.md)
