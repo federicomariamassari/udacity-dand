@@ -11,7 +11,10 @@ __Completion time:__ 5 days
 
 __Supporting lesson content:__ _[Introduction to Python Programming](https://eu.udacity.com/course/introduction-to-python--ud1110)_ (Beginner)
 
+[Link to project specification](projects/p0/dand-p0-project-specification.md)
+
 ### Overview
+
 _Analyse data from Ford GoBike, a bike sharing company in the San Francisco Bay Area, using Python. Clean the dataset, create visualisations from the wrangled data, uncover and explore trends._
 
 This is a rework of the original __introductory project__, to complete within the first week of enrolment in the Data Analyst Nanodegree program. Using Pandas, Seaborn, and Basemap I explore two years of daily trip data across five US cities (Mountain View, Palo Alto, Redwood City, San Francisco, and San Jose), and for two types of users (annual subscribers and customers).
