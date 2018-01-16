@@ -100,6 +100,8 @@ __Completion time:__ 45 days
 
 __Supporting lesson content:__ _[Data Wrangling with MongoDB](https://eu.udacity.com/course/data-wrangling-with-mongodb--ud032)_ (Intermediate)
 
+[Link to project specification](projects/p3/dand-p3-project-specification.md)
+
 ### Overview
 _Choose an area of the world you care about in [OpenStreetMap.org](https://www.openstreetmap.org) and use data munging techniques to clean the related OSM file (XML). Import the file into a SQL or MongoDB database and run queries to inspect the cleaned data._
 
