@@ -31,8 +31,12 @@ References
 """
 import csv
 
-with open('ks-projects-201801.csv', 'r', newline='') as f, \
-     open('ks.csv', 'w', newline='') as w:
+directory = './data/'
+file_in = 'ks-projects-201801.csv'
+file_out = 'ks.csv'
+
+with open(''.join([directory, file_in]), 'r', newline='') as f, \
+     open(''.join([directory, file_out]), 'w', newline='') as w:
 
     reader = csv.reader(f)
     writer = csv.writer(w)
