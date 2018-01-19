@@ -56,7 +56,7 @@ Dealing with the replacement option, which impacts on the random card drawing al
 ### Which part of the code do you like best?
 The deck generating process. In particular, the way suits and values are stored in different variables, then randomly paired by the card drawing algorithm. I believe this procedure is very intuitive and neat.
 
-[Link to Python module](/projects/p1/python-modules/p1.py)
+[Link to Python module](/projects/p1/python-modules/)
 
 ## P2 [Investigate a Dataset](https://nbviewer.jupyter.org/github/federicomariamassari/udacity-dand/blob/master/projects/p2/dand-p2-investigate-a-dataset.ipynb)
 
@@ -90,7 +90,7 @@ Performing meaningful tests of association between _binary variables_ and plotti
 ### Which part of the code do you like best?
 Function `association`, which returns phi coefficients (if applicable), Cramér's V, and the result of Pearson's test of independence. For the first two statistics no built-in Python function was available, so I had to define my own.
 
-[Link to Python module](/projects/p2/python-modules/p2.py)
+[Link to Python module](/projects/p2/python-modules/)
 
 ## P3 [Wrangle OpenStreetMap Data](https://github.com/federicomariamassari/udacity-dand/blob/master/projects/p3/dand-p3-wrangle-openstreetmap.md)
 
@@ -135,5 +135,7 @@ __Supporting lesson content:__ _[Data Analysis with R](https://eu.udacity.com/co
 ### What was the biggest challenge?
 
 ### Which part of the code do you like best?
+
+[Link to Python module](/projects/p4/python-modules/)
 
 [Link to R module]()
