@@ -124,7 +124,7 @@ Map generation via the Basemap toolkit. My first experiment with the module, a s
 
 ## P4 [Explore and Summarise Data]()
 
-__Language:__ Python (data acquisition and wrangling), R (exploratory data analysis)
+__Languages:__ Python, R
 
 __Completion time:__
 
