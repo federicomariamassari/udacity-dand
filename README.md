@@ -105,7 +105,7 @@ __Supporting lesson content:__ _[Data Wrangling with MongoDB](https://eu.udacity
 ### Overview
 _Choose an area of the world you care about in [OpenStreetMap.org](https://www.openstreetmap.org) and use data munging techniques to clean the related OSM file (XML). Import the file into a SQL or MongoDB database and run queries to inspect the cleaned data._
 
-This project focuses on the __wrangling__ step of the data analysis process: auditing (using regular expressions) and cleaning an XML document, writing its updated entries on csv files, creating a SQL database and importing the files in it, querying the database, and, finally, producing a report.
+This project focuses on the __wrangling__ step of the data analysis process: auditing (using regular expressions) and cleaning an XML document, writing its updated entries on csv files, creating a SQL database and importing the files in it, querying the database, and, finally, producing a report. This is where my Python skills definitely leveled up!
 
 <table>
   <tr>
