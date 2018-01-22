@@ -49,6 +49,26 @@ def get_content(base_url, links):
 
     return pages
 
+def shape_elements(soup):
+    """Prepare HTML content for insertion into csv file.
+
+    Arguments:
+        soup -- bs4.BeautifulSoup. The BeautifulSoup constructor, output
+            of the function 'get_url'.
+
+    Returns:
+        fieldnames -- list of str. A list of field names, the header row.
+        entries -- list of dict. A list of dictionaries, each containing a
+            row, or entry, of the table.
+
+        Pass both objects to 'write_csv' as, respectively, header and entries.
+    """
+    import re
+    from collections import OrderedDict
+    from strings import digits
+
+    
+
 def write_csv(header, entries, file_out, directory='./'):
     """Write content of a web page on csv file.
 
