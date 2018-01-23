@@ -31,23 +31,19 @@ def get_url(url, parser='lxml', sleep_time=10):
 
     return soup
 
-def get_content(base_url, links):
-    """Retrieve HTML content from a list of web pages.
+def get_content(base_url, link):
+    """Retrieve HTML content from a web page.
 
     Arguments:
         base_url -- str. The common prefix of a given web site.
-        links -- list. A list of web site links; each link, appended
-            to the base url, produces a fully working web address.
+        link -- str. A link, which appended to the base url produces a fully
+            working web address.
 
     Returns:
-        A list of HTML structures from the desired web pages.
+        The HTML structure of the desired web page
     """
 
-    pages = []
-    for link in links:
-        pages.append(get_url(base_url + link))
-
-    return pages
+    return get_url(base_url + link)
 
 def clean_title(entry, fieldname='Title'):
     """Clean title of an entry according to a custom mapping."""
