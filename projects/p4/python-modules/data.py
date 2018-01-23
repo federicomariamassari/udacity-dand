@@ -28,6 +28,8 @@ def get_url(url, parser='lxml', sleep_time=10):
     time.sleep(sleep_time)
 
     print('Retrieved content from: {}'.format(url))
+    print('Waiting {} seconds between requests for ethical scraping...'\
+        .format(sleep_time))
 
     return soup
 
