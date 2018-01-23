@@ -92,7 +92,23 @@ def shape_elements(soup):
     """
     import re
     from collections import OrderedDict
-    from strings import digits
+    from string import digits
+
+    # Find dictionary values using regular expressions
+    def find_value(entry, pattern):
+        """Evaluate entry using regular expression.
+
+        Arguments:
+            entry -- str. The row to evaluate.
+            pattern -- str. The regular expression to compile.
+
+        Returns:
+            match -- _sre.SRE_Match. The matched string of text, if any.
+        """
+        compiled_re = re.compile(pattern)
+        match = re.search(compiled_re, entry)
+
+        return match
 
     entries = []
 
@@ -142,22 +158,6 @@ def shape_elements(soup):
         # Add first column 'rank', a counter increasing at each row
         rank = 1
 
-        # Find dictionary values using regular expressions
-        def find_value(entry, re):
-            """Evaluate entry using regular expression.
-
-            Arguments:
-                entry -- str. The row to evaluate.
-                re -- str. The regular expression to compile.
-
-            Returns:
-                match -- _sre.SRE_Match. The matched string of text, if any.
-            """
-            compiled_re = re.compile(re)
-            match = re.search(compiled_re, entry)
-
-            return match
-
         # Get entries within the <div class> tag
         for e in soup.find_all('div', {'class': 'stacks_in text_stack'}):
 
@@ -173,33 +173,150 @@ def shape_elements(soup):
                 rank += 1
 
                 # Match dictionary key, value pairs
-                previous = find_value(e.get_text(), r'\(\d+[\s]*\)|(new)')
-                director = find_value(e.get_text(), r'\.[\s\.\-\w+]*')
-                greatest = find_value(e.get_text(),
+                match_previous = find_value(e.get_text(), r'\(\d+[\s]*\)|(new)')
+                match_director = find_value(e.get_text(), r'\.[\s\.\-\w+]*')
+                match_greatest = find_value(e.get_text(),
                                         r'\d+[*\w+\d+,\s]*(Greatest)')
-                cited = find_value(e.get_text(), r'\d+[\s\w]+(cited)')
+                match_cited = find_value(e.get_text(), r'\d+[\s\w]+(cited)')
 
-                if previous:
-                    # Replace cell value '(new)' with blank
-                    if previous.group() == '(new)':
+                if match_previous:
+                    # Replace cell value '(new)' with NA
+                    if match_previous.group() == 'new':
                         entry['2017'] = ''
                     else:
-                        entry['2017'] = previous.group().strip('\(\)\t')
+                        entry['2017'] = match_previous.group().strip('\(\)\t')
 
-                elif director:
-                    entry['Director'] = director.group().strip('\. ')
+                if match_director:
+                    entry['Director'] = match_director.group().strip('\. ')
 
-                elif greatest:
-                    entry['Greatest'] = greatest.group().split(' ')[0]\
+                if match_greatest:
+                    entry['Greatest'] = match_greatest.group().split(' ')[0]\
                                         .strip('*')
 
-                elif cited:
-                    entry['Cited'] = cited.group().split(' ')[0]
+                if match_cited:
+                    entry['Cited'] = match_cited.group().split(' ')[0]
 
                 entries.append(entry)
 
     elif page_title == 'Ranking History':
-        
+
+        # Retrieve data in the third (position 2) <div>, <class> tag pair
+        counter = 0
+        for e in soup.find_all('div', {'class': 'stacks_in text_stack'}):
+            if counter == 2:
+
+                # Get header row
+                match_fieldnames = find_value(e.get_text(), r':[\w+\s-]*')
+                if match_fieldnames:
+                    fieldnames = match_fieldnames.group().strip(': ')\
+                                    .split(' -- ')
+
+                """Get entries, which are inside strings of text of the form
+                <Unicode char> <rank1> --- <rank2> ... <rankN>.
+                """
+                for tag in e.find_all({'span': 'style'}):
+
+                    # Avoid line if it begins with '---'
+                    if tag.get_text().strip('â\x96ª ')[0].isdigit():
+
+                        entry = OrderedDict()
+
+                        # Match key, value pairs
+                        for i in range(len(fieldnames)):
+                            content = tag.get_text().strip('â\x96ª ')\
+                                        .split(' -- ')[i]
+
+                            if content != '0':
+                                entry[fieldnames[i]] = content
+                            else:
+                                # Replace value 0 with NA
+                                entry[fieldnames[i]] = ''
+
+                        entries.append(entry)
+
+                """Titles are much harder to fetch because they are nested
+                between tags. However, they are necessary, since they work as
+                'primary key' to link this table to other ones.
+                """
+                # Add new field to header and place it at the beginning
+                fieldnames.append('Title')
+                fieldnames.insert(0, fieldnames.pop(-1))
+
+                """Extract the raw content as a list of elements split on the
+                most common delimiter in the page, ' -- '.
+                """
+                raw_page = e.get_text().split(' -- ')
+
+                """Retrieve raw titles every 12 lines in the page, excluding
+                the first and the last ones.
+                """
+                titles = []
+                for row in range(1, len(raw_page) - 1):
+                    if row % 12 == 0:
+                        titles.append(raw_page[row])
+
+                def substring(entry, pos):
+                    """Extract substring starting from desired index"""
+                    s = entry.split('  ')[0][pos:].split(' (')[0].title()
+
+                    return s
+
+                movies = []
+                # Clean raw titles and append them to dictionary
+                for row in range(len(titles)):
+                    movie = OrderedDict()
+
+                    # Add these variables for neater code
+                    raw_title = titles[row].split('  ')[0]
+                    previous_char = raw_title.split(' ')[0][-1]
+
+                    # The first line begins with <Month>.<title>
+                    if row == 0:
+                        movie['Title'] = raw_title.split('.')[1]\
+                                            .split(' (')[0].title()
+
+                    # 8th line has two digits to strip
+                    elif row == 8:
+                        movie['Title'] = substring(titles[row], 2)
+
+                    # 9th line has three digits to strip
+                    elif row == 9:
+                        movie['Title'] = substring(titles[row], 3)
+
+                    # Account for other special titles
+                    elif (previous_char.isdigit()) | \
+                            (previous_char in [':', '½']):
+
+                        if '2046' in raw_title:
+                            movie['Title'] = substring(titles[row], 1)
+                        elif 'W.R.' in raw_title:
+                            movie['Title'] = substring(titles[row], 2)
+                        else:
+                            # Other entries have all three digits to strip
+                            movie['Title'] = substring(titles[row], 3)
+
+                    else:
+                        """Remove leading digits from titles that begin with
+                        letter using the string method 'digits'.
+                        """
+                        movie['Title'] = raw_title.lstrip(digits)\
+                                            .split(' (')[0].title()
+
+                    # Fix entry that really has parentheses in title
+                    if movie['Title'].split(' ')[-1] == 'Peut':
+                            movie['Title'] = ''.join(movie['Title'] + \
+                                                ' (La Vie)')
+
+                    movie = clean_title(movie)
+                    movies.append(movie)
+
+                    # Move field 'Title' at the beginning of entries
+                    entries[row]['Title'] = movies[row]
+                    entries[row].move_to_end('Title', last=False)
+
+            counter += 1
+
+    return fieldnames, entries
 
 def write_csv(header, entries, file_out, directory='./'):
     """Write content of a web page on csv file.
@@ -222,6 +339,6 @@ def write_csv(header, entries, file_out, directory='./'):
         raise IndexError('Lengths of header and entries do not match.')
 
     with open(''.join([directory, file_out]), 'w', newline='') as w:
-        writer = csv.DictWriter(w, fieldnames = header)
+        writer = csv.DictWriter(w, fieldnames=header)
         writer.writeheader()
         writer.writerows(entries)
