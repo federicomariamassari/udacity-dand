@@ -185,7 +185,20 @@ def shape_elements(soup):
                         entry['2017'] = match_previous.group().strip('\(\)\t')
 
                 if match_director:
-                    entry['Director'] = match_director.group().strip('\. ')
+                    entry['Director'] = match_director.group().strip('\. ')\
+                                        .split(' ')
+
+                    """Make column uniform with those of other csv files with
+                    the same information. Store names as <surname>, <name>,
+                    accounting for special surnames with a nobility particle.
+                    """
+                    particle = ['De', 'de', 'dos', 'Van', 'von']
+                    if any(char in particle for char in entry['Director']):
+                        entry['Director'] = ' '.join(entry['Director'][-2:]) + \
+                                        ', ' + ' '.join(entry['Director'][:-2])
+                    else:
+                        entry['Director'] = entry['Director'][-1] + \
+                        ', ' + ' '.join(entry['Director'][:-1])
 
                 if match_greatest:
                     entry['Greatest'] = match_greatest.group().split(' ')[0]\
