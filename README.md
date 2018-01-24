@@ -136,6 +136,6 @@ __Supporting lesson content:__ _[Data Analysis with R](https://eu.udacity.com/co
 
 ### Which part of the code do you like best?
 
-[Link to Python module](/projects/p4/python-modules/)
+[Link to Python modules](/projects/p4/python-modules/)
 
-[Link to R module]()
+[Link to R module](/projects/p4/R-modules/)
