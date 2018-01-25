@@ -11,6 +11,8 @@ __Completion time:__ 5 days
 
 __Supporting lesson content:__ _[Introduction to Python Programming](https://eu.udacity.com/course/introduction-to-python--ud1110)_ (Beginner)
 
+__Acquired familiarity with:__ Python
+
 [Link to project specification](projects/p0/dand-p0-project-specification.md)
 
 ### Overview
@@ -37,6 +39,8 @@ Revealing that a small group of annual subscribers, possibly unaware of overtime
 __Completion time:__ 5 days
 
 __Supporting lesson content:__ _[Intro to Descriptive Statistics](https://eu.udacity.com/course/intro-to-descriptive-statistics--ud827)_ (Beginner)
+
+__Acquired familiarity with:__ NumPy, SciPy, Matplotlib
 
 ### Overview
 _In this project, you will demonstrate your knowledge of descriptive statistics by conducting an experiment dealing with drawing from a deck of playing cards and creating a write up containing your findings._
@@ -65,6 +69,8 @@ __Completion time:__ 21 days
 __Supporting lesson content:__ _[Intro to Data Analysis](https://eu.udacity.com/course/intro-to-data-analysis--ud170)_ (Beginner)
 
 __Textbook:__ Jake VanderPlas, [_Python Data Science Handbook. Essential Tools for Working with Data_](http://shop.oreilly.com/product/0636920034919.do), O'Reilly Media, 2016
+
+__Acquired familiarity with:__ Pandas, Seaborn
 
 [Link to project specification](projects/p2/dand-p2-project-specification.md)
 
@@ -100,6 +106,8 @@ __Completion time:__ 45 days
 
 __Supporting lesson content:__ _[Data Wrangling with MongoDB](https://eu.udacity.com/course/data-wrangling-with-mongodb--ud032)_ (Intermediate)
 
+__Acquired familiarity with:__ ElementTree XML API, SQLite
+
 [Link to project specification](projects/p3/dand-p3-project-specification.md)
 
 ### Overview
@@ -131,6 +139,8 @@ __Completion time:__
 __Supporting lesson content:__ _[Data Analysis with R](https://eu.udacity.com/course/data-analysis-with-r--ud651)_ (Intermediate)
 
 __Textbook:__ Ryan Mitchell, [_Web Scraping with Python. Collecting Data from the Modern Web_](http://shop.oreilly.com/product/0636920034391.do), O'Reilly Media, 2015
+
+__Acquired familiarity with:__ Beautiful Soup, R
 
 ### Overview
 
