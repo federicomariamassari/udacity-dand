@@ -130,7 +130,7 @@ __Completion time:__
 
 __Supporting lesson content:__ _[Data Analysis with R](https://eu.udacity.com/course/data-analysis-with-r--ud651)_ (Intermediate)
 
-__Textbook:__ Ryan Mitchell, [_Web Scraping with Python. Collecting Data from the Modern Web. _](http://shop.oreilly.com/product/0636920034391.do), O'Reilly Media, 2015
+__Textbook:__ Ryan Mitchell, [_Web Scraping with Python. Collecting Data from the Modern Web_](http://shop.oreilly.com/product/0636920034391.do), O'Reilly Media, 2015
 
 ### Overview
 
