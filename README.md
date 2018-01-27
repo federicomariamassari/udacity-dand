@@ -142,6 +142,8 @@ __Textbook:__ Ryan Mitchell, [_Web Scraping with Python. Collecting Data from th
 
 __Acquired familiarity with:__ Beautiful Soup, R
 
+[Link to project specification]
+
 ### Overview
 
 ### What was the biggest challenge?
