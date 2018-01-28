@@ -142,7 +142,7 @@ __Textbook:__ Ryan Mitchell, [_Web Scraping with Python. Collecting Data from th
 
 __Acquired familiarity with:__ Beautiful Soup, R
 
-[Link to project specification]
+[Link to project specification](projects/p4/dand-p4-project-specification.md)
 
 ### Overview
 
