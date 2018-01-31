@@ -130,7 +130,7 @@ Map generation via the Basemap toolkit. My first experiment with the module, a s
 
 [Link to Python modules](/projects/p3/python-modules/)
 
-## P4 [Explore and Summarise Data]()
+## P4 [Explore and Summarise Data](https://github.com/federicomariamassari/udacity-dand/blob/master/projects/p4/dand-p4-explore-and-summarise-data)
 
 __Languages:__ Python, R
 
