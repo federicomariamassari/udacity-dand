@@ -62,7 +62,7 @@ def write_xls(xls_file, filename, directory='./xls/'):
 
     Arguments:
         xls_file -- requests.models.Response. requests' Response object,
-            Output of requests.get() in 'download_xls'.
+            output of requests.get() in 'download_xls'.
         filename -- str. Name of the file to save, with or without extension.
 
     Keyword arguments:
