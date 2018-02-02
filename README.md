@@ -147,6 +147,7 @@ __Acquired familiarity with:__ Beautiful Soup, R
 ### Overview
 
 ### What was the biggest challenge?
+Choosing the right dataset—one rich enough to be explored along many dimensions—as well as becoming familiar with the R language, proved two pretty challenging tasks. In the first case, I spent days surfing on _Kaggle_ before deciding that, if I wanted to be really happy with a dataset, I had to make my own. As a consequence, I turned to a website I have long revered, _[TheyShootPictures.com](http://theyshootpictures.com)_, and wrangled its content (I could not find _robots.txt_, but given the amount of material made available by the Webmaster, I supposed I could scrape the website, if I provided the right attributions). During this phase, Python (especially the combination of `requests` and `BeautifulSoup`) proved invaluable. The biggest inputs came from Udacity courses _[Intro to Computer Science](https://eu.udacity.com/course/intro-to-computer-science--cs101)_, which introduced me to BeautifulSoup, and _[Data Wrangling with MongoDB](https://eu.udacity.com/course/data-wrangling-with-mongodb--ud032)_, which taught me how simple it is to inspect a web page to infer its structure, before extracting the data. In the second case, learning the R syntax was not immediate, although familiarity with MATLAB, NumPy, and Pandas helped me catch up quickly.
 
 ### Which part of the code do you like best?
 
