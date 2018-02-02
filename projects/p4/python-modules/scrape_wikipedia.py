@@ -113,3 +113,15 @@ def country_gdp_by_sector(soup):
                     entries.append(entry)
 
     return fieldnames, entries
+
+if __name__ == '__main__':
+    base_url = 'https://en.wikipedia.org/wiki/'
+    links = ['List_of_countries_by_GDP_sector_composition']
+
+    for link in links:
+        url = ''.join(base_url + link)
+        soup = get_soup(url)
+        if link == 'List_of_countries_by_GDP_sector_composition':
+            fieldnames, entries = country_gdp_by_sector(soup)
+            filename = 'gdp.csv'
+            write_csv(entries, fieldnames, filename)
