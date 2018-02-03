@@ -133,7 +133,7 @@ def country_gdp_by_sector(soup):
     and store the results in a list of dictionaries.
 
     Arguments:
-        soup. bs4.BeautifulSoup. The BeautifulSoup constructor from 'get_soup'.
+        soup -- bs4.BeautifulSoup. BeautifulSoup constructor from 'get_soup'.
 
     Returns:
         fieldnames -- list. List of field names, header row of the csv file.
@@ -175,7 +175,7 @@ def country_by_continent(soup):
     _territories_by_continent
 
     Arguments:
-        soup. bs4.BeautifulSoup. The BeautifulSoup constructor from 'get_soup'.
+        soup -- bs4.BeautifulSoup. BeautifulSoup constructor from 'get_soup'.
 
     Returns:
         fieldnames -- list. List of field names, header row of the csv file.
