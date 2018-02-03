@@ -216,6 +216,7 @@ def country_by_continent(soup):
 
 
 if __name__ == '__main__':
+    """Automatically scrape all pages in the list."""
 
     base_url = 'https://en.wikipedia.org/wiki/'
 
