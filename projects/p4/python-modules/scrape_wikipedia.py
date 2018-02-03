@@ -63,12 +63,65 @@ def write_csv(entries, fieldnames, filename, directory='./csv/'):
     if not os.path.exists(directory):
         os.makedirs(directory)
 
-    with open(''.join([directory, filename]), 'w', newline='') as w:
+    # Add extension to filenames if not present
+    if filename.split('.')[-1] not in 'csv':
+        filename = ''.join(filename + '.csv')
+
+    path = ''.join([directory, filename])
+
+    with open(path, 'w', newline='') as w:
         writer = csv.DictWriter(w, fieldnames=fieldnames)
         writer.writeheader()
         writer.writerows(entries)
 
-"""B. Scrape Wikipedia
+def scrape_all(base_url, pages, directory='./csv/', sleep_time=10):
+    """Main function to download a list of Wikipedia pages, scraping ethically.
+
+    Arguments:
+        base_url -- str. The common prefix of a given web site.
+        pages -- list of dict. Each dictionary must have the form:
+            {'id': <str>,       # Page identifier, custom-defined
+             'link': <str>,     # Link, to append to 'base_url'
+             'filename:' <str>  # Name of the csv file to save*
+            }
+
+        * '.csv' automatically appended to filenames without extension.
+
+    Keyword arguments:
+        directory -- str. Name of the directory in which the file is stored
+            (default './csv/').
+        sleep_time -- float. Number of seconds to wait before downloading a
+            new xls file. For ethical scraping, set this parameter to at least
+            5 seconds (default 10).
+
+    Returns:
+        A set of csv documents, stored in the desired folder.
+    """
+    import time
+
+    # Set sleep_time to at least 5 seconds, if manually input
+    if sleep_time < 5:
+        sleep_time = 5
+
+    # Scrape web page
+    for page in pages:
+        url = ''.join(base_url + page['link'])
+        soup = get_soup(url)
+
+        if page['id'] == 'GDP to services':
+            fieldnames, entries = country_gdp_by_sector(soup)
+        elif page['id'] == 'Country by continent':
+            fieldnames, entries = country_by_continent(soup)
+
+        write_csv(entries, fieldnames, page['filename'])
+
+        # Wait at least 5 seconds unless page is last in the list
+        if page != pages[-1]:
+            print('Waiting {} seconds for ethical scraping...'\
+                    .format(sleep_time))
+            time.sleep(sleep_time)
+
+"""B. Scrape Wikipedia pages
 
 Request HTML content and store it in a BeautifulSoup constructure.
 """
@@ -114,14 +167,70 @@ def country_gdp_by_sector(soup):
 
     return fieldnames, entries
 
-if __name__ == '__main__':
-    base_url = 'https://en.wikipedia.org/wiki/'
-    links = ['List_of_countries_by_GDP_sector_composition']
+def country_by_continent(soup):
+    """Retrieve continent, Country pairs from Wikipedia.
 
-    for link in links:
-        url = ''.join(base_url + link)
-        soup = get_soup(url)
-        if link == 'List_of_countries_by_GDP_sector_composition':
-            fieldnames, entries = country_gdp_by_sector(soup)
-            filename = 'gdp.csv'
-            write_csv(entries, fieldnames, filename)
+    Return a list of Countries by associated continents, from
+    https://en.wikipedia.org/wiki/List_of_sovereign_states_and_dependent
+    _territories_by_continent
+
+    Arguments:
+        soup. bs4.BeautifulSoup. The BeautifulSoup constructor from 'get_soup'.
+
+    Returns:
+        fieldnames -- list. List of field names, header row of the csv file.
+        entries -- list of dict. List of dictionaries, each containing a row,
+            or entry, of the table.
+
+    Pass the output to function 'write_csv'.
+    """
+    fieldnames = ['Continent', 'Country']
+
+    # Store continent names in list
+    continents = []
+
+    # Get continent names, children of tags <h2>
+    for i, continent in enumerate(soup.find_all("h2")):
+        # Do not include unnecessary titles, remove [edit] text
+        if (i > 0) & (i < 7):
+            continents.append(continent.get_text().split('[')[0])
+
+    # Store each key, value pair in list 'entries'
+    entries = []
+
+    # Country names are stored in tables
+    for i, nation in enumerate(soup.find_all("table", \
+                                {"class", "wikitable sortable"})):
+
+        # Relevant countries are boldface (children of tags <b>)
+        for element in nation.find_all("b"):
+            # Store each k,v pair in a dictionary, append the latter to list
+            entry = {}
+            entry['Continent'] = continents[i]
+            # Country names are nested in attributes <a title="Country">
+            entry['Country'] = element.a.get("title")
+
+            entries.append(entry)
+
+    return fieldnames, entries
+
+
+if __name__ == '__main__':
+
+    base_url = 'https://en.wikipedia.org/wiki/'
+
+    """A list of pages to scrape. Each 'page' is a dictionary containing a
+    custom defined page identifier, a link which, appended to the base_url,
+    produces a fully working web address, and the name of the file to save.
+    """
+    pages = [
+    {'id': 'GDP to services',
+     'link': 'List_of_countries_by_GDP_sector_composition',
+     'filename': 'gdp.csv'},
+
+    {'id': 'Country by continent',
+     'link': 'List_of_sovereign_states_and_dependent_territories_by_continent',
+     'filename': 'continents.csv'}
+     ]
+
+    scrape_all(base_url, pages, directory='./csv/', sleep_time=10)
