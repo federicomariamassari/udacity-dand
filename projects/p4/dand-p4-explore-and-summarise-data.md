@@ -7,3 +7,7 @@ The project is connected to the course _[Data Analysis with R](https://eu.udacit
 <img align="center" src="./img/figure-01.png"/>
 
 <img align="center" src="./img/figure-02.png"/>
+
+<img align="center" src="./img/figure-03.png"/>
+
+<img align="center" src="./img/figure-04.png"/>
