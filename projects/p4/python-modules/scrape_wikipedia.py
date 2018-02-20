@@ -123,7 +123,7 @@ def scrape_all(base_url, pages, directory='./csv/', sleep_time=10):
 
 """B. Scrape Wikipedia pages
 
-Request HTML content and store it in a BeautifulSoup constructure.
+Request HTML content and store it in a BeautifulSoup constructor.
 """
 def country_gdp_by_sector(soup):
     """Get Countries' GDP by sector from Wikipedia.
