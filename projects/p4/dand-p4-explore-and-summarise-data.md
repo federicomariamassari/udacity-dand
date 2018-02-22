@@ -37,7 +37,6 @@ We have seen the geographic distribution of the greatest movies. But _how many_ 
 
 - By far, the largest contributor is the United States, with over 800 movies (over 900 if co-productions are also included). France follows, with half that figure;
 - The only African Country contributing more than two movies is Senegal (5-10);
--
 
 <img align="center" src="./img/figure-03.png"/>
 
