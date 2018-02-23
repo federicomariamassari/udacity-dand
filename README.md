@@ -153,7 +153,7 @@ Choosing the right dataset—one rich enough to be explored along many dimension
   <head>
     <meta name="robots" content="index, follow">
 ```
-Python, especially the combination of `requests` and `BeautifulSoup`, proved invaluable during this phase. The biggest inputs came from Udacity courses _[Intro to Computer Science](https://eu.udacity.com/course/intro-to-computer-science--cs101)_, which introduced me to BeautifulSoup, and _[Data Wrangling with MongoDB](https://eu.udacity.com/course/data-wrangling-with-mongodb--ud032)_, which taught me how simple it is to inspect a web page to infer its structure, before extracting the data. In the second case, learning the R syntax was not immediate, although familiarity with MATLAB, NumPy, and Pandas helped me catch up quickly.
+Python, especially the combination of `requests` and `BeautifulSoup`, proved invaluable during this phase. In the second case, learning the R syntax was not immediate, although familiarity with MATLAB, NumPy, and Pandas helped me catch up quickly.
 
 ### Which part of the code do you like best?
 
