@@ -147,7 +147,7 @@ __Acquired familiarity with:__ Beautiful Soup, R
 ### Overview
 
 ### What was the biggest challenge?
-Choosing the right dataset—one rich enough to be explored along many dimensions—as well as becoming familiar with the R language, proved two pretty challenging tasks. In the first case, I spent days surfing on _Kaggle_ before deciding that, if I wanted to be happy with a dataset, I had to make my own. In the end, I wrangled the content of a website I have long appreciated, _[TheyShootPictures.com](http://theyshootpictures.com)_. I discovered I could legally scrape the website from the _robots meta tags_:
+Choosing the right dataset—one rich enough to be explored along many dimensions—as well as becoming familiar with the R language, proved two pretty challenging tasks. In the first case, I spent days surfing on _Kaggle_ before I decided to make my own dataset. In the end, I wrangled the content of a website I have long appreciated, _[TheyShootPictures.com](http://theyshootpictures.com)_. I discovered I could legally scrape the website from the _robots meta tags_:
 ```html
 <html lang="en">
   <head>
