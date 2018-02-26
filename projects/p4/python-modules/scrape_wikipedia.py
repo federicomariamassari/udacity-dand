@@ -42,7 +42,7 @@ def get_soup(url, parser='lxml'):
 
     return soup
 
-def write_csv(entries, fieldnames, filename, directory='./csv/'):
+def write_csv(entries, fieldnames, filename, directory='./data/csv/'):
     """Write content of a web page on a csv file.
 
     Arguments:
@@ -52,7 +52,7 @@ def write_csv(entries, fieldnames, filename, directory='./csv/'):
         filename -- str. Name of the output csv file.
 
     Keyword arguments:
-        directory -- str. Destination path of the file (default './csv/').
+        directory -- str. Destination path of the file (default './data/csv/').
 
     Returns:
         A csv document distilling the information of the selected web page.
@@ -234,4 +234,4 @@ if __name__ == '__main__':
      'filename': 'continents.csv'}
      ]
 
-    scrape_all(base_url, pages, directory='./csv/', sleep_time=10)
+    scrape_all(base_url, pages, directory='./data/csv/', sleep_time=10)

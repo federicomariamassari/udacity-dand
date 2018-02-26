@@ -13,7 +13,7 @@ Use Python 3 to run this file.
 2018 - Federico Massari / federico.massari@libero.it
 """
 
-def download_all(base_url, links, directory='./xls/', sleep_time=10):
+def download_all(base_url, links, directory='./data/xls/', sleep_time=10):
     """Download a list of Excel files, scraping ethically.
 
     Arguments:
@@ -23,7 +23,7 @@ def download_all(base_url, links, directory='./xls/', sleep_time=10):
 
     Keyword arguments:
         directory -- str. Name of the directory in which the file is stored
-            (default './xls/').
+            (default './data/xls/').
         sleep_time -- float. Number of seconds to wait before downloading a
             new xls file. For ethical scraping, set this parameter to at least
             5 seconds (default 10).
@@ -57,7 +57,7 @@ def download_xls(base_url, link):
 
     return requests.get(url)
 
-def write_xls(xls_file, filename, directory='./xls/'):
+def write_xls(xls_file, filename, directory='./data/xls/'):
     """Write content to xls file.
 
     Arguments:
@@ -67,7 +67,7 @@ def write_xls(xls_file, filename, directory='./xls/'):
 
     Keyword arguments:
         directory -- str. Name of the directory in which the file is stored
-            (default './xls/').
+            (default './data/xls/').
 
     Returns:
         An Excel document with the content of 'xls_file'.
