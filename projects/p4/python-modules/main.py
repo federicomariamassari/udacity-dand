@@ -1,7 +1,9 @@
-"""Auxiliary Functions
+"""Auxiliary functions to retrieve HTML content (requests + BeautifulSoup)
+and write the output to csv.
 
-Use these functions to retrieve HTML content (requests + BeautifulSoup), and
-write the output to csv (csv).
+Use Python 3 to run this file.
+
+2018 - Federico Massari / federico.massari@libero.it
 """
 def get_soup(url, parser='lxml'):
     """Request a web page and pass it to a BeautifulSoup constructor.
