@@ -30,3 +30,27 @@ greatest$region <- factor(greatest$region)
 # Add factor levels
 levels(greatest$region) <- c(levels(greatest$region),
 c("China", "Czech Republic", "Serbia"))
+
+# Automate factor renaming
+rename_factor <- function(df_column, old_name, new_name) {
+    # Rename data frame factor.
+    #
+    # Arguments:
+    #   df_column: The factor column.
+    #   old_name: The factor name to replace.
+    #   new_name: The new factor name.
+    #
+    # Returns:
+    #   A data frame column with replaced factor name.
+    df_column[df_column == old_name] <- new_name
+    return(df_column)
+}
+
+# Uniform names with those of world map
+old_names <- c("Czechoslovakia", "Hong Kong", "USSR", "West Germany",
+"Yugoslavia")
+new_names <- c("Czech Republic", "China", "Russia", "Germany", "Serbia")
+
+for (i in 1:length(old_names)) {
+    greatest$region <- rename_factor(greatest$region, old_names[i], new_names[i])
+}
