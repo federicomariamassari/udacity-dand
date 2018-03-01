@@ -1,3 +1,17 @@
+"""Scrape HTML content from 'They Shoot Pictures' and write to csv.
+
+For the specified pages, this module allows to:
+- retrieve the page HTML structure;
+- extract the content of a table and store it in a list of dictionaries;
+- write each key, value pair on a csv file.
+
+Use Python 3 to run this file.
+Run the module while in the 'p4' directory (not 'p4/python-modules').
+
+2018 - Federico Massari / federico.massari@libero.it
+"""
+
+# Import auxiliary functions
 from main import get_soup
 from main import write_csv
 
