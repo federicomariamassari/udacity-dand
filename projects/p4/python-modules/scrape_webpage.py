@@ -58,6 +58,7 @@ def top_directors(soup):
 
 def scrape_webpage(base_url, pages, directory='./data/csv/', sleep_time=10):
     """Main function to download a list of pages, scraping ethically.
+
     Arguments:
         base_url -- str. The common prefix of a given web site.
         pages -- list of dict. Each dictionary must have the form:
@@ -66,12 +67,14 @@ def scrape_webpage(base_url, pages, directory='./data/csv/', sleep_time=10):
              'filename:' <str>  # Name of the csv file to save*
             }
         * '.csv' automatically appended to filenames without extension.
+
     Keyword arguments:
         directory -- str. Name of the directory in which the file is stored
             (default './data/csv/').
         sleep_time -- float. Number of seconds to wait before downloading a
             new xls file. For ethical scraping, set this parameter to at least
             5 seconds (default 10).
+
     Returns:
         A set of csv documents, stored in the desired folder.
     """
