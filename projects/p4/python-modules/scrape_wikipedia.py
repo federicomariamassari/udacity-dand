@@ -14,7 +14,7 @@ Use Python 3 to run this file.
 from main import get_soup
 from main import write_csv
 
-def scrape_all(base_url, pages, directory='./csv/', sleep_time=10):
+def scrape_wiki(base_url, pages, directory='./data/csv/', sleep_time=10):
     """Main function to download a list of Wikipedia pages, scraping ethically.
 
     Arguments:
@@ -29,7 +29,7 @@ def scrape_all(base_url, pages, directory='./csv/', sleep_time=10):
 
     Keyword arguments:
         directory -- str. Name of the directory in which the file is stored
-            (default './csv/').
+            (default './data/csv/').
         sleep_time -- float. Number of seconds to wait before downloading a
             new xls file. For ethical scraping, set this parameter to at least
             5 seconds (default 10).
@@ -174,4 +174,4 @@ if __name__ == '__main__':
      'filename': 'continents.csv'}
      ]
 
-    scrape_all(base_url, pages, directory='./data/csv/', sleep_time=10)
+    scrape_wiki(base_url, pages, directory='./data/csv/', sleep_time=10)
