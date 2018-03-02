@@ -54,3 +54,46 @@ new_names <- c("Czech Republic", "China", "Russia", "Germany", "Serbia")
 for (i in 1:length(old_names)) {
     greatest$region <- rename_factor(greatest$region, old_names[i], new_names[i])
 }
+
+make_chart <- function(df, column, column_id) {
+    # Create a dplyr summary chart with custom column names [1].
+    #
+    # Arguments:
+    #   df: The data frame to summarise.
+    #   column: The df column to "group_by".
+    #   column_id: A string label to uniquely identify the columns.
+    #
+    # Returns:
+    #   A summary table with log10, log2, and level transformations.
+    #
+    # References:
+    #   [1] http://dplyr.tidyverse.org/articles/programming.html
+    
+    # Create quosure to use dplyr in function environment
+    column <- enquo(column)
+    
+    # Unquote (evaluate immediately) quosure expression
+    df_out <- df %>%
+    group_by(!!column) %>%
+    summarise(n = n()) %>%
+    mutate(log10 = log10(n)) %>%
+    mutate(log2 = log2(n))
+    
+    # Conveniently group and label factor levels
+    df_out$bin <- cut(df_out$log10,
+    breaks = c(-Inf, 0, 1, 2, +Inf))
+    
+    levels(df_out$bin) <- c("Single",
+    "From 2 to 10",
+    "From 11 to 100",
+    "More than 100")
+    
+    # Uniquely label columns using an identifier
+    cols <- c("n", "log10", "log2", "bin")
+    
+    for (i in 1:length(cols)) {
+        colnames(df_out)[i+1] <- c(paste(cols[i], column_id, sep = "_"))
+    }
+    
+    return(df_out)
+}
