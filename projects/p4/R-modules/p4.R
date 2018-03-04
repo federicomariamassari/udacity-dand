@@ -3,17 +3,19 @@ system("python3 ../python-modules/get_xls.py")
 system("python3 ./python-modules/scrape_webpage.py")
 system("python3 ../python-modules/scrape_wikipedia.py")
 
-# Import libraries
+# Import frequently used libraries
 library(ggplot2)
 library(dplyr)
 library(gridExtra)
 
-# Import file content as data frames
-greatest_pt1 <- readxl::read_excel("../data/xls/1000GreatestFilms.xls")
-greatest_pt2 <- readxl::read_excel("../data/xls/Films-Ranked-1001-2000.xls")
-directors <- read.csv("../data/csv/top_250_directors.csv")
-gdp <- read.csv("../data/csv/gdp.csv")
-continents <- read.csv("../data/csv/continents.csv")
+# Import file contents as data frames
+greatest_pt1 <- readxl::read_excel("./data/xls/1000GreatestFilms.xls")
+greatest_pt2 <- readxl::read_excel("./data/xls/Films-Ranked-1001-2000.xls")
+directors <- read.csv("./data/csv/top_250_directors.csv")
+continents <- read.csv("./data/csv/continents.csv")
+gdp <- read.csv("./data/csv/gdp.csv")
+
+# Import world map from ggplot2 library
 world <- map_data("world")
 
 # Uniform the data frames, append pt2 to pt1
@@ -22,7 +24,7 @@ greatest <- rbind(greatest_pt1[, -c(2:3)], greatest_pt2)
 # Remove single files to free up space
 rm(greatest_pt1, greatest_pt2)
 
-# Single-out main country of production
+# Single-out main Country of production
 greatest$region <- stringr::str_split_fixed(greatest$Country, "-", 2)[,1]
 
 # Convert to factors (before: chr)
@@ -99,3 +101,5 @@ make_chart <- function(df, column, column_id) {
     
     return(df_out)
 }
+
+
