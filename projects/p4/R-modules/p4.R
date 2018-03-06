@@ -79,18 +79,15 @@ make_chart <- function(df, column, column_id) {
     # Unquote (evaluate immediately) quosure expression
     df_out <- df %>%
     group_by(!!column) %>%
-    summarise(n = n()) %>%
-    mutate(log10 = log10(n)) %>%
-    mutate(log2 = log2(n))
+    summarise(n = n())
     
     # Conveniently group and label factor levels
-    df_out$bin <- cut(df_out$log10,
-    breaks = c(-Inf, 0, 1, 2, +Inf))
+    df_out$bin <- cut(df_out$n, breaks = c(-Inf, 1,  10, 50, 100, +Inf))
+
+    levels(df_out$bin) <- c("Single", "From 2 to 10", "From 11 to 50",
+                            "From 51 to 100", "More than 100")
     
-    levels(df_out$bin) <- c("Single",
-    "From 2 to 10",
-    "From 11 to 100",
-    "More than 100")
+    
     
     # Uniquely label columns using an identifier
     cols <- c("n", "log10", "log2", "bin")
