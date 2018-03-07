@@ -18,6 +18,9 @@ gdp <- read.csv("./data/csv/gdp.csv")
 # Import world map from ggplot2 library
 world <- map_data("world")
 
+# Convert character columns to factors
+world <- as.data.frame(unclass(world))
+
 # Uniform the data frames, append pt2 to pt1
 greatest <- rbind(greatest_pt1[, -c(2:3)], greatest_pt2)
 
