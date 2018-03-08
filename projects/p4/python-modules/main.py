@@ -24,7 +24,6 @@ def get_soup(url, parser='lxml'):
     """
     from bs4 import BeautifulSoup
     import requests
-    import time
 
     html = requests.get(url)
     soup = BeautifulSoup(html.text, parser)
