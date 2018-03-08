@@ -31,7 +31,10 @@ def scrape_webpage(page):
         for row in soup.find_all("tr"):
             entry = OrderedDict()
             for i, cell in enumerate(row.find_all("td")):
-                entry[fieldnames[i]] = cell.get_text()
+                if "[" in cell.get_text():
+                    entry[fieldnames[i]] = cell.get_text().split("[")[0].strip()
+                else:
+                    entry[fieldnames[i]] = cell.get_text()
 
             if entry != {}:
                 entries.append(entry)
