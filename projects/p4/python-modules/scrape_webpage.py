@@ -6,7 +6,9 @@ For the specified pages, this module allows to:
 - write each key, value pair on a csv file.
 
 Use Python 3 to run this file.
+
 Run the module while in the 'p4' directory (not 'p4/python-modules').
+On Terminal or Command Prompt: python3 python-modules/scrape_webpage.py
 
 2018 - Federico Massari / federico.massari@libero.it
 """
