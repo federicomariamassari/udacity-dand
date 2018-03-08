@@ -55,6 +55,8 @@ def scrape_wiki(base_url, pages, directory='./data/csv/', sleep_time=10):
             fieldnames, entries = country_gdp_by_sector(soup)
         elif page['id'] == 'Country by continent':
             fieldnames, entries = country_by_continent(soup)
+        elif page['id'] == 'Country by area':
+            fieldnames, entries = country_by_area(soup)
 
         write_csv(entries, fieldnames, page['filename'])
 
@@ -157,6 +159,65 @@ def country_by_continent(soup):
 
     return fieldnames, entries
 
+def country_by_area(soup):
+    """Retrieve Country area divided between land and water.
+
+    Return a list of Countries by area (total and land/water only), from
+    https://en.wikipedia.org/wiki/List_of_countries_and_dependencies_by_area.
+
+    Arguments:
+        soup -- bs4.BeautifulSoup. BeautifulSoup constructor from 'get_soup'.
+
+    Returns:
+        fieldnames -- list. List of field names, header row of the csv file.
+        entries -- list of dict. List of dictionaries, each containing a row,
+            or entry, of the table.
+
+    Pass the output to function 'write_csv'.
+    """
+    from collections import OrderedDict
+
+    # Make custom fieldnames
+    fieldnames = ['region', 'total area', 'land', 'water']
+
+    entries = []
+    for table in soup.find_all("table", {"class": "wikitable sortable"}):
+        for tr in table.find_all("tr"):
+
+            entry = OrderedDict()
+            for i, row in enumerate(tr.find_all("td")):
+                if i == 1:
+                    """Country name is the content of tag <a>. This method
+                    ignored the names of those Countries whose entry includes
+                    a clickable flag (a few small islands). An alternative
+                    method would look at the content of attribute 'title' in
+                    row.find("a")['title'], however this also fails whenever
+                    no or multiple attributes 'title' are available.
+                    """
+                    entry[fieldnames[i-1]] = row.a.get_text()
+
+                elif 1 < i < 5:
+                    """Each entry value corresponding to keys 'total area',
+                    'land', and 'water', is the so-called next sibling of the
+                    related <span> tag (i.e., the value is outside any tag, and
+                    it is to the right of </span>).
+                    """
+                    try:
+                        if row.span.next_sibling[0].isdigit():
+                            # Remove thousands separator from entries
+                            entry[fieldnames[i-1]] = row.span.next_sibling\
+                                                        .replace(',', '')
+                        else:
+                            entry[fieldnames[i-1]] = ''
+
+                    # Empty cells have no attribute span
+                    except (AttributeError, KeyError) as e:
+                        entry[fieldnames[i-1]] = ''
+
+            if entry != {}:
+                entries.append(entry)
+
+    return fieldnames, entries
 
 if __name__ == '__main__':
     """Automatically scrape all pages in the list."""
@@ -174,7 +235,11 @@ if __name__ == '__main__':
 
     {'id': 'Country by continent',
      'link': 'List_of_sovereign_states_and_dependent_territories_by_continent',
-     'filename': 'continents.csv'}
+     'filename': 'continents.csv'},
+
+    {'id': 'Country by area',
+     'link': 'List_of_countries_and_dependencies_by_area',
+     'filename': 'country_area.csv'},
      ]
 
     scrape_wiki(base_url, pages, directory='./data/csv/', sleep_time=10)
