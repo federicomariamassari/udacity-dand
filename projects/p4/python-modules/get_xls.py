@@ -9,7 +9,9 @@ recommend if you are interested in the topic. I have been a fan for several
 years already.
 
 Use Python 3 to run this file.
+
 Run the module while in the 'p4' directory (not 'p4/python-modules').
+On Terminal or Command Prompt: python3 python-modules/get_xls.py
 
 2018 - Federico Massari / federico.massari@libero.it
 """
