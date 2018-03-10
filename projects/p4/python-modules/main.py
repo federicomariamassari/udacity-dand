@@ -1,8 +1,7 @@
 """Auxiliary functions to retrieve HTML content (requests + BeautifulSoup)
 and write the output to csv.
 
-Use Python 3 to run this file.
-Run the module while in the 'p4' directory (not 'p4/python-modules').
+Do not run this module, simply import it.
 
 2018 - Federico Massari / federico.massari@libero.it
 """
