@@ -57,6 +57,8 @@ def scrape_wiki(base_url, pages, directory='./data/csv/', sleep_time=10):
             fieldnames, entries = country_by_continent(soup)
         elif page['id'] == 'Country by area':
             fieldnames, entries = country_by_area(soup)
+        elif page['id'] == 'Country by alpha-2 code':
+            fieldnames, entries = country_by_code(soup)
 
         write_csv(entries, fieldnames, page['filename'])
 
@@ -219,6 +221,51 @@ def country_by_area(soup):
 
     return fieldnames, entries
 
+def country_by_code(soup):
+    """Retrieve ISO 3166-1 alpha-2 Country codes.
+
+    Return a list of Countries by area (total and land/water only), from
+    https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2.
+
+    Arguments:
+        soup -- bs4.BeautifulSoup. BeautifulSoup constructor from 'get_soup'.
+
+    Returns:
+        fieldnames -- list. List of field names, header row of the csv file.
+        entries -- list of dict. List of dictionaries, each containing a row,
+            or entry, of the table.
+
+    Pass the output to function 'write_csv'.
+    """
+    from collections import OrderedDict
+
+    # Make custom fieldnames
+    fieldnames = ['Code', 'Country']
+    entries = []
+
+    for e, table in enumerate(soup.find_all("table", \
+                                            {"class", "wikitable sortable"})):
+
+        """Only retrieve content from the wikitable containing 'officially
+        assigned code elements'.
+        """
+        if e == 0:
+            for row in table.find_all("tr"):
+                entry = OrderedDict()
+
+                for i, row in enumerate(row.find_all("td")):
+
+                    # Only consider content in the first two columns
+                    if i == 0:
+                        entry['Code'] = row['id']
+                    elif i == 1:
+                        entry['Country'] = row.a['title']
+
+                if entry != {}:
+                    entries.append(entry)
+
+    return fieldnames, entries
+
 if __name__ == '__main__':
     """Automatically scrape all pages in the list."""
 
@@ -240,6 +287,10 @@ if __name__ == '__main__':
     {'id': 'Country by area',
      'link': 'List_of_countries_and_dependencies_by_area',
      'filename': 'country_area.csv'},
+
+    {'id': 'Country by alpha-2 code',
+     'link': 'ISO_3166-1_alpha-2',
+     'filename': 'country_codes.csv'}
      ]
 
     scrape_wiki(base_url, pages, directory='./data/csv/', sleep_time=10)
