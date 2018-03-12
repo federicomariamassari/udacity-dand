@@ -132,7 +132,7 @@ Map generation via the Basemap toolkit. My first experiment with the module, a s
 
 ## P4 [Explore and Summarise Data](https://github.com/federicomariamassari/udacity-dand/blob/master/projects/p4/dand-p4-explore-and-summarise-data.md)
 
-__Languages:__ Python, R, Plotly
+__Languages:__ Python, R
 
 __Completion time:__
 
@@ -140,7 +140,7 @@ __Supporting lesson content:__ _[Data Analysis with R](https://eu.udacity.com/co
 
 __Textbook:__ Ryan Mitchell, [_Web Scraping with Python. Collecting Data from the Modern Web_](http://shop.oreilly.com/product/0636920034391.do), O'Reilly Media, 2015
 
-__Acquired familiarity with:__ Beautiful Soup, R
+__Acquired familiarity with:__ Beautiful Soup, R, Plotly
 
 [Link to project specification](projects/p4/dand-p4-project-specification.md)
 
