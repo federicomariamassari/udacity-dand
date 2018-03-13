@@ -21,8 +21,10 @@ def scrape_webpage(page):
     if page['id'] == 'Country coordinates':
 
         fieldnames = []
-        for field in soup.find_all("th"):
-            fieldnames.append(field.get_text())
+        for e, field in enumerate(soup.find_all("th")):
+            if e != 0:
+                # Titlecase fieldnames
+                fieldnames.append(field.get_text().title())
 
         # Rename dictionary field 'name' to 'Country'
         fieldnames[-1] = 'Country'
@@ -30,11 +32,13 @@ def scrape_webpage(page):
         entries = []
         for row in soup.find_all("tr"):
             entry = OrderedDict()
-            for i, cell in enumerate(row.find_all("td")):
-                if "[" in cell.get_text():
-                    entry[fieldnames[i]] = cell.get_text().split("[")[0].strip()
-                else:
-                    entry[fieldnames[i]] = cell.get_text()
+            for e, cell in enumerate(row.find_all("td")):
+                if e != 0:
+                    if "[" in cell.get_text():
+                        entry[fieldnames[e-1]] = cell.get_text().split("[")[0]\
+                                                .strip()
+                    else:
+                        entry[fieldnames[e-1]] = cell.get_text()
 
             if entry != {}:
                 entries.append(entry)
