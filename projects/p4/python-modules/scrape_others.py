@@ -24,8 +24,8 @@ def scrape_webpage(page):
         for field in soup.find_all("th"):
             fieldnames.append(field.get_text())
 
-        # Rename dictionary field 'name' to 'region'
-        fieldnames[-1] = 'region'
+        # Rename dictionary field 'name' to 'Country'
+        fieldnames[-1] = 'Country'
 
         entries = []
         for row in soup.find_all("tr"):
