@@ -180,7 +180,7 @@ def country_by_area(soup):
     from collections import OrderedDict
 
     # Make custom fieldnames
-    fieldnames = ['region', 'total area', 'land', 'water']
+    fieldnames = ['Country', 'Total Area', 'Land', 'Water']
 
     entries = []
     for table in soup.find_all("table", {"class": "wikitable sortable"}):
