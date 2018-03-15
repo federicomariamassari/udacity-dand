@@ -2,7 +2,7 @@ Previous: [P2 Investigate a Dataset](https://nbviewer.jupyter.org/github/federic
 # Data Analyst Nanodegree: P3 Wrangle OpenStreetMap
 __Federico Maria Massari / federico.massari@bocconialumni.it__
 
-The project is connected to the course _[Data Wrangling with MongoDB](https://eu.udacity.com/course/data-wrangling-with-mongodb--ud032)_. | ★ This is a featured article.
+The project is connected to the course _[Data Wrangling with MongoDB](https://eu.udacity.com/course/data-wrangling-with-mongodb--ud032)_. | ★ This is a featured project.
 
 ## Map area
 Milan, Italy
