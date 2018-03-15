@@ -21,8 +21,8 @@ def get_soup(url, parser='lxml'):
     References:
     [1] https://www.crummy.com/software/BeautifulSoup/bs4/doc/
     """
-    from bs4 import BeautifulSoup
     import requests
+    from bs4 import BeautifulSoup
 
     html = requests.get(url)
     soup = BeautifulSoup(html.text, parser)
