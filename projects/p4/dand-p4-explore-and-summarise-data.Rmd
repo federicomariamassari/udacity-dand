@@ -1,5 +1,0 @@
----
-title: 'Data Analyst Nanodegree: P4 Explore and Summarise Data'
-author: "Federico Maria Massari"
-output: html_document
----
