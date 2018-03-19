@@ -5,9 +5,11 @@ Data Analyst Nanodegree: P4 Explore and Summarise Data
 **Introduction**
 ----------------
 
-*[They Shoot Pictures, Don't They?](http://www.theyshootpictures.com)*, by Bill Georgaris and Vicki Platt, is among the definitive guides for cinema aficionados. The website features some of the most referenced film lists on the Internet, most notably "The 1,000 Greatest Films", which showcases the most groundbreaking and highly artistic movies ever made (and which was recently expanded to include 2,000 films in total), "The 21st Century's Most Acclaimed Films", which presents the best works of the past two decades, and "Top 250 Directors", which ranks filmmakers by historical importance.
+*[They Shoot Pictures, Don't They?](http://www.theyshootpictures.com)*, by Bill Georgaris and Vicki Platt, is among the definitive guides for cinema aficionados. The website features some of the most referenced film lists on the Internet, notably "The 1,000 Greatest Films", which showcases the most groundbreaking and highly artistic movies ever made (and which was recently expanded to include 2,000 films in total), "The 21st Century's Most Acclaimed Films", which presents the best works of the past two decades, and "Top 250 Directors", which ranks filmmakers by historical importance.
 
-Each list is a synthesis of thousands of individual ballots, so it is not only pleasant to read, but also "statistically sound". As a consequence, the website represents an invaluable resource for both professionals and beginners alike.
+Each list is a synthesis of thousands of individual polls and ballots, so it is not only pleasant to read, but also "statistically sound". As a consequence, the website represents an invaluable resource for both professionals and beginners alike.
+
+Eytan Bakshy, a scientist at Facebook, suggests that future data scientists find data they are interested in, and play with them, to develop experience. I have been a fan of TSPDT for years, so this is my chance to visually explore some of its rich data sets. Among the others, I will investigate:
 
 **Data acquisition**
 --------------------
@@ -15,10 +17,10 @@ Each list is a synthesis of thousands of individual ballots, so it is not only p
 #### **Acquire external datasets using Python**
 
 ``` r
-#system("python3 ./python-modules/get_xls.py")
-#system("python3 ./python-modules/scrape_webpage.py")
-#system("python3 ./python-modules/scrape_wikipedia.py")
-#system("python3 ./python-modules/scrape_others.py")
+system("python3 ./python-modules/get_xls.py")
+system("python3 ./python-modules/scrape_webpage.py")
+system("python3 ./python-modules/scrape_wikipedia.py")
+system("python3 ./python-modules/scrape_others.py")
 ```
 
 #### **Import datasets into R**
@@ -27,7 +29,6 @@ Each list is a synthesis of thousands of individual ballots, so it is not only p
 # Import frequently used libraries
 library(dplyr)
 library(ggplot2)
-library(plotly)
 ```
 
 ``` r
