@@ -1,34 +1,36 @@
----
-title: "Data Analyst Nanodegree: P4 Explore and Summarise Data"
-author: "Federico Maria Massari"
-output: #rmarkdown::github_document
-  html_document:
-    keep_md: TRUE
----
+Data Analyst Nanodegree: P4 Explore and Summarise Data
+================
+**Federico Maria Massari / <federico.massari@bocconialumni.it>**
 
+**Introduction**
+----------------
 
-## __Data acquisition__
+*[They Shoot Pictures, Don't They?](http://www.theyshootpictures.com)*, by Bill Georgaris and Vicki Platt, is among the definitive guides for cinema aficionados. The website features some of the most referenced film lists on the Internet, most notably "The 1,000 Greatest Films", which showcases the most groundbreaking and highly artistic movies ever made (and which was recently expanded to include 2,000 films in total), "The 21st Century's Most Acclaimed Films", which presents the best works of the past two decades, and "Top 250 Directors", which ranks filmmakers by historical importance.
 
-#### __Acquire external datasets using Python__
+Each list is a synthesis of thousands of individual ballots, so it is not only pleasant to read, but also "statistically sound". As a consequence, the website represents an invaluable resource for both professionals and beginners alike.
 
-```r
-system("python3 ./python-modules/get_xls.py")
-system("python3 ./python-modules/scrape_webpage.py")
-system("python3 ./python-modules/scrape_wikipedia.py")
-system("python3 ./python-modules/scrape_others.py")
+**Data acquisition**
+--------------------
+
+#### **Acquire external datasets using Python**
+
+``` r
+#system("python3 ./python-modules/get_xls.py")
+#system("python3 ./python-modules/scrape_webpage.py")
+#system("python3 ./python-modules/scrape_wikipedia.py")
+#system("python3 ./python-modules/scrape_others.py")
 ```
 
-#### __Import datasets into R__
+#### **Import datasets into R**
 
-```r
+``` r
 # Import frequently used libraries
 library(dplyr)
 library(ggplot2)
 library(plotly)
 ```
 
-
-```r
+``` r
 # Import main files as data frames
 greatest_pt1 <- readxl::read_excel("./data/xls/1000GreatestFilms.xls")
 greatest_pt2 <- readxl::read_excel("./data/xls/Films-Ranked-1001-2000.xls")
@@ -42,18 +44,18 @@ country_codes <- read.csv("./data/csv/country_codes.csv")
 gdp <- read.csv("./data/csv/gdp.csv")
 
 # Import world map from ggplot2 library
-#world <- map_data("world")
 world <- filter(map_data("world"), region != "Antarctica")
 
 # Uniform the data frames, append pt2 to pt1
 greatest <- rbind(greatest_pt1[, -c(2:3)], greatest_pt2)
 ```
 
-## __Data cleaning__
+**Data cleaning**
+-----------------
 
-#### __Define auxiliary functions__
+#### **Define auxiliary functions**
 
-```r
+``` r
 # Convert character columns to factors
 convert.to.factor <- function(df) {
   # Convert all "chr" columns of a data frame to "Factor".
@@ -153,9 +155,9 @@ add.bool.column <- function(df, cond.column, new.column, delimiter,
 }
 ```
 
-#### __Clean original data frames__
+#### **Clean original data frames**
 
-```r
+``` r
 # Convert columns of type "chr" to "Factor"
 world <- convert.to.factor(world)
 greatest <- convert.to.factor(greatest)
@@ -206,9 +208,9 @@ cols <- c("Agriculture", "Industry", "Services")
 gdp[, cols] = apply(gdp[, cols], 2, function(x) as.numeric(as.character(x)))
 ```
 
-#### __Add columns to data frame__
+#### **Add columns to data frame**
 
-```r
+``` r
 # Add column "Co.Production"
 greatest <- add.bool.column(df = greatest, cond.column = "All.Countries",
                             new.column = "Co.Production", delimiter = ", ")
@@ -234,9 +236,9 @@ levels(greatest$Rank.Category) <- c("Top 10", "From 11 to 100",
                                     "Bottom 1000")
 ```
 
-#### __Generate main dataset__
+#### **Generate main dataset**
 
-```r
+``` r
 split.strings <- function(df, column, delimiter = ", ") {
   # Split data frame column entries by delimiter and vectorise the output.
   #
@@ -348,8 +350,7 @@ extract.countries <- function(df, column, old_names, new_names) {
 }
 ```
 
-
-```r
+``` r
 # Uniform Country levels with those of world map
 old_names <- c("Czechia", "Czechoslovakia", "Kingdom of the Netherlands",
                "Korea, South", "Palestinian Territories", "Republic of Ireland",
@@ -366,9 +367,9 @@ new_names <- c("Czech Republic", "Czech Republic", "Netherlands", "South Korea",
 countries <- extract.countries(greatest, "All.Countries", old_names, new_names)
 ```
 
-#### __Migrate content to new dataset__
+#### **Migrate content to new dataset**
 
-```r
+``` r
 append.columns <- function(df, to_append, shared_col, old_names, new_names) {
   # Append data frame columns to a different data frame.
   #
@@ -397,8 +398,7 @@ append.columns <- function(df, to_append, shared_col, old_names, new_names) {
 }
 ```
 
-
-```r
+``` r
 # Determine the number of array repetitions
 nreps <- nrow(countries) / nrow(greatest)
 
@@ -414,8 +414,7 @@ countries <- subset(cbind(countries, added_column), !Country == "")
 countries <- countries[, c("Pos", "Country")]
 ```
 
-
-```r
+``` r
 # Append columns to data frame. This is an elegant, albeit space inefficient,
 # way to append multiple data frame columns to "countries"
 df.list <- list(country_codes, continents, coordinates, country_area, gdp)
@@ -428,22 +427,23 @@ for (df in df.list) {
 countries <- merge(countries, greatest, by = "Pos")
 ```
 
-#### __Clean up Global Environment__
+#### **Clean up Global Environment**
 
-```r
+``` r
 # Remove all but necessary variables and functions
 required <- c(lsf.str(), "countries", "directors", "world", "old_names",
               "new_names")
 rm(list = setdiff(ls(), required))
 ```
 
-## __Data exploration__
+**Data exploration**
+--------------------
 
-### __Atlas of the greatest films__
+### **Atlas of the greatest films**
 
-#### __Aggregate data for exploration__
+#### **Aggregate data for exploration**
 
-```r
+``` r
 aggregate.df <- function(df, column) {
   # Group data frame by column variable and count values.
   #
@@ -468,8 +468,7 @@ aggregate.df <- function(df, column) {
 }
 ```
 
-
-```r
+``` r
 # Aggregate data
 greatest.by_country <- aggregate.df(countries, Country)
 
@@ -481,17 +480,17 @@ levels(greatest.by_country$bin) <- c("Single", "From 2 to 10", "From 11 to 50",
                                      "From 51 to 100", "More than 100")
 
 # Append selected columns to the dataset
-greatest.by_country <-merge(greatest.by_country,
-                            unique(countries[, c(2:12)]),
-                            by = "Country")
+greatest.by_country <- merge(greatest.by_country,
+                             unique(countries[, c(2:12)]),
+                             by = "Country")
 
 # Append selected columns to data frame "world"
 world <- plyr::join(world, greatest.by_country[, c(1:3)], by = "Country")
 ```
 
-#### __Generate choropleth__
+#### **Generate choropleth**
 
-```r
+``` r
 # Define attributes shared by plots, to override if necessary
 shared_themes <- theme(plot.title = element_text(size = 11),
                        plot.caption = element_text(size = 8),
@@ -503,8 +502,7 @@ shared_themes <- theme(plot.title = element_text(size = 11),
                        legend.position = "bottom")
 ```
 
-
-```r
+``` r
 # Generate world map and define common features
 world_base <- ggplot() +
   geom_polygon(data = world, aes(x = long, y = lat, group = group)) +
@@ -525,10 +523,9 @@ world_base +
 
 <img src="./img/figure-01.png" width="816" />
 
-#### __Observations__
+#### **Observations**
 
-
-```r
+``` r
 custom_ticks <- c(0, 1, 10, 100, 1000)
 
 ggplot(data = greatest.by_country,
@@ -552,10 +549,9 @@ ggplot(data = greatest.by_country,
 
 <img src="./img/figure-02.png" width="816" />
 
-#### __Observations__
+#### **Observations**
 
-
-```r
+``` r
 ggplot(data = greatest.by_country,
        aes(x = log2(n), y = Services, color = Continent)) +
   geom_point(size = 1) +
@@ -575,10 +571,9 @@ ggplot(data = greatest.by_country,
 
 <img src="./img/figure-03.png" width="816" />
 
-#### __Observations__
+#### **Observations**
 
-
-```r
+``` r
 linear.regression <- function(df, x, y, transform.x = NA, transform.y = NA) {
   # Calculate linear regression y ~ x and provide summary statistics.
   #
@@ -611,35 +606,32 @@ linear.regression <- function(df, x, y, transform.x = NA, transform.y = NA) {
 }
 ```
 
-
-```r
+``` r
 linear.regression(greatest.by_country, "n", "Services", transform.x = "log2")
 ```
 
-```
-##
-## Call:
-## lm(formula = y ~ x)
-##
-## Residuals:
-##      Min       1Q   Median       3Q      Max
-## -25.2063  -6.1733  -0.4499   5.8646  27.4262
-##
-## Coefficients:
-##             Estimate Std. Error t value Pr(>|t|)    
-## (Intercept)  56.1407     2.1279  26.383  < 2e-16 ***
-## x             2.4331     0.5533   4.398 4.46e-05 ***
-## ---
-## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
-##
-## Residual standard error: 10.29 on 61 degrees of freedom
-## Multiple R-squared:  0.2407,	Adjusted R-squared:  0.2283
-## F-statistic: 19.34 on 1 and 61 DF,  p-value: 4.458e-05
-```
+    ##
+    ## Call:
+    ## lm(formula = y ~ x)
+    ##
+    ## Residuals:
+    ##      Min       1Q   Median       3Q      Max
+    ## -25.2063  -6.1733  -0.4499   5.8646  27.4262
+    ##
+    ## Coefficients:
+    ##             Estimate Std. Error t value Pr(>|t|)    
+    ## (Intercept)  56.1407     2.1279  26.383  < 2e-16 ***
+    ## x             2.4331     0.5533   4.398 4.46e-05 ***
+    ## ---
+    ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+    ##
+    ## Residual standard error: 10.29 on 61 degrees of freedom
+    ## Multiple R-squared:  0.2407, Adjusted R-squared:  0.2283
+    ## F-statistic: 19.34 on 1 and 61 DF,  p-value: 4.458e-05
 
-### __Golden and silver periods of world cinema__
+### **Golden and silver periods of world cinema**
 
-```r
+``` r
 # Aggregate data by Country and Decade, then summarise
 greatest.by_decade <- countries %>%
   group_by(.dots = c("Country", "Decade")) %>%
@@ -654,8 +646,7 @@ levels(greatest.by_decade$Rank.Category) <-
     "Bottom 1000")
 ```
 
-
-```r
+``` r
 ggplot(data = greatest.by_decade, aes(x = Decade, y = Country)) +
   geom_tile(aes(fill = Rank.Category), colour = "black") +
   scale_x_discrete(position = "top") +
@@ -669,13 +660,13 @@ ggplot(data = greatest.by_decade, aes(x = Decade, y = Country)) +
 
 <img src="./img/figure-04.png" width="816" />
 
-#### __Observations__
+#### **Observations**
 
-### __Most frequent co-productions__
+### **Most frequent co-productions**
 
-#### __Define auxiliary functions__
+#### **Define auxiliary functions**
 
-```r
+``` r
 rbind.factor.comb <- function(df, column, delimiter = ", ") {
   # Extract all factor combinations out of each row of a data frame column
   # and rbind the output of each iteration [1].
@@ -801,9 +792,9 @@ expand.to.comb <- function(df, column, times) {
 }
 ```
 
-#### __Count co-production relationships__
+#### **Count co-production relationships**
 
-```r
+``` r
 # Single out and sum co-productions
 co_productions <- subset(countries, Co.Production == "Yes")
 
@@ -884,10 +875,9 @@ levels(greatest.by_coproduction$Two.Country.Relationships) <-
     "More than 100")
 ```
 
+#### **Clean up Global Environment**
 
-#### __Clean up Global Environment__
-
-```r
+``` r
 # Remove all but necessary variables and functions
 required <- c(lsf.str(), "countries", "directors", "world", "old_names",
               "new_names", "greatest.by_country", "greatest.by_decade",
@@ -895,8 +885,7 @@ required <- c(lsf.str(), "countries", "directors", "world", "old_names",
 rm(list = setdiff(ls(), required))
 ```
 
-
-```r
+``` r
 # Define transparent world map for network plot
 world_transparent <- ggplot() +
   geom_polygon(data = world, aes(x = long, y = lat, group = group),
@@ -920,4 +909,6 @@ world_transparent +
 
 <img src="./img/figure-05.png" width="816" />
 
-#### __Observations__
+#### **Observations**
+
+### **Colour and black-and-white**
