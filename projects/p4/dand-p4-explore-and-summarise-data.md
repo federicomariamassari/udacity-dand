@@ -9,7 +9,15 @@ Data Analyst Nanodegree: P4 Explore and Summarise Data
 
 Each list is a synthesis of thousands of individual polls and ballots, so it is not only pleasant to read, but also "statistically sound". As a consequence, the website represents an invaluable resource for both professionals and beginners alike.
 
-Eytan Bakshy, a scientist at Facebook, suggests that future data scientists find data they are interested in, and play with them, to develop experience. I have been a fan of TSPDT for years, so this is my chance to visually explore some of its rich data sets. Among the others, I will investigate:
+Eytan Bakshy, a scientist at Facebook, suggests that future data scientists find data they are interested in, and play with them, to develop expertise. I have been a fan of TSPDT for years, so this is my chance to visually explore some of its rich data sets. Among the others, I will investigate:
+
+-   which Countries (co-)produced the greatest movies of all time, whether any particular region stands out in terms of either the number of contributions or film quality and, if so, why;
+
+-   which co-production relationships were the most frequent, whether the choice was dictated by historical or economic reasons, and whether geographical or linguistic proximity also played a role;
+
+-   
+
+To answer questions as they come to mind, in a stream-of-consciousness narrative style, the main datasets are enriched with content from Wikipedia and Google.
 
 **Data acquisition**
 --------------------
@@ -17,10 +25,10 @@ Eytan Bakshy, a scientist at Facebook, suggests that future data scientists find
 #### **Acquire external datasets using Python**
 
 ``` r
-system("python3 ./python-modules/get_xls.py")
-system("python3 ./python-modules/scrape_webpage.py")
-system("python3 ./python-modules/scrape_wikipedia.py")
-system("python3 ./python-modules/scrape_others.py")
+modules <- c("get_xls.py", "scrape_webpage.py", "scrape_wikipedia.py",
+             "scrape_others.py")
+sapply(modules,
+       function(x) system(paste("python3 ./python-modules/", x, sep = "")))
 ```
 
 #### **Import datasets into R**
@@ -617,18 +625,18 @@ linear.regression(greatest.by_country, "n", "Services", transform.x = "log2")
     ##
     ## Residuals:
     ##      Min       1Q   Median       3Q      Max
-    ## -25.2063  -6.1733  -0.4499   5.8646  27.4262
+    ## -25.2054  -6.1729  -0.4477   5.8644  27.4260
     ##
     ## Coefficients:
     ##             Estimate Std. Error t value Pr(>|t|)    
-    ## (Intercept)  56.1407     2.1279  26.383  < 2e-16 ***
-    ## x             2.4331     0.5533   4.398 4.46e-05 ***
+    ## (Intercept)  56.1412     2.1278  26.384  < 2e-16 ***
+    ## x             2.4328     0.5532   4.398 4.46e-05 ***
     ## ---
     ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
     ##
     ## Residual standard error: 10.29 on 61 degrees of freedom
     ## Multiple R-squared:  0.2407, Adjusted R-squared:  0.2283
-    ## F-statistic: 19.34 on 1 and 61 DF,  p-value: 4.458e-05
+    ## F-statistic: 19.34 on 1 and 61 DF,  p-value: 4.459e-05
 
 ### **Golden and silver periods of world cinema**
 
@@ -891,7 +899,6 @@ rm(list = setdiff(ls(), required))
 world_transparent <- ggplot() +
   geom_polygon(data = world, aes(x = long, y = lat, group = group),
                color = "#b2b2b2", size = 0.3, fill = NA) +
-  labs(caption = "Data source: theyshootpictures.com") +
   shared_themes +
   # Use map theme from the "ggthemes" package
   ggthemes::theme_map()
@@ -905,7 +912,8 @@ world_transparent +
                  alpha = Two.Country.Relationships), color = "#a50026") +
   scale_alpha_manual(values = c(0.05, 0.1, 0.2, 0.5, 1)) +
   ggtitle(paste("Figure 5: Most frequent two-Country co-production",
-                "relationships"))
+                "relationships")) +
+  labs(caption = "Data sources: theyshootpictures.com, Google Developers")
 ```
 
 <img src="./img/figure-05.png" width="816" />
