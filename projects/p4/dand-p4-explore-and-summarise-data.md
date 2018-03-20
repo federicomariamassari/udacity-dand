@@ -22,6 +22,22 @@ To answer questions as they come to mind, in a stream-of-consciousness narrative
 **Data acquisition**
 --------------------
 
+### **Datasets**
+
+### **Data acquisition process**
+
+The data are acquired using Python libraries [Requests](http://docs.python-requests.org/en/master/) and [Beautiful Soup](https://www.crummy.com/software/BeautifulSoup/bs4/doc/). To respect intellectual property, the content is not stored in this repository, but rather automatically placed inside a new folder `data` at module runtime. Web scraping was done ethically, obeying to either the `robots.txt` file or the *robots meta tag*, whichever was available. For example, the following snippet from the "Top 250 Directors" page should indicate that data acquisition is allowed:
+
+``` html
+<html lang="en">
+  <head>
+    <meta name="robots" content="index, follow">
+```
+
+Care was also taken to ensure that at least five seconds pass before an additional page is requested (the default time is ten seconds). This added constraint makes the data retrieval process time consuming (it clocks in at about one minute), but it avoids causing server saturation, and it is only done once.
+
+See the [related folder](https://github.com/federicomariamassari/udacity-dand/tree/master/projects/p4/python-modules) for information on the Python modules.
+
 #### **Acquire external datasets using Python**
 
 ``` r
