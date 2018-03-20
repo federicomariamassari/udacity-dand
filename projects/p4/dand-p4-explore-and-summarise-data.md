@@ -11,7 +11,7 @@ Each list is a synthesis of thousands of individual polls and ballots, so it is 
 
 Eytan Bakshy, a scientist at Facebook, suggests that future data scientists find data they are interested in, and play with them, to develop expertise. I have been a fan of TSPDT for years, so this is my chance to visually explore some of its rich data sets. Among the others, I will investigate:
 
--   which Countries (co-)produced the greatest movies of all time, whether any particular region stands out in terms of either the number of contributions or film quality and, if so, why;
+-   which countries (co-)produced the greatest movies of all time, whether any particular region stands out in terms of either the number of contributions or film quality and, if so, why;
 
 -   which co-production relationships were the most frequent, whether the choice was dictated by historical or economic reasons, and whether geographical or linguistic proximity also played a role;
 
@@ -23,6 +23,14 @@ To answer questions as they come to mind, in a stream-of-consciousness narrative
 --------------------
 
 ### **Datasets**
+
+*They Shoot Pictures* provides a wealth of datasets related to both movies and filmmakers. For this project, I concentrated on the following rankings:
+
+-   [The 1,000 Greatest Films](http://www.theyshootpictures.com/gf1000.htm) and [Films Ranked 1,001-2,000](http://www.theyshootpictures.com/gf1000_films1001-2000.htm): among the most important lists on the website, these contain information on current rankings, titles, directors, years and countries of production, genres, and whether a particular film was shot in colour or black-and-white. The lists are available as Excel files, so they are tidy and easy to acquire. "The 1,000 Greatest Films" also includes rankings for the past two years, but I decided to drop the columns for a few reasons: the second list does not (the order was disclosed this year for the first time); there is little variability among positions year-over-year, especially at the top; and the samples vary over time (some movies are new entries, some are re-entries, and some dropped out of the lists);
+
+-   [Top 250 Directors](http://www.theyshootpictures.com/gf1000_top250directors.htm): this provides information on the most critically acclaimed filmmakers of all-time, including current rankings, the number of movies appearing in "The 1,000 Greatest Films", and that of movies featured in other lists (i.e., "cited"). Particularly important is the directors' rankings, since I am going to manually determine, for each director, the number of films among the top 2,000. I could not find the list in an easily downloadable format, so I had to scrape the data from the webpage (on ethical scraping, see the next paragraph), and store them in a csv file;
+
+-   Auxiliary data come from Wikipedia (breakdown of countries by continent, area, code, and gdp sector composition) and Google Developers (country coordinates).
 
 ### **Data acquisition process**
 
@@ -41,10 +49,10 @@ See the [related folder](https://github.com/federicomariamassari/udacity-dand/tr
 #### **Acquire external datasets using Python**
 
 ``` r
-modules <- c("get_xls.py", "scrape_webpage.py", "scrape_wikipedia.py",
-             "scrape_others.py")
-sapply(modules,
-       function(x) system(paste("python3 ./python-modules/", x, sep = "")))
+#modules <- c("get_xls.py", "scrape_webpage.py", "scrape_wikipedia.py", 
+#             "scrape_others.py")
+#sapply(modules, 
+#       function(x) system(paste("python3 ./python-modules/", x, sep = "")))
 ```
 
 #### **Import datasets into R**
@@ -112,10 +120,10 @@ replace.with.mean <- function(df, column, delimiter = "-") {
   #
   # Store all rows in which delimiter appears in a subset
   df_subset <- df[grepl(delimiter, df[[column]], fixed = TRUE), ]
-
+  
   # Separately store corresponding row indices
   indices <- as.numeric(rownames(df_subset))
-
+  
   # Replace entry with conditional mean value
   for (i in 1:length(indices)) {
     string <- stringr::str_split_fixed(df_subset[[column]][i], delimiter, Inf)
@@ -170,7 +178,7 @@ add.bool.column <- function(df, cond.column, new.column, delimiter,
   #
   # Initialise data frame column
   df[[new.column]] <- NA
-
+  
   for (i in 1:nrow(df)) {
     ifelse(grepl(delimiter, df[[cond.column]][i], fixed = TRUE),
            df[[new.column]][i] <- if.TRUE,
@@ -187,7 +195,7 @@ add.bool.column <- function(df, cond.column, new.column, delimiter,
 world <- convert.to.factor(world)
 greatest <- convert.to.factor(greatest)
 
-# ggplot2 "world" only distinguishes between "China" and "Hong Kong" at the
+# ggplot2 "world" only distinguishes between "China" and "Hong Kong" at the 
 # "subregion" level. For the analysis, also set "region" to "Hong Kong"
 levels(world$region) <- c(levels(world$region), "Hong Kong")
 index <- as.numeric(rownames(subset(world, subregion == "Hong Kong")))
@@ -225,7 +233,7 @@ greatest$Director <- gsub("/", "; ", greatest$Director)
 directors <- rename(directors, Dir.Rank = Rank)
 
 # Add new row related to "Hong Kong" in "continents"
-continents <- rbind(continents, data.frame(Continent = "Asia",
+continents <- rbind(continents, data.frame(Continent = "Asia", 
                                            Country = "Hong Kong"))
 
 # Convert "gdp" factor columns to numeric using lambda function
@@ -237,27 +245,27 @@ gdp[, cols] = apply(gdp[, cols], 2, function(x) as.numeric(as.character(x)))
 
 ``` r
 # Add column "Co.Production"
-greatest <- add.bool.column(df = greatest, cond.column = "All.Countries",
+greatest <- add.bool.column(df = greatest, cond.column = "All.Countries", 
                             new.column = "Co.Production", delimiter = ", ")
 
 # Add column "Co.Director"
-greatest <- add.bool.column(df = greatest, cond.column = "Director",
+greatest <- add.bool.column(df = greatest, cond.column = "Director", 
                             new.column = "Co.Director", delimiter = "; ")
 
 # Add column "Decade"
-greatest$Decade <- cut(greatest$Year, breaks = seq(1890, 2020, 10),
+greatest$Decade <- cut(greatest$Year, breaks = seq(1890, 2020, 10), 
                        dig.lab = 5, right = FALSE)
 
-levels(greatest$Decade) <- c("1890s", "1900s", "1910s", "1920s", "1930s",
-                             "1940s", "1950s", "1960s", "1970s", "1980s",
+levels(greatest$Decade) <- c("1890s", "1900s", "1910s", "1920s", "1930s", 
+                             "1940s", "1950s", "1960s", "1970s", "1980s", 
                              "1990s", "2000s", "2010s")
 
 # Add column "Rank.Category"
-greatest$Rank.Category <- cut(greatest$Pos,
+greatest$Rank.Category <- cut(greatest$Pos, 
                               breaks=c(0, 10, 100, 500, 1000, 2000))
 
-levels(greatest$Rank.Category) <- c("Top 10", "From 11 to 100",
-                                    "From 101 to 500", "From 501 to 1000",
+levels(greatest$Rank.Category) <- c("Top 10", "From 11 to 100", 
+                                    "From 101 to 500", "From 501 to 1000", 
                                     "Bottom 1000")
 ```
 
@@ -281,7 +289,7 @@ split.strings <- function(df, column, delimiter = ", ") {
   #   the provided delimiter, and where blank spaces are not removed.
   #
   output <- stringr::str_split_fixed(df[[column]], delimiter, Inf)
-
+  
   # Do not remove blanks yet
   output <- unlist((as.list(output)))
   return(output)
@@ -292,7 +300,7 @@ rename.factor <- function(df, column, old_name, new_name) {
   #
   # Arguments:
   #   df: Data frame.
-  #   column: Data frame column with factor level to rename. Enter as text
+  #   column: Data frame column with factor level to rename. Enter as text 
   #     (i.e., "column", since the function evaluates it as df[["column"]]).
   #   old_name: The factor level to replace.
   #   new_name: The new name of the factor level.
@@ -309,7 +317,7 @@ rename.all.factors <- function(df, column, old_names, new_names) {
   #
   # Arguments:
   #   df: Data frame
-  #   column: Data frame column with factor levels to rename. Enter as text
+  #   column: Data frame column with factor levels to rename. Enter as text 
   #     (i.e., "column", since the function evaluates it as df[["column"]]).
   #   old_names: List of factor levels to replace.
   #   new_names: List of new names for the factor levels.
@@ -363,28 +371,28 @@ extract.countries <- function(df, column, old_names, new_names) {
   # Split column by delimiter and convert to data frame
   Country <- split.strings(df, column)
   df_out <- data.frame(Country, stringsAsFactors = TRUE)
-
+  
   # Add new factor levels to data frame
   levels(df_out$Country) <- c(levels(df_out$Country), new_names)
-
+  
   # Update Country names, sort factor levels alphabetically
   df_out <- rename.all.factors(df_out, "Country", old_names, new_names)
   df_out$Country <- as.factor(as.character(df_out$Country))
-
+  
   return(df_out)
 }
 ```
 
 ``` r
 # Uniform Country levels with those of world map
-old_names <- c("Czechia", "Czechoslovakia", "Kingdom of the Netherlands",
+old_names <- c("Czechia", "Czechoslovakia", "Kingdom of the Netherlands", 
                "Korea, South", "Palestinian Territories", "Republic of Ireland",
-               "Republic of Macedonia", "State of Palestine", "United Kingdom",
-               "United States", "USSR", "West Bank and Gaza", "West Germany",
+               "Republic of Macedonia", "State of Palestine", "United Kingdom", 
+               "United States", "USSR", "West Bank and Gaza", "West Germany", 
                "Yugoslavia")
-
-new_names <- c("Czech Republic", "Czech Republic", "Netherlands", "South Korea",
-               "Palestine", "Ireland", "Macedonia", "Palestine", "UK", "USA",
+               
+new_names <- c("Czech Republic", "Czech Republic", "Netherlands", "South Korea", 
+               "Palestine", "Ireland", "Macedonia", "Palestine", "UK", "USA", 
                "Russia", "Palestine", "Germany", "Serbia")
 
 # Single out all Countries of production (including co-production ones) and
@@ -412,13 +420,13 @@ append.columns <- function(df, to_append, shared_col, old_names, new_names) {
   # Add factor levels and rename
   levels(to_append[[shared_col]]) <- c(levels(to_append[[shared_col]]),
                                        new_names)
-
-  to_append <- rename.all.factors(to_append, shared_col, old_names,
+  
+  to_append <- rename.all.factors(to_append, shared_col, old_names, 
                                   new_names)
-
+  
   # Append columns to data frame
   df <- plyr::join(x = df, y = to_append, by = shared_col)
-
+  
   return(df)
 }
 ```
@@ -456,7 +464,7 @@ countries <- merge(countries, greatest, by = "Pos")
 
 ``` r
 # Remove all but necessary variables and functions
-required <- c(lsf.str(), "countries", "directors", "world", "old_names",
+required <- c(lsf.str(), "countries", "directors", "world", "old_names", 
               "new_names")
 rm(list = setdiff(ls(), required))
 ```
@@ -483,12 +491,12 @@ aggregate.df <- function(df, column) {
   #
   # Create quosure to use dplyr in function environment
   column <- enquo(column)
-
+  
   # Unquote (evaluate immediately) quosure expression
   df_out <- df %>%
     group_by(!!column) %>%
     summarise(n = n())
-
+  
   return(df_out)
 }
 ```
@@ -546,14 +554,14 @@ world_base +
                 "of production"))
 ```
 
-<img src="./img/figure-01.png" width="816" />
+<img src="./img/figure-01-1.png" width="816" />
 
 #### **Observations**
 
 ``` r
 custom_ticks <- c(0, 1, 10, 100, 1000)
 
-ggplot(data = greatest.by_country,
+ggplot(data = greatest.by_country, 
        aes(x = log2(n), y = reorder(Country, n), color = Continent)) +
   geom_point(size = 2) +
   geom_segment(aes(x = 0, xend = log2(n), y = Country, yend = Country),
@@ -565,23 +573,23 @@ ggplot(data = greatest.by_country,
                 "Country of production")) +
   xlab("Number of contributions, log2 scale") +
   ylab("Country") +
-  labs(fill = "Contributions to list",
+  labs(fill = "Contributions to list", 
        caption = "Data sources: theyshootpictures.com, Wikipedia") +
   shared_themes +
   # Override "shared_themes" legend position
   theme(legend.position = "right")
 ```
 
-<img src="./img/figure-02.png" width="816" />
+<img src="./img/figure-02-1.png" width="816" />
 
 #### **Observations**
 
 ``` r
-ggplot(data = greatest.by_country,
+ggplot(data = greatest.by_country, 
        aes(x = log2(n), y = Services, color = Continent)) +
   geom_point(size = 1) +
   # Use ggrepel to avoid label overlapping
-  ggrepel::geom_text_repel(aes(label = Country), size = 2.5,
+  ggrepel::geom_text_repel(aes(label = Country), size = 2.5, 
                            show.legend = FALSE) +
   geom_smooth(method = "lm", se = FALSE, size = 0.5, color = "royalblue") +
   scale_x_continuous(breaks = log2(custom_ticks), labels = custom_ticks) +
@@ -594,7 +602,7 @@ ggplot(data = greatest.by_country,
   shared_themes
 ```
 
-<img src="./img/figure-03.png" width="816" />
+<img src="./img/figure-03-1.png" width="816" />
 
 #### **Observations**
 
@@ -635,23 +643,23 @@ linear.regression <- function(df, x, y, transform.x = NA, transform.y = NA) {
 linear.regression(greatest.by_country, "n", "Services", transform.x = "log2")
 ```
 
-    ##
+    ## 
     ## Call:
     ## lm(formula = y ~ x)
-    ##
+    ## 
     ## Residuals:
-    ##      Min       1Q   Median       3Q      Max
-    ## -25.2054  -6.1729  -0.4477   5.8644  27.4260
-    ##
+    ##      Min       1Q   Median       3Q      Max 
+    ## -25.2054  -6.1729  -0.4477   5.8644  27.4260 
+    ## 
     ## Coefficients:
     ##             Estimate Std. Error t value Pr(>|t|)    
     ## (Intercept)  56.1412     2.1278  26.384  < 2e-16 ***
     ## x             2.4328     0.5532   4.398 4.46e-05 ***
     ## ---
     ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
-    ##
+    ## 
     ## Residual standard error: 10.29 on 61 degrees of freedom
-    ## Multiple R-squared:  0.2407, Adjusted R-squared:  0.2283
+    ## Multiple R-squared:  0.2407, Adjusted R-squared:  0.2283 
     ## F-statistic: 19.34 on 1 and 61 DF,  p-value: 4.459e-05
 
 ### **Golden and silver periods of world cinema**
@@ -663,11 +671,11 @@ greatest.by_decade <- countries %>%
   summarise(Max.Rank = min(Pos))
 
 # Add column "Rank.Category" to data frame
-greatest.by_decade$Rank.Category <-
+greatest.by_decade$Rank.Category <- 
   cut(greatest.by_decade$Max.Rank, breaks = c(0, 10, 100, 500, 1000, 2000))
 
-levels(greatest.by_decade$Rank.Category) <-
-  c("Top 10", "From 11 to 100", "From 101 to 500", "From 501 to 1000",
+levels(greatest.by_decade$Rank.Category) <- 
+  c("Top 10", "From 11 to 100", "From 101 to 500", "From 501 to 1000", 
     "Bottom 1000")
 ```
 
@@ -677,13 +685,13 @@ ggplot(data = greatest.by_decade, aes(x = Decade, y = Country)) +
   scale_x_discrete(position = "top") +
   scale_fill_brewer(palette = "Reds", direction = -1) +
   ggtitle("Figure 4: Heatmap of peak positions by Country and decade") +
-  labs(fill = "Maximum rank reached",
+  labs(fill = "Maximum rank reached", 
        caption = "Data source: theyshootpictures.com") +
   shared_themes +
   theme(axis.text.x = element_text(angle = -45, hjust = 1.05))
 ```
 
-<img src="./img/figure-04.png" width="816" />
+<img src="./img/figure-04-1.png" width="816" />
 
 #### **Observations**
 
@@ -693,7 +701,7 @@ ggplot(data = greatest.by_decade, aes(x = Decade, y = Country)) +
 
 ``` r
 rbind.factor.comb <- function(df, column, delimiter = ", ") {
-  # Extract all factor combinations out of each row of a data frame column
+  # Extract all factor combinations out of each row of a data frame column 
   # and rbind the output of each iteration [1].
   #
   # Arguments:
@@ -713,13 +721,13 @@ rbind.factor.comb <- function(df, column, delimiter = ", ") {
   #
   # Create empty list, to which to add after each loop
   df_out <- list()
-
+  
   for (i in 1:length(df[[column]])) {
     # Make an expanded grid of all combinations of factors in each row
     expanded_row <- expand.grid(
       stringr::str_split_fixed(df[[column]][i], delimiter, Inf),
       stringr::str_split_fixed(df[[column]][i], delimiter, Inf))
-
+    
     # Add the output of each loop to the list
     df_out[[i]] <- expanded_row
   }
@@ -742,7 +750,7 @@ cbind.coordinates <- function(df, coord.df, columns.x, column.y) {
   #
   # Returns:
   #   The original data frame, (column-) augmented by coordinate pairs for each
-  #   of its columns. The output is optimised for ggplot2 "geom_curve", which
+  #   of its columns. The output is optimised for ggplot2 "geom_curve", which 
   #   requires both (x, y) and (xend, yend).
   #
   for (column in columns.x) {
@@ -768,7 +776,7 @@ remove.duplicates <- function(df, column, na.rm = TRUE) {
   #   column.
   #
   df_out <- df[!duplicated(df[[column]]), ]
-
+  
   if (na.rm == TRUE) {
     # Clear away duplicates from the data frame
     df_out <- subset(df_out, !is.na(eval(parse(text = column))))
@@ -791,7 +799,7 @@ count.movie.coproducers <- function(df, column, delimiter = ", ") {
   #   A vector containing the number of co-producing Countries for each film
   #   in the data frame column.
   n.times <- vector(mode = "integer", length = length(df[[column]]))
-
+  
   for (i in 1:length(df[[column]])) {
     n.times[i] <- ncol(stringr::str_split_fixed(df[[column]][i], ", ", Inf))
   }
@@ -806,7 +814,7 @@ expand.to.comb <- function(df, column, times) {
   #  column: The data frame column to expand. Enter as text (i.e., "column").
   #  times: A vector of integers representing the number of times each single
   #    column entry should be expanded.
-  #
+  # 
   # Returns:
   #   A data frame column with entries expanded according to vector "times",
   #   to conform to the size of "rbind.factor.comb" output.
@@ -848,7 +856,7 @@ combinations <- update.factor.columns(combinations, old_names, new_names)
 # Keep track of the times each entry was expanded
 n.times <- count.movie.coproducers(co_productions, "All.Countries")
 
-# Expand column "All.Countries" to the length of "combinations".
+# Expand column "All.Countries" to the length of "combinations". 
 # The column will work as primary key, to join different data frames
 shared_col <- expand.to.comb(co_productions, "All.Countries", n.times**2)
 shared_col <- rename(shared_col, All.Countries = col.name)
@@ -859,11 +867,11 @@ combinations <- cbind(combinations, shared_col)
 # Append coordinate pairs to Country.x and Country.y
 unique_coord <- greatest.by_country[, c("Country", "Latitude", "Longitude")]
 
-combinations <- cbind.coordinates(combinations, unique_coord,
-                                  columns.x = c("Country.x", "Country.y"),
+combinations <- cbind.coordinates(combinations, unique_coord, 
+                                  columns.x = c("Country.x", "Country.y"), 
                                   column.y = "Country")
 
-combinations <- merge(combinations, greatest.by_connection,
+combinations <- merge(combinations, greatest.by_connection, 
                       by = "All.Countries", all.x = TRUE)
 
 # Shrink data frame and remove duplicate elements
@@ -873,7 +881,7 @@ combinations <- combinations[apply(combinations[, c("Country.x", "Country.y")],
 
 # Include "Mean.Latitude" as one of the two columns used to identify unique
 # co-production relationships (the other being "Mean.Latitude.All")
-combinations$Mean.Latitude <-
+combinations$Mean.Latitude <- 
   0.5 * (combinations$Latitude.x + combinations$Latitude.y)
 
 # Single out unique co-productions
@@ -887,15 +895,15 @@ greatest.by_coproduction <- combinations %>%
 
 # Append coordinates to optimise output for "geom_curve"
 greatest.by_coproduction <- cbind.coordinates(
-  greatest.by_coproduction, unique_coord,
+  greatest.by_coproduction, unique_coord, 
   columns.x = c("Country.x", "Country.y"), column.y = "Country")
 
 # Add factor levels for neater visualisation
 greatest.by_coproduction$Two.Country.Relationships <-
-  cut(greatest.by_coproduction$Total.Co.Productions,
+  cut(greatest.by_coproduction$Total.Co.Productions, 
       breaks = c(0, 10, 20, 50, 100, Inf))
 
-levels(greatest.by_coproduction$Two.Country.Relationships) <-
+levels(greatest.by_coproduction$Two.Country.Relationships) <- 
   c("Up to 10", "From 11 to 20", "From 21 to 50", "From 51 to 100",
     "More than 100")
 ```
@@ -904,7 +912,7 @@ levels(greatest.by_coproduction$Two.Country.Relationships) <-
 
 ``` r
 # Remove all but necessary variables and functions
-required <- c(lsf.str(), "countries", "directors", "world", "old_names",
+required <- c(lsf.str(), "countries", "directors", "world", "old_names", 
               "new_names", "greatest.by_country", "greatest.by_decade",
               "greatest.by_coproduction", "shared_themes", "world_base")
 rm(list = setdiff(ls(), required))
@@ -913,7 +921,7 @@ rm(list = setdiff(ls(), required))
 ``` r
 # Define transparent world map for network plot
 world_transparent <- ggplot() +
-  geom_polygon(data = world, aes(x = long, y = lat, group = group),
+  geom_polygon(data = world, aes(x = long, y = lat, group = group), 
                color = "#b2b2b2", size = 0.3, fill = NA) +
   shared_themes +
   # Use map theme from the "ggthemes" package
@@ -922,7 +930,7 @@ world_transparent <- ggplot() +
 world_transparent +
   geom_point(data = countries, aes(x = Longitude, y = Latitude),
              color = "orange", size = 1.2) +
-  geom_curve(data = greatest.by_coproduction,
+  geom_curve(data = greatest.by_coproduction, 
              aes(x = Longitude.x, xend = Longitude.y,
                  y = Latitude.x, yend = Latitude.y,
                  alpha = Two.Country.Relationships), color = "#a50026") +
@@ -932,7 +940,7 @@ world_transparent +
   labs(caption = "Data sources: theyshootpictures.com, Google Developers")
 ```
 
-<img src="./img/figure-05.png" width="816" />
+<img src="./img/figure-05-1.png" width="816" />
 
 #### **Observations**
 
