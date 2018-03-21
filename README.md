@@ -145,6 +145,8 @@ __Acquired familiarity with:__ Beautiful Soup, R, Plotly
 [Link to project specification](projects/p4/dand-p4-project-specification.md)
 
 ### Overview
+_Choose one of Udacity's curated datasets or find one of your own and perform a complete exploratory data analysis on the data using R: investigate relationships in one variable to multiple variables, distributions, outliers, and anomalies._
+
 This project focuses on the __exploration__ phase of the data analysis process:
 
 <table>
