@@ -9,7 +9,7 @@ Data Analyst Nanodegree: P4 Explore and Summarise Data
 
 Each list is a synthesis of thousands of individual polls and ballots, so it is not only pleasant to read, but also "statistically sound". As a consequence, the website represents an invaluable resource for both professionals and beginners alike.
 
-Eytan Bakshy, a scientist at Facebook, suggests that future data scientists find data they are interested in, and play with them, to develop expertise. I have been a fan of TSPDT for years, so this is my chance to visually explore some of its rich data sets. Among the others, I will investigate:
+Eytan Bakshy, a scientist at Facebook, suggests that future data scientists find data they are interested in, and play with them, to develop expertise. I have been a fan of TSPDT for years, so this is my chance to visually explore some of its rich datasets. Among the others, I will investigate:
 
 -   which countries (co-)produced the greatest movies of all time, whether any particular region stands out in terms of either the number of contributions or film quality and, if so, why;
 
@@ -26,7 +26,7 @@ To answer questions as they come to mind, in a stream-of-consciousness narrative
 
 *They Shoot Pictures* provides a wealth of datasets related to both movies and filmmakers. For this project, I concentrated on the following rankings:
 
--   [The 1,000 Greatest Films](http://www.theyshootpictures.com/gf1000.htm) and [Films Ranked 1,001-2,000](http://www.theyshootpictures.com/gf1000_films1001-2000.htm): among the most important lists on the website, these contain information on current rankings, titles, directors, years and countries of production, genres, and whether a particular film was shot in colour or black-and-white. The lists are available as Excel files, so they are tidy and easy to acquire. "The 1,000 Greatest Films" also includes rankings for the past two years, but I decided to drop the columns for a few reasons: the second list does not (the order was disclosed this year for the first time); there is little variability among positions year-over-year, especially at the top; and the samples vary over time (some movies are new entries, some are re-entries, and some dropped out of the lists);
+-   [The 1,000 Greatest Films](http://www.theyshootpictures.com/gf1000.htm) and [Films Ranked 1,001-2,000](http://www.theyshootpictures.com/gf1000_films1001-2000.htm): among the most important lists on the website, these contain information on current rankings, titles, directors, years and countries of production, genres, and whether a particular film was shot in colour or black-and-white. The lists are available as Excel files, so they are definitely easy to acquire. "The 1,000 Greatest Films" also includes rankings for the past two years, but I decided to drop the columns for a few reasons: the second list does not (the order was disclosed this year for the first time); there is little variability among positions year-over-year, especially at the top; and the samples vary over time (some movies are new entries, some are re-entries, and some dropped out of the lists);
 
 -   [Top 250 Directors](http://www.theyshootpictures.com/gf1000_top250directors.htm): this provides information on the most critically acclaimed filmmakers of all-time, including current rankings, the number of movies appearing in "The 1,000 Greatest Films", and that of movies featured in other lists (i.e., "cited"). Particularly important is the directors' rankings, since I am going to manually determine, for each director, the number of films among the top 2,000. I could not find the list in an easily downloadable format, so I had to scrape the data from the webpage (on ethical scraping, see the next paragraph), and store them in a csv file;
 
@@ -42,9 +42,11 @@ The data are acquired using Python libraries [Requests](http://docs.python-reque
     <meta name="robots" content="index, follow">
 ```
 
-Care was also taken to ensure that at least five seconds pass before an additional page is requested (the default time is ten seconds). This added constraint makes the data retrieval process time consuming (it clocks in at about one minute), but it avoids causing server saturation, and it is only done once.
+Care was also taken to ensure that at least five seconds pass before an additional page is requested (the default time is ten seconds). This added constraint makes the data retrieval process time consuming (it clocks in at about one minute), but it avoids causing server saturation, and is only done once.
 
 See the [related folder](https://github.com/federicomariamassari/udacity-dand/tree/master/projects/p4/python-modules) for information on the Python modules.
+
+### **Data loading**
 
 #### **Acquire external datasets using Python**
 
@@ -62,6 +64,7 @@ sapply(modules,
 # Import frequently used libraries
 library(dplyr)
 library(ggplot2)
+library(kableExtra)
 ```
 
 ``` r
@@ -87,6 +90,78 @@ greatest <- rbind(greatest_pt1[, -c(2:3)], greatest_pt2)
 
 **Data cleaning**
 -----------------
+
+### **Data tidying**
+
+Hadley Wickham (Wickham, 2014) defines as "tidy" any dataset with the following three characteristics: every row is an observation, every column a variable, and every table a type of observational unit. Most of the imported datasets meet these conditions. However, the one combining "The 1,000 Greatest Films" and "Films Ranked 1,001-2,000" falls short of the second requirement, since columns "Country" and "Genre" contain multiple variables:
+
+<table class="table table-striped table-hover table-condensed table-responsive" style="margin-left: auto; margin-right: auto;">
+<thead>
+<tr>
+<th style="text-align:right;">
+Pos
+</th>
+<th style="text-align:left;">
+Title
+</th>
+<th style="text-align:left;">
+Director
+</th>
+<th style="text-align:left;">
+Year
+</th>
+<th style="text-align:left;">
+Country
+</th>
+<th style="text-align:right;">
+Length
+</th>
+<th style="text-align:left;">
+Genre
+</th>
+<th style="text-align:left;">
+Colour
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:right;">
+45
+</td>
+<td style="text-align:left;">
+In the Mood for Love
+</td>
+<td style="text-align:left;">
+Wong Kar-wai
+</td>
+<td style="text-align:left;">
+2000
+</td>
+<td style="text-align:left;">
+Hong Kong-France
+</td>
+<td style="text-align:right;">
+97
+</td>
+<td style="text-align:left;">
+Romance-Drama
+</td>
+<td style="text-align:left;">
+Col
+</td>
+</tr>
+</tbody>
+</table>
+To tidy the dataset three steps are needed:
+
+-   split the content of the target columns by the dash delimiter to obtain "colvars" (i.e., individual variables stored in different columns);
+
+-   "melt" the colvars (i.e., turn them into rows of a single column), using a primary key to uniquely relate the output to the corresponding observations;
+
+-   "left join" (i.e., merge two datasets, conforming the size of the second one to that of the first one) the molten data on content from the original dataset.
+
+### **Missing values imputation**
 
 #### **Define auxiliary functions**
 
@@ -156,22 +231,22 @@ replace.value <- function(df, column, replacement, to_replace = "---") {
 }
 
 add.bool.column <- function(df, cond.column, new.column, delimiter,
-                            if.TRUE = "Yes", if.FALSE = "No") {
+                            if_TRUE = "Yes", if_FALSE = "No") {
   # Add Boolean column to data frame.
   #
   # Arguments:
   #   df: Data frame.
   #   cond.column: The data frame column upon which to build the Boolean
   #     column. If entry i in cond.column contains a specific delimiter,
-  #     new.column[i] is set to if.TRUE; else, it is set to if.FALSE.
+  #     new.column[i] is set to if_TRUE; else, it is set to if_FALSE.
   #     Enter cond.column as text (i.e., "cond.column").
   #   new.column: The new column name, as text.
   #   delimiter: Delimiter to search in cond.column, as text.
   #   
   # Keyword arguments:
-  #   if.TRUE: The conditional affirmative value of new.column entries, as text
+  #   if_TRUE: The conditional affirmative value of new.column entries, as text
   #     (default: "Yes").
-  #   if.FALSE: The conditional negative value of new.column entries, as text
+  #   if_FALSE: The conditional negative value of new.column entries, as text
   #     (default: "No").
   #
   # Returns:
@@ -183,8 +258,8 @@ add.bool.column <- function(df, cond.column, new.column, delimiter,
 
   for (i in 1:nrow(df)) {
     ifelse(grepl(delimiter, df[[cond.column]][i], fixed = TRUE),
-           df[[new.column]][i] <- if.TRUE,
-           df[[new.column]][i] <- if.FALSE)  
+           df[[new.column]][i] <- if_TRUE,
+           df[[new.column]][i] <- if_FALSE)  
   }
   return(df)
 }
@@ -264,7 +339,7 @@ levels(greatest$Decade) <- c("1890s", "1900s", "1910s", "1920s", "1930s",
 
 # Add column "Rank.Category"
 greatest$Rank.Category <- cut(greatest$Pos,
-                              breaks=c(0, 10, 100, 500, 1000, 2000))
+                              breaks = c(0, 10, 100, 500, 1000, 2000))
 
 levels(greatest$Rank.Category) <- c("Top 10", "From 11 to 100",
                                     "From 101 to 500", "From 501 to 1000",
@@ -947,3 +1022,8 @@ world_transparent +
 #### **Observations**
 
 ### **Colour and black-and-white**
+
+**Bibliography**
+----------------
+
+Wickham, H. (2014): *Tidy Data*, Journal of Statistical Software, Vol. 59, Issue 10.
