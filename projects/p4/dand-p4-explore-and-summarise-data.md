@@ -62,9 +62,8 @@ sapply(modules,
 
 ``` r
 # Import frequently used libraries
-library(dplyr)
-library(ggplot2)
-library(kableExtra)
+libraries <- c("dplyr", "ggplot2", "kableExtra")
+sapply(libraries, require, character.only = TRUE)
 ```
 
 ``` r
@@ -163,7 +162,7 @@ To tidy the dataset three steps are needed:
 
 ### **Missing values imputation**
 
-#### **Define auxiliary functions**
+#### **Clean the original data frames**
 
 ``` r
 # Convert character columns to factors
@@ -229,43 +228,7 @@ replace.value <- function(df, column, replacement, to_replace = "---") {
   df[[column]][grepl(to_replace, df[[column]], fixed = TRUE)] <- replacement
   return(df)
 }
-
-add.bool.column <- function(df, cond.column, new.column, delimiter,
-                            if_TRUE = "Yes", if_FALSE = "No") {
-  # Add Boolean column to data frame.
-  #
-  # Arguments:
-  #   df: Data frame.
-  #   cond.column: The data frame column upon which to build the Boolean
-  #     column. If entry i in cond.column contains a specific delimiter,
-  #     new.column[i] is set to if_TRUE; else, it is set to if_FALSE.
-  #     Enter cond.column as text (i.e., "cond.column").
-  #   new.column: The new column name, as text.
-  #   delimiter: Delimiter to search in cond.column, as text.
-  #   
-  # Keyword arguments:
-  #   if_TRUE: The conditional affirmative value of new.column entries, as text
-  #     (default: "Yes").
-  #   if_FALSE: The conditional negative value of new.column entries, as text
-  #     (default: "No").
-  #
-  # Returns:
-  #   The data frame, augmented by a Boolean column according to the specified
-  #   conditions.
-  #
-  # Initialise data frame column
-  df[[new.column]] <- NA
-
-  for (i in 1:nrow(df)) {
-    ifelse(grepl(delimiter, df[[cond.column]][i], fixed = TRUE),
-           df[[new.column]][i] <- if_TRUE,
-           df[[new.column]][i] <- if_FALSE)  
-  }
-  return(df)
-}
 ```
-
-#### **Clean original data frames**
 
 ``` r
 # Convert columns of type "chr" to "Factor"
@@ -310,8 +273,8 @@ greatest$Director <- gsub("/", "; ", greatest$Director)
 directors <- rename(directors, Dir.Rank = Rank)
 
 # Add new row related to "Hong Kong" in "continents"
-continents <- rbind(continents, data.frame(Continent = "Asia",
-                                           Country = "Hong Kong"))
+continents <- rbind(continents,
+                    data.frame(Continent = "Asia", Country = "Hong Kong"))
 
 # Convert "gdp" factor columns to numeric using lambda function
 cols <- c("Agriculture", "Industry", "Services")
@@ -319,6 +282,42 @@ gdp[, cols] = apply(gdp[, cols], 2, function(x) as.numeric(as.character(x)))
 ```
 
 #### **Add columns to data frame**
+
+``` r
+add.bool.column <- function(df, cond.column, new.column, delimiter,
+                            if_TRUE = "Yes", if_FALSE = "No") {
+  # Add Boolean column to data frame.
+  #
+  # Arguments:
+  #   df: Data frame.
+  #   cond.column: The data frame column upon which to build the Boolean
+  #     column. If entry i in cond.column contains a specific delimiter,
+  #     new.column[i] is set to if_TRUE; else, it is set to if_FALSE.
+  #     Enter cond.column as text (i.e., "cond.column").
+  #   new.column: The new column name, as text.
+  #   delimiter: Delimiter to search in cond.column, as text.
+  #   
+  # Keyword arguments:
+  #   if_TRUE: The conditional affirmative value of new.column entries, as text
+  #     (default: "Yes").
+  #   if_FALSE: The conditional negative value of new.column entries, as text
+  #     (default: "No").
+  #
+  # Returns:
+  #   The data frame, augmented by a Boolean column according to the specified
+  #   conditions.
+  #
+  # Initialise data frame column
+  df[[new.column]] <- NA
+
+  for (i in 1:nrow(df)) {
+    ifelse(grepl(delimiter, df[[cond.column]][i], fixed = TRUE),
+           df[[new.column]][i] <- if_TRUE,
+           df[[new.column]][i] <- if_FALSE)  
+  }
+  return(df)
+}
+```
 
 ``` r
 # Add column "Co.Production"
