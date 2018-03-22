@@ -26,7 +26,7 @@ To answer questions as they come to mind, in a stream-of-consciousness narrative
 
 *They Shoot Pictures* provides a wealth of datasets related to both movies and filmmakers. For this project, I concentrated on the following rankings:
 
--   [The 1,000 Greatest Films](http://www.theyshootpictures.com/gf1000.htm) and [Films Ranked 1,001-2,000](http://www.theyshootpictures.com/gf1000_films1001-2000.htm): among the most important lists on the website, these contain information on current rankings, titles, directors, years and countries of production, genres, and whether a particular film was shot in colour or black-and-white. The lists are available as Excel files, so they are definitely easy to acquire. "The 1,000 Greatest Films" also includes rankings for the past two years, but I decided to drop the columns for a few reasons: the second list does not (the order was disclosed this year for the first time); there is little variability among positions year-over-year, especially at the top; and the samples vary over time (some movies are new entries, some are re-entries, and some dropped out of the lists);
+-   [The 1,000 Greatest Films](http://www.theyshootpictures.com/gf1000.htm) and [Films Ranked 1,001-2,000](http://www.theyshootpictures.com/gf1000_films1001-2000.htm) (henceforth, "main"): among the most important lists on the website, these contain information on current rankings, titles, directors, years and countries of production, genres, and whether a particular film was shot in colour or black-and-white. The lists are available as Excel files, so they are definitely easy to acquire. "The 1,000 Greatest Films" also includes rankings for the past two years, but I decided to drop the columns for a few reasons: the second list does not (the order was disclosed this year for the first time); there is little variability among positions year-over-year, especially at the top; and the samples vary over time (some movies are new entries, some are re-entries, and some dropped out of the lists);
 
 -   [Top 250 Directors](http://www.theyshootpictures.com/gf1000_top250directors.htm): this provides information on the most critically acclaimed filmmakers of all-time, including current rankings, the number of movies appearing in "The 1,000 Greatest Films", and that of movies featured in other lists (i.e., "cited"). Particularly important is the directors' rankings, since I am going to manually determine, for each director, the number of films among the top 2,000. I could not find the list in an easily downloadable format, so I had to scrape the data from the webpage (on ethical scraping, see the next paragraph), and store them in a csv file;
 
@@ -90,82 +90,9 @@ greatest <- rbind(greatest_pt1[, -c(2:3)], greatest_pt2)
 **Data cleaning**
 -----------------
 
-### **Data tidying**
-
-Hadley Wickham (Wickham, 2014) defines as "tidy" any dataset with the following three characteristics: every row is an observation, every column a variable, and every table a type of observational unit. Most of the imported datasets meet these conditions. However, the one combining "The 1,000 Greatest Films" and "Films Ranked 1,001-2,000" falls short of the second requirement, since columns "Country" and "Genre" contain multiple variables:
-
-<table class="table table-striped table-hover table-condensed table-responsive" style="margin-left: auto; margin-right: auto;">
-<thead>
-<tr>
-<th style="text-align:right;">
-Pos
-</th>
-<th style="text-align:left;">
-Title
-</th>
-<th style="text-align:left;">
-Director
-</th>
-<th style="text-align:left;">
-Year
-</th>
-<th style="text-align:left;">
-Country
-</th>
-<th style="text-align:right;">
-Length
-</th>
-<th style="text-align:left;">
-Genre
-</th>
-<th style="text-align:left;">
-Colour
-</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align:right;">
-45
-</td>
-<td style="text-align:left;">
-In the Mood for Love
-</td>
-<td style="text-align:left;">
-Wong Kar-wai
-</td>
-<td style="text-align:left;">
-2000
-</td>
-<td style="text-align:left;">
-Hong Kong-France
-</td>
-<td style="text-align:right;">
-97
-</td>
-<td style="text-align:left;">
-Romance-Drama
-</td>
-<td style="text-align:left;">
-Col
-</td>
-</tr>
-</tbody>
-</table>
-To tidy the dataset three steps are needed:
-
--   split the content of the target columns by the dash delimiter to obtain "colvars" (i.e., individual variables stored in different columns);
-
--   "melt" the colvars (i.e., turn them into rows of a single column), using a primary key to uniquely relate the output to the corresponding observations;
-
--   "left join" (i.e., merge two datasets, conforming the size of the second one to that of the first one) the molten data on content from the original dataset.
-
-### **Missing values imputation**
-
-#### **Clean the original data frames**
+### **Character-to-factor conversion**
 
 ``` r
-# Convert character columns to factors
 convert.to.factor <- function(df) {
   # Convert all "chr" columns of a data frame to "Factor".
   #
@@ -178,7 +105,43 @@ convert.to.factor <- function(df) {
   df <- as.data.frame(unclass(df))
   return(df)
 }
+```
 
+``` r
+world <- convert.to.factor(world)
+greatest <- convert.to.factor(greatest)
+```
+
+### **Factor level inclusion**
+
+The world map dataset from the `maps` package only distinguishes between China and Hong Kong at the sub-regional level. This is a reasonable choice, since Hong Kong is not an independent country but a special administrative region of China. However, given the prominence of its film industry, it is useful to consider the city as separate from the mainland:
+
+``` r
+# Distinguish between China and Hong Kong at level "region"
+levels(world$region) <- c(levels(world$region), "Hong Kong")
+index <- as.numeric(rownames(subset(world, subregion == "Hong Kong")))
+world[index, ]$region <- "Hong Kong"
+
+# Add new row related to Hong Kong in auxiliary data frame
+continents <- rbind(continents,
+                    data.frame(Continent = "Asia", Country = "Hong Kong"))
+```
+
+### **Column renaming**
+
+``` r
+world <- rename(world, Country = region)
+greatest <- rename(greatest, All.Countries = Country)
+directors <- rename(directors, Dir.Rank = Rank)
+```
+
+### **Missing values imputation**
+
+A few values in the main dataset are either missing or difficult to process. These relate to columns:
+
+-   "Length":
+
+``` r
 replace.with.mean <- function(df, column, delimiter = "-") {
   # Replace entry "YYYY-YYYY" with the rounded mean of the single years.
   #
@@ -231,31 +194,19 @@ replace.value <- function(df, column, replacement, to_replace = "---") {
 ```
 
 ``` r
-# Convert columns of type "chr" to "Factor"
-world <- convert.to.factor(world)
-greatest <- convert.to.factor(greatest)
-
-# ggplot2 "world" only distinguishes between "China" and "Hong Kong" at the
-# "subregion" level. For the analysis, also set "region" to "Hong Kong"
-levels(world$region) <- c(levels(world$region), "Hong Kong")
-index <- as.numeric(rownames(subset(world, subregion == "Hong Kong")))
-world[index, ]$region <- "Hong Kong"
-
-# Rename column "region" to "Country" in "world"
-world <- rename(world, Country = region)
-
-# Rename column "Country" to "All.Countries" in "greatest"
-greatest <- rename(greatest, All.Countries = Country)
-
-# Split each "YYYY-YYYY" in "Year", and replace with mean of the two values,
-# then convert to numeric
+# Split each "YYYY-YYYY" in column "Year", replace it with the rounded mean of
+# the two values, then convert the output to numeric
 greatest <- replace.with.mean(greatest, "Year")
 greatest$Year <- as.numeric(as.character(greatest$Year))
 
 # Replace "---" in columns "Colour" and "Genre" with suitable values
 greatest <- replace.value(greatest, "Colour", "Col-BW")
 greatest <- replace.value(greatest, "Genre", "Drama")
+```
 
+### **Typo corrections**
+
+``` r
 # Fix typo from xls file
 greatest$All.Countries <- gsub("Herzergovina", "Herzegovina",
                                greatest$All.Countries)
@@ -269,17 +220,91 @@ for (column in c("All.Countries", "Genre")) {
 }
 greatest$Director <- gsub("/", "; ", greatest$Director)
 
-# Rename column "Rank" to "Dir.Rank" in "directors"
-directors <- rename(directors, Dir.Rank = Rank)
-
-# Add new row related to "Hong Kong" in "continents"
-continents <- rbind(continents,
-                    data.frame(Continent = "Asia", Country = "Hong Kong"))
-
 # Convert "gdp" factor columns to numeric using lambda function
 cols <- c("Agriculture", "Industry", "Services")
 gdp[, cols] = apply(gdp[, cols], 2, function(x) as.numeric(as.character(x)))
 ```
+
+    ## Warning in FUN(newX[, i], ...): NAs introduced by coercion
+
+    ## Warning in FUN(newX[, i], ...): NAs introduced by coercion
+
+### **Data tidying**
+
+Hadley Wickham (Wickham, 2014) defines as "tidy" any dataset with the following three characteristics: every row is an observation, every column a variable, and every table a type of observational unit. Most of the imported datasets meet these conditions. However, the one combining "The 1,000 Greatest Films" and "Films Ranked 1,001-2,000" falls short of the second requirement, since columns "Country" and "Genre" contain multiple variables:
+
+<table class="table table-striped table-hover table-condensed table-responsive" style="margin-left: auto; margin-right: auto;">
+<thead>
+<tr>
+<th style="text-align:left;">
+</th>
+<th style="text-align:right;">
+Pos
+</th>
+<th style="text-align:left;">
+Title
+</th>
+<th style="text-align:left;">
+Director
+</th>
+<th style="text-align:right;">
+Year
+</th>
+<th style="text-align:left;">
+All.Countries
+</th>
+<th style="text-align:right;">
+Length
+</th>
+<th style="text-align:left;">
+Genre
+</th>
+<th style="text-align:left;">
+Colour
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+45
+</td>
+<td style="text-align:right;">
+45
+</td>
+<td style="text-align:left;">
+In the Mood for Love
+</td>
+<td style="text-align:left;">
+Wong Kar-wai
+</td>
+<td style="text-align:right;">
+2000
+</td>
+<td style="text-align:left;">
+Hong Kong, France
+</td>
+<td style="text-align:right;">
+97
+</td>
+<td style="text-align:left;">
+Romance, Drama
+</td>
+<td style="text-align:left;">
+Col
+</td>
+</tr>
+</tbody>
+</table>
+To tidy the dataset three steps are needed:
+
+-   splitting the content of the target columns by delimiter to obtain "colvars" (i.e., individual variables stored in different columns);
+
+-   melting the colvars (i.e., turn them into rows of a single column), using a primary key to uniquely relate the output to the corresponding observations;
+
+-   left joining (i.e., merging two datasets, conforming the size of the second one to that of the first one) the molten data on content from the original dataset.
+
+In the same dataset, a few values are missing from different columns.
 
 #### **Add columns to data frame**
 
