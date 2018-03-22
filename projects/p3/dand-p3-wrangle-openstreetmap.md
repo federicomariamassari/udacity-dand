@@ -84,7 +84,7 @@ __Code misplacement.__ A considerable number of postal codes belonged to differe
 City names were made consistent with the entries of a csv file containing information on all municipalities of Italy. The file was used, among the others, to associate towns with the corresponding provinces in SQL queries [see: [data.py](https://github.com/federicomariamassari/udacity-dand/blob/master/projects/p3/python-modules/data.py)]:
 - Municipalities of Italy (compressed): http://lab.comuni-italiani.it/files/listacomuni.zip
 
-Recurring problems at this stage were titlecase propositions and misspelled truncations. In the first case, I singled out the matched prepositions and converted them to lowercase before concatenation with the string remainder. In the other, I checked whether the last letter before the apostrophe was _"e"_, and if so, I added a blank space after the apostrophe:
+Recurring problems at this stage were titlecase prepositions and misspelled truncations. In the first case, I singled out the matched prepositions and converted them to lowercase before concatenation with the string remainder. In the other, I checked whether the last letter before the apostrophe was _"e"_, and if so, I added a blank space after the apostrophe:
 ```python
 if "'" in match.group():
     if city_name.split("'")[0][-1] == 'e':
