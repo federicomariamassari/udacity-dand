@@ -137,9 +137,13 @@ directors <- rename(directors, Dir.Rank = Rank)
 
 ### **Missing values imputation**
 
-A few values in the main dataset are either missing or difficult to process. These relate to columns:
+In the main dataset, missing or otherwise difficult to process entries are of two kinds: unknown length, genre, or colour; and a range of values for production years.
 
--   "Length":
+-   The only film with unknown length is *Eniaios* (\#1544), by Gregory Markopoulos. The full movie lasts about 80 hours, but it has not been screened yet in its entirety. A few new cycles, of the twenty-two in total, have been released to the public every four years since 2004, also thanks to a successful [Kickstarter campaign](https://www.kickstarter.com/projects/1525866264/towards-eniaios-and-the-temenos) in 2012. How long the movie was when it entered various polls is not known, so the value is left blank (the observation is removed when the length dimension is analysed);
+
+-   One movie has unknown genre and one unknown colour specification. These are, respectively, *Reisender Krieger \[TV\]* (\#1947), by Christian Schocher, and *Line Describing a Cone* (\#1422), by Anthony McCall. The former is a *road movie* that focuses on the protagonists' journey, both physical and spiritual. The latter is an *experimental* film that invites the viewer to interact with light, so it could be seen as having the features of both black-and-white and colour movies;
+
+-   Three movies have a range of values for production years. These are *Scenes from Under Childhood* (\#1490), by Stan Brakhage, *Little Stabs at Happiness* (\#1599), by Ken Jacobs, and *The Wire \[TV\]* (\#1934), by various directors. In this case, I replaced the range of years with the average, rounding down unless the latter was an integer.
 
 ``` r
 replace.with.mean <- function(df, column, delimiter = "-") {
@@ -201,17 +205,17 @@ greatest$Year <- as.numeric(as.character(greatest$Year))
 
 # Replace "---" in columns "Colour" and "Genre" with suitable values
 greatest <- replace.value(greatest, "Colour", "Col-BW")
-greatest <- replace.value(greatest, "Genre", "Drama")
+greatest <- replace.value(greatest, "Genre", "Road Movie")
 ```
 
-### **Typo corrections**
+### **Typo correction and delimiter replacement**
 
 ``` r
 # Fix typo from xls file
 greatest$All.Countries <- gsub("Herzergovina", "Herzegovina",
                                greatest$All.Countries)
 
-# Fix typo in column "Country: "--" -> "-"
+# Fix typo in column "All.Countries": "--" -> "-"
 greatest$All.Countries <- gsub("--", "-", greatest$All.Countries)
 
 # Replace delimiters with clearer ones
@@ -219,15 +223,13 @@ for (column in c("All.Countries", "Genre")) {
   greatest[[column]] <- gsub("-", ", ", greatest[[column]])
 }
 greatest$Director <- gsub("/", "; ", greatest$Director)
+```
 
+``` r
 # Convert "gdp" factor columns to numeric using lambda function
 cols <- c("Agriculture", "Industry", "Services")
 gdp[, cols] = apply(gdp[, cols], 2, function(x) as.numeric(as.character(x)))
 ```
-
-    ## Warning in FUN(newX[, i], ...): NAs introduced by coercion
-
-    ## Warning in FUN(newX[, i], ...): NAs introduced by coercion
 
 ### **Data tidying**
 
