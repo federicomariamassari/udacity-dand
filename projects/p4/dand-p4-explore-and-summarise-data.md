@@ -235,7 +235,7 @@ gdp[, cols] = apply(gdp[, cols], 2, function(x) as.numeric(as.character(x)))
 
 ### **Variables creation**
 
-Four variables are added to the data frame: `Co.Production` and `Co.Director`, which signal whether a particular movie was co-produced by different countries or shot by various directors (Boolean), and `Decade` and `Rank.Category`, which provide a higher level of aggregation with respect to "Year" and "Position".
+Four variables are added to the data frame: `Co.Production` and `Co.Director`, which signal whether a particular movie was co-produced by different countries or shot by various directors (Boolean), and `Decade` and `Rank.Category`, which provide a higher level of aggregation with respect to "Year" and "Position" (Factor).
 
 ``` r
 add.bool.column <- function(df, cond.column, new.column, delimiter,
@@ -301,15 +301,12 @@ levels(greatest$Rank.Category) <- c("Top 10", "From 11 to 100",
 
 ### **Data tidying**
 
-Hadley Wickham (Wickham, 2014) defines as "tidy" any dataset with the following three characteristics: every row is an observation, every column a variable, and every table a type of observational unit. Most of the imported datasets meet these conditions. However, the main one falls short of the second requirement, since columns "Country" and "Genre" contain multiple variables:
+Hadley Wickham (Wickham, 2014) defines as "tidy" any dataset with the following three characteristics: every row is an observation, every column a variable, and every table a type of observational unit. While most of the imported datasets are tidy, the main one falls short of the second requirement, since `All.Countries` and `Genre` contain multiple variables:
 
-<table class="table table-striped table-hover table-condensed table-responsive" style="margin-left: auto; margin-right: auto;">
+<table>
 <thead>
 <tr>
 <th style="text-align:left;">
-</th>
-<th style="text-align:right;">
-Pos
 </th>
 <th style="text-align:left;">
 Title
@@ -351,9 +348,6 @@ Rank.Category
 <td style="text-align:left;">
 45
 </td>
-<td style="text-align:right;">
-45
-</td>
 <td style="text-align:left;">
 In the Mood for Love
 </td>
@@ -392,13 +386,11 @@ From 11 to 100
 </table>
 To tidy the dataset three steps are needed:
 
--   splitting the content of the target columns by delimiter to obtain "colvars" (i.e., individual variables stored in different columns);
+-   splitting the content of the target columns by delimiter, to obtain "colvars" (i.e., individual variables stored in multiple columns);
 
--   melting the colvars (i.e., turn them into rows of a single column), using a primary key to uniquely relate the output to the corresponding observations;
+-   "melting" the colvars (i.e., turning them into rows of a single column), using a primary key to uniquely relate the output to the corresponding observations;
 
--   left joining (i.e., merging two datasets, conforming the size of the second one to that of the first one) the molten data on content from the original dataset.
-
-In the same dataset, a few values are missing from different columns.
+-   "left joining" (i.e., merging two datasets, conforming the size of the second one to that of the first one) the molten data on content from the original dataset.
 
 #### **Generate main dataset**
 
