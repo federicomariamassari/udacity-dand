@@ -137,13 +137,13 @@ directors <- rename(directors, Dir.Rank = Rank)
 
 ### **Missing values imputation**
 
-In the main dataset, missing or otherwise difficult to process entries are of two kinds: unknown length, genre, or colour; and a range of values for production years.
+In the main dataset, missing or otherwise difficult to process entries are of two kinds: unknown length, genre, or colour; and a range of values for production year.
 
 -   The only film with unknown length is *Eniaios* (\#1544), by Gregory Markopoulos. The full movie lasts about 80 hours, but it has not been screened yet in its entirety. A few new cycles, of the twenty-two in total, have been released to the public every four years since 2004, also thanks to a successful [Kickstarter campaign](https://www.kickstarter.com/projects/1525866264/towards-eniaios-and-the-temenos) in 2012. How long the movie was when it entered various polls is not known, so the value is left blank (the observation is removed when the length dimension is analysed);
 
 -   One movie has unknown genre and one unknown colour specification. These are, respectively, *Reisender Krieger \[TV\]* (\#1947), by Christian Schocher, and *Line Describing a Cone* (\#1422), by Anthony McCall. The former is a *road movie* that focuses on the protagonists' journey, both physical and spiritual. The latter is an *experimental* film that invites the viewer to interact with light, so it could be seen as having the features of both black-and-white and colour movies;
 
--   Three movies have a range of values for production years. These are *Scenes from Under Childhood* (\#1490), by Stan Brakhage, *Little Stabs at Happiness* (\#1599), by Ken Jacobs, and *The Wire \[TV\]* (\#1934), by various directors. In this case, I replaced the range of years with the average, rounding down unless the latter was an integer.
+-   Three movies have a range of values for production year. These are *Scenes from Under Childhood* (\#1490), by Stan Brakhage, *Little Stabs at Happiness* (\#1599), by Ken Jacobs, and *The Wire \[TV\]* (\#1934), by various directors. In this case, I replaced the range of years with the average, rounding down unless the latter was an integer.
 
 ``` r
 replace.with.mean <- function(df, column, delimiter = "-") {
@@ -211,19 +211,21 @@ greatest <- replace.value(greatest, "Genre", "Road Movie")
 ### **Typo correction and delimiter replacement**
 
 ``` r
-# Fix typo from xls file
-greatest$All.Countries <- gsub("Herzergovina", "Herzegovina",
-                               greatest$All.Countries)
+# Fix typo from the Excel file
+greatest$All.Countries <-
+  gsub("Herzergovina", "Herzegovina", greatest$All.Countries)
 
 # Fix typo in column "All.Countries": "--" -> "-"
 greatest$All.Countries <- gsub("--", "-", greatest$All.Countries)
 
-# Replace delimiters with clearer ones
+# Replace dash delimiters with clearer ones
 for (column in c("All.Countries", "Genre")) {
   greatest[[column]] <- gsub("-", ", ", greatest[[column]])
 }
 greatest$Director <- gsub("/", "; ", greatest$Director)
 ```
+
+### **Other type conversions**
 
 ``` r
 # Convert "gdp" factor columns to numeric using lambda function
@@ -231,84 +233,9 @@ cols <- c("Agriculture", "Industry", "Services")
 gdp[, cols] = apply(gdp[, cols], 2, function(x) as.numeric(as.character(x)))
 ```
 
-### **Data tidying**
+### **Variables creation**
 
-Hadley Wickham (Wickham, 2014) defines as "tidy" any dataset with the following three characteristics: every row is an observation, every column a variable, and every table a type of observational unit. Most of the imported datasets meet these conditions. However, the one combining "The 1,000 Greatest Films" and "Films Ranked 1,001-2,000" falls short of the second requirement, since columns "Country" and "Genre" contain multiple variables:
-
-<table class="table table-striped table-hover table-condensed table-responsive" style="margin-left: auto; margin-right: auto;">
-<thead>
-<tr>
-<th style="text-align:left;">
-</th>
-<th style="text-align:right;">
-Pos
-</th>
-<th style="text-align:left;">
-Title
-</th>
-<th style="text-align:left;">
-Director
-</th>
-<th style="text-align:right;">
-Year
-</th>
-<th style="text-align:left;">
-All.Countries
-</th>
-<th style="text-align:right;">
-Length
-</th>
-<th style="text-align:left;">
-Genre
-</th>
-<th style="text-align:left;">
-Colour
-</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align:left;">
-45
-</td>
-<td style="text-align:right;">
-45
-</td>
-<td style="text-align:left;">
-In the Mood for Love
-</td>
-<td style="text-align:left;">
-Wong Kar-wai
-</td>
-<td style="text-align:right;">
-2000
-</td>
-<td style="text-align:left;">
-Hong Kong, France
-</td>
-<td style="text-align:right;">
-97
-</td>
-<td style="text-align:left;">
-Romance, Drama
-</td>
-<td style="text-align:left;">
-Col
-</td>
-</tr>
-</tbody>
-</table>
-To tidy the dataset three steps are needed:
-
--   splitting the content of the target columns by delimiter to obtain "colvars" (i.e., individual variables stored in different columns);
-
--   melting the colvars (i.e., turn them into rows of a single column), using a primary key to uniquely relate the output to the corresponding observations;
-
--   left joining (i.e., merging two datasets, conforming the size of the second one to that of the first one) the molten data on content from the original dataset.
-
-In the same dataset, a few values are missing from different columns.
-
-#### **Add columns to data frame**
+Four variables are added to the data frame: `Co.Production` and `Co.Director`, which signal whether a particular movie was co-produced by different countries or shot by various directors (Boolean), and `Decade` and `Rank.Category`, which provide a higher level of aggregation with respect to "Year" and "Position".
 
 ``` r
 add.bool.column <- function(df, cond.column, new.column, delimiter,
@@ -371,6 +298,107 @@ levels(greatest$Rank.Category) <- c("Top 10", "From 11 to 100",
                                     "From 101 to 500", "From 501 to 1000",
                                     "Bottom 1000")
 ```
+
+### **Data tidying**
+
+Hadley Wickham (Wickham, 2014) defines as "tidy" any dataset with the following three characteristics: every row is an observation, every column a variable, and every table a type of observational unit. Most of the imported datasets meet these conditions. However, the main one falls short of the second requirement, since columns "Country" and "Genre" contain multiple variables:
+
+<table class="table table-striped table-hover table-condensed table-responsive" style="margin-left: auto; margin-right: auto;">
+<thead>
+<tr>
+<th style="text-align:left;">
+</th>
+<th style="text-align:right;">
+Pos
+</th>
+<th style="text-align:left;">
+Title
+</th>
+<th style="text-align:left;">
+Director
+</th>
+<th style="text-align:right;">
+Year
+</th>
+<th style="text-align:left;">
+All.Countries
+</th>
+<th style="text-align:right;">
+Length
+</th>
+<th style="text-align:left;">
+Genre
+</th>
+<th style="text-align:left;">
+Colour
+</th>
+<th style="text-align:left;">
+Co.Production
+</th>
+<th style="text-align:left;">
+Co.Director
+</th>
+<th style="text-align:left;">
+Decade
+</th>
+<th style="text-align:left;">
+Rank.Category
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+45
+</td>
+<td style="text-align:right;">
+45
+</td>
+<td style="text-align:left;">
+In the Mood for Love
+</td>
+<td style="text-align:left;">
+Wong Kar-wai
+</td>
+<td style="text-align:right;">
+2000
+</td>
+<td style="text-align:left;">
+Hong Kong, France
+</td>
+<td style="text-align:right;">
+97
+</td>
+<td style="text-align:left;">
+Romance, Drama
+</td>
+<td style="text-align:left;">
+Col
+</td>
+<td style="text-align:left;">
+Yes
+</td>
+<td style="text-align:left;">
+No
+</td>
+<td style="text-align:left;">
+2000s
+</td>
+<td style="text-align:left;">
+From 11 to 100
+</td>
+</tr>
+</tbody>
+</table>
+To tidy the dataset three steps are needed:
+
+-   splitting the content of the target columns by delimiter to obtain "colvars" (i.e., individual variables stored in different columns);
+
+-   melting the colvars (i.e., turn them into rows of a single column), using a primary key to uniquely relate the output to the corresponding observations;
+
+-   left joining (i.e., merging two datasets, conforming the size of the second one to that of the first one) the molten data on content from the original dataset.
+
+In the same dataset, a few values are missing from different columns.
 
 #### **Generate main dataset**
 
