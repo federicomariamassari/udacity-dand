@@ -72,7 +72,7 @@ greatest_pt1 <- readxl::read_excel("./data/xls/1000GreatestFilms.xls")
 greatest_pt2 <- readxl::read_excel("./data/xls/Films-Ranked-1001-2000.xls")
 directors <- read.csv("./data/csv/top_250_directors.csv")
 
-# Import auxiliary files as data frames
+# Import auxiliary documents as data frames
 variables <- c("continents", "coordinates", "country_area", "country_codes",
                "gdp")
 
@@ -131,7 +131,7 @@ continents <- rbind(continents,
 
 ``` r
 world <- rename(world, Country = region)
-greatest <- rename(greatest, All.Countries = Country)
+greatest <- rename(greatest, Countries = Country)
 directors <- rename(directors, Dir.Rank = Rank)
 ```
 
@@ -212,14 +212,14 @@ greatest <- replace.value(greatest, "Genre", "Road Movie")
 
 ``` r
 # Fix typo from the Excel file
-greatest$All.Countries <-
-  gsub("Herzergovina", "Herzegovina", greatest$All.Countries)
+greatest$Countries <-
+  gsub("Herzergovina", "Herzegovina", greatest$Countries)
 
-# Fix typo in column "All.Countries": "--" -> "-"
-greatest$All.Countries <- gsub("--", "-", greatest$All.Countries)
+# Fix typo in column "Countries": "--" -> "-"
+greatest$Countries <- gsub("--", "-", greatest$Countries)
 
 # Replace dash delimiters with clearer ones
-for (column in c("All.Countries", "Genre")) {
+for (column in c("Countries", "Genre")) {
   greatest[[column]] <- gsub("-", ", ", greatest[[column]])
 }
 greatest$Director <- gsub("/", "; ", greatest$Director)
@@ -275,7 +275,7 @@ add.bool.column <- function(df, cond.column, new.column, delimiter,
 
 ``` r
 # Add column "Co.Production"
-greatest <- add.bool.column(df = greatest, cond.column = "All.Countries",
+greatest <- add.bool.column(df = greatest, cond.column = "Countries",
                             new.column = "Co.Production", delimiter = ", ")
 
 # Add column "Co.Director"
@@ -301,7 +301,7 @@ levels(greatest$Rank.Category) <- c("Top 10", "From 11 to 100",
 
 ### **Data tidying**
 
-Hadley Wickham (Wickham, 2014) defines as "tidy" any dataset with the following three characteristics: every row is an observation, every column a variable, and every table a type of observational unit. While most of the imported datasets are tidy, the main one falls short of the second requirement, since `All.Countries` and `Genre` contain multiple variables:
+Hadley Wickham (Wickham, 2014) defines as "tidy" any dataset with the following three characteristics: every row is an observation, every column a variable, and every table a type of observational unit. While most of the imported datasets are tidy, the main one falls short of the second requirement, since `Countries` and `Genre` contain multiple variables:
 
 <table>
 <thead>
@@ -318,7 +318,7 @@ Director
 Year
 </th>
 <th style="text-align:left;">
-All.Countries
+Countries
 </th>
 <th style="text-align:right;">
 Length
@@ -391,6 +391,8 @@ To tidy the dataset three steps are needed:
 -   "melting" the colvars (i.e., turning them into rows of a single column), using a primary key to uniquely relate the output to the corresponding observations;
 
 -   "left joining" (i.e., merging two datasets, conforming the size of the second one to that of the first one) the molten data on content from the original dataset.
+
+Revealing the contributions of individual countries is an important goal of the project, so I am going to tidy the dataset with respect to "Countries" first. Tasks 1-2 are accomplished by functions `split.strings` and `extract.countries`, task 3 by `append.columns`. The unprocessed column is kept as primary key.
 
 #### **Generate main dataset**
 
@@ -520,7 +522,7 @@ new_names <- c("Czech Republic", "Czech Republic", "Netherlands", "South Korea",
 
 # Single out all Countries of production (including co-production ones) and
 # store into "countries", which becomes the main dataset for exploration
-countries <- extract.countries(greatest, "All.Countries", old_names, new_names)
+countries <- extract.countries(greatest, "Countries", old_names, new_names)
 ```
 
 #### **Migrate content to new dataset**
@@ -955,7 +957,7 @@ expand.to.comb <- function(df, column, times) {
 co_productions <- subset(countries, Co.Production == "Yes")
 
 greatest.by_connection <- co_productions %>%
-  group_by(All.Countries) %>%
+  group_by(Countries) %>%
   summarise(n = n(),
             # Summary variable to detect two-way co-productions
             Mean.Latitude.All = mean(Latitude))
@@ -970,21 +972,21 @@ greatest.by_connection <- merge(subset(greatest.by_connection, select = -n),
                                 auxiliary.df, by = "Mean.Latitude.All")
 
 # Generate all possible combinations of two-Country co-productions
-combinations <- rbind.factor.comb(co_productions, "All.Countries", ", ")
+combinations <- rbind.factor.comb(co_productions, "Countries", ", ")
 
 # Update column names and factor levels
 combinations <- rename(combinations, Country.x = Var1, Country.y = Var2)
 combinations <- update.factor.columns(combinations, old_names, new_names)
 
 # Keep track of the times each entry was expanded
-n.times <- count.movie.coproducers(co_productions, "All.Countries")
+n.times <- count.movie.coproducers(co_productions, "Countries")
 
-# Expand column "All.Countries" to the length of "combinations".
+# Expand column "Countries" to the length of "combinations".
 # The column will work as primary key, to join different data frames
-shared_col <- expand.to.comb(co_productions, "All.Countries", n.times**2)
-shared_col <- rename(shared_col, All.Countries = col.name)
+shared_col <- expand.to.comb(co_productions, "Countries", n.times**2)
+shared_col <- rename(shared_col, Countries = col.name)
 
-# Column bind "All.Countries" to "combinations"
+# Column bind "Countries" to "combinations"
 combinations <- cbind(combinations, shared_col)
 
 # Append coordinate pairs to Country.x and Country.y
@@ -995,7 +997,7 @@ combinations <- cbind.coordinates(combinations, unique_coord,
                                   column.y = "Country")
 
 combinations <- merge(combinations, greatest.by_connection,
-                      by = "All.Countries", all.x = TRUE)
+                      by = "Countries", all.x = TRUE)
 
 # Shrink data frame and remove duplicate elements
 combinations <- unique(combinations)
