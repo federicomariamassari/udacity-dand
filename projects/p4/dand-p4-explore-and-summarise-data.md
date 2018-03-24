@@ -394,7 +394,7 @@ To tidy the dataset three steps are needed:
 
 Revealing the contributions of individual countries is an important goal of the project, so I am going to tidy the dataset with respect to "Countries" first. Tasks 1-2 are accomplished by functions `split.strings` and `extract.countries`, task 3 by `append.columns`. The unprocessed column is kept as primary key.
 
-#### **Generate main dataset**
+#### **Split by and melt column variables**
 
 ``` r
 split.strings <- function(df, column, delimiter = ", ") {
@@ -525,7 +525,7 @@ new_names <- c("Czech Republic", "Czech Republic", "Netherlands", "South Korea",
 countries <- extract.countries(greatest, "Countries", old_names, new_names)
 ```
 
-#### **Migrate content to new dataset**
+#### **Left join molten data on the original dataset**
 
 ``` r
 append.columns <- function(df, to_append, shared_col, old_names, new_names) {
