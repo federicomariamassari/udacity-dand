@@ -3,6 +3,8 @@ My Udacity Data Analyst Nanodegree projects. In Python, unless otherwise stated.
 
 __[Link to syllabus](./projects/dand-old-syllabus.pdf)__
 
+__Associated repositories:__ [_Data Analyst Nanodegree: Career Development_](https://github.com/federicomariamassari/udacity-dand-career-development)
+
 __Featured project:__ [Explore what I consider my best project to date!](https://github.com/federicomariamassari/udacity-dand/blob/master/projects/p3/dand-p3-wrangle-openstreetmap.md)
 
 ## P0 [Bay Area Bike Share Analysis](./projects/p0/dand-p0-bay-area-bike-share-analysis.md)
