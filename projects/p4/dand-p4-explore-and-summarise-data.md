@@ -301,7 +301,7 @@ levels(greatest$Rank.Category) <- c("Top 10", "From 11 to 100",
 
 ### **Data tidying**
 
-Hadley Wickham (Wickham, 2014) defines as "tidy" any dataset with the following three characteristics: every row is an observation, every column a variable, and every table a type of observational unit. While most of the imported datasets are tidy, the main one falls short of the second requirement, since `Countries` and `Genre` contain multiple variables:
+Hadley Wickham (Wickham, 2014) defines as "tidy" any dataset with the following three characteristics: every row is an observation, every column a variable, and every table a type of observational unit. While most of the imported datasets are tidy, the main one falls short of the second requirement, since `Countries` and `Genre` have multiple variables. For example:
 
 <table>
 <thead>
@@ -586,7 +586,7 @@ for (df in df.list) {
 countries <- merge(countries, greatest, by = "Pos")
 ```
 
-The result of tidying with respect to "Countries", for the same movie, is the following:
+The result of tidying with respect to "Countries" is the following:
 
 <table>
 <thead>
@@ -807,6 +807,8 @@ From 11 to 100
 </tr>
 </tbody>
 </table>
+I will use this dataset in most of my exploratory analysis.
+
 #### **Clean up Global Environment**
 
 ``` r
