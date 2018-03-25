@@ -235,7 +235,7 @@ gdp[, cols] = apply(gdp[, cols], 2, function(x) as.numeric(as.character(x)))
 
 ### **Variables creation**
 
-Four variables are added to the data frame. "Co.Production" and "Co.Director" (Boolean) signal whether a certain movie was co-produced by different countries or shot by various directors; "Decade" and "Rank.Category" provide a higher level of aggregation with respect to "Year" and "Position".
+Four variables are added to the data frame. "Co-Production" and "Co-Director" (Boolean) signal whether a certain movie was co-produced by different countries or shot by various directors; "Decade" and "Rank Category" provide a higher level of aggregation with respect to "Year" and "Position".
 
 ``` r
 add.bool.column <- function(df, cond.column, new.column, delimiter,
