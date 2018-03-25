@@ -306,7 +306,8 @@ Hadley Wickham (Wickham, 2014) defines as "tidy" any dataset with the following 
 <table>
 <thead>
 <tr>
-<th style="text-align:left;">
+<th style="text-align:right;">
+Pos
 </th>
 <th style="text-align:left;">
 Title
@@ -345,7 +346,7 @@ Rank.Category
 </thead>
 <tbody>
 <tr>
-<td style="text-align:left;">
+<td style="text-align:right;">
 45
 </td>
 <td style="text-align:left;">
@@ -585,6 +586,227 @@ for (df in df.list) {
 countries <- merge(countries, greatest, by = "Pos")
 ```
 
+The result of tidying with respect to "Countries", for the same movie, is the following:
+
+<table>
+<thead>
+<tr>
+<th style="text-align:right;">
+Pos
+</th>
+<th style="text-align:left;">
+Country
+</th>
+<th style="text-align:left;">
+Code
+</th>
+<th style="text-align:left;">
+Continent
+</th>
+<th style="text-align:right;">
+Latitude
+</th>
+<th style="text-align:right;">
+Longitude
+</th>
+<th style="text-align:right;">
+Total.Area
+</th>
+<th style="text-align:right;">
+Land
+</th>
+<th style="text-align:right;">
+Water
+</th>
+<th style="text-align:right;">
+Agriculture
+</th>
+<th style="text-align:right;">
+Industry
+</th>
+<th style="text-align:right;">
+Services
+</th>
+<th style="text-align:left;">
+Title
+</th>
+<th style="text-align:left;">
+Director
+</th>
+<th style="text-align:right;">
+Year
+</th>
+<th style="text-align:left;">
+Countries
+</th>
+<th style="text-align:right;">
+Length
+</th>
+<th style="text-align:left;">
+Genre
+</th>
+<th style="text-align:left;">
+Colour
+</th>
+<th style="text-align:left;">
+Co.Production
+</th>
+<th style="text-align:left;">
+Co.Director
+</th>
+<th style="text-align:left;">
+Decade
+</th>
+<th style="text-align:left;">
+Rank.Category
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:right;">
+45
+</td>
+<td style="text-align:left;">
+France
+</td>
+<td style="text-align:left;">
+FR
+</td>
+<td style="text-align:left;">
+Europe
+</td>
+<td style="text-align:right;">
+46.22764
+</td>
+<td style="text-align:right;">
+2.213749
+</td>
+<td style="text-align:right;">
+640679
+</td>
+<td style="text-align:right;">
+640427
+</td>
+<td style="text-align:right;">
+3374
+</td>
+<td style="text-align:right;">
+1.8
+</td>
+<td style="text-align:right;">
+18.8
+</td>
+<td style="text-align:right;">
+79.4
+</td>
+<td style="text-align:left;">
+In the Mood for Love
+</td>
+<td style="text-align:left;">
+Wong Kar-wai
+</td>
+<td style="text-align:right;">
+2000
+</td>
+<td style="text-align:left;">
+Hong Kong, France
+</td>
+<td style="text-align:right;">
+97
+</td>
+<td style="text-align:left;">
+Romance, Drama
+</td>
+<td style="text-align:left;">
+Col
+</td>
+<td style="text-align:left;">
+Yes
+</td>
+<td style="text-align:left;">
+No
+</td>
+<td style="text-align:left;">
+2000s
+</td>
+<td style="text-align:left;">
+From 11 to 100
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+45
+</td>
+<td style="text-align:left;">
+Hong Kong
+</td>
+<td style="text-align:left;">
+HK
+</td>
+<td style="text-align:left;">
+Asia
+</td>
+<td style="text-align:right;">
+22.39643
+</td>
+<td style="text-align:right;">
+114.109497
+</td>
+<td style="text-align:right;">
+2755
+</td>
+<td style="text-align:right;">
+1106
+</td>
+<td style="text-align:right;">
+1649
+</td>
+<td style="text-align:right;">
+0.1
+</td>
+<td style="text-align:right;">
+6.8
+</td>
+<td style="text-align:right;">
+93.2
+</td>
+<td style="text-align:left;">
+In the Mood for Love
+</td>
+<td style="text-align:left;">
+Wong Kar-wai
+</td>
+<td style="text-align:right;">
+2000
+</td>
+<td style="text-align:left;">
+Hong Kong, France
+</td>
+<td style="text-align:right;">
+97
+</td>
+<td style="text-align:left;">
+Romance, Drama
+</td>
+<td style="text-align:left;">
+Col
+</td>
+<td style="text-align:left;">
+Yes
+</td>
+<td style="text-align:left;">
+No
+</td>
+<td style="text-align:left;">
+2000s
+</td>
+<td style="text-align:left;">
+From 11 to 100
+</td>
+</tr>
+</tbody>
+</table>
 #### **Clean up Global Environment**
 
 ``` r
