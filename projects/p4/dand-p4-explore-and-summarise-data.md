@@ -235,7 +235,7 @@ gdp[, cols] = apply(gdp[, cols], 2, function(x) as.numeric(as.character(x)))
 
 ### **Variables creation**
 
-Four variables are added to the data frame: `Co.Production` and `Co.Director`, which signal whether a particular movie was co-produced by different countries or shot by various directors (Boolean), and `Decade` and `Rank.Category`, which provide a higher level of aggregation with respect to "Year" and "Position" (Factor).
+Four variables are added to the data frame. "Co.Production" and "Co.Director" (Boolean) signal whether a certain movie was co-produced by different countries or shot by various directors; "Decade" and "Rank.Category" provide a higher level of aggregation with respect to "Year" and "Position".
 
 ``` r
 add.bool.column <- function(df, cond.column, new.column, delimiter,
@@ -301,7 +301,7 @@ levels(greatest$Rank.Category) <- c("Top 10", "From 11 to 100",
 
 ### **Data tidying**
 
-Hadley Wickham (Wickham, 2014) defines as "tidy" any dataset with the following three characteristics: every row is an observation, every column a variable, and every table a type of observational unit. While most of the imported datasets are tidy, the main one falls short of the second requirement, since `Countries` and `Genre` have multiple variables. For example:
+Hadley Wickham (Wickham, 2014) defines as "tidy" any dataset with the following three characteristics: every row is an observation, every column a variable, and every table a type of observational unit. While most of the imported datasets are tidy, the main one falls short of the second requirement, since "Countries" and "Genre" both contain multiple variables. For example:
 
 <table>
 <thead>
@@ -393,7 +393,7 @@ To tidy the dataset three steps are needed:
 
 -   "left joining" (i.e., merging two datasets, conforming the size of the second one to that of the first one) the molten data on content from the original dataset.
 
-Revealing the contributions of individual countries is an important goal of the project, so I am going to tidy the dataset with respect to "Countries" first. Tasks 1-2 are accomplished by functions `split.strings` and `extract.countries`, task 3 by `append.columns`. The raw variable is kept as primary key.
+Revealing the contributions of individual countries is an important goal of the project, so I am going to tidy the dataset with respect to "Countries" first. Functions `split.strings` and `extract.countries` will perform tasks 1-2, `append.columns` task 3. I will also keep the raw variable as primary key.
 
 #### **Split by and melt column variables**
 
@@ -807,7 +807,7 @@ From 11 to 100
 </tr>
 </tbody>
 </table>
-I will use this dataset in most of my exploratory analysis.
+This dataset is used for most of the exploratory analysis.
 
 #### **Clean up Global Environment**
 
