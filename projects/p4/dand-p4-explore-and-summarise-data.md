@@ -393,7 +393,7 @@ To tidy the dataset three steps are needed:
 
 -   "left joining" (i.e., merging two datasets, conforming the size of the second one to that of the first one) the molten data on content from the original dataset.
 
-Revealing the contributions of individual countries is an important goal of the project, so I am going to tidy the dataset with respect to "Countries" first. Functions `split.strings` and `extract.countries` will perform tasks 1-2, `append.columns` task 3. I will also keep the raw variable as primary key.
+Revealing the contributions of individual countries is an important goal of the project, so I am going to tidy the dataset with respect to "Countries" first.
 
 #### **Split by and melt column variables**
 
