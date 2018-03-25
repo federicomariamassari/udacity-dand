@@ -218,7 +218,7 @@ greatest$Countries <-
 # Fix typo in column "Countries": "--" -> "-"
 greatest$Countries <- gsub("--", "-", greatest$Countries)
 
-# Replace dash delimiters with clearer ones
+# Replace delimiters with clearer ones
 for (column in c("Countries", "Genre")) {
   greatest[[column]] <- gsub("-", ", ", greatest[[column]])
 }
@@ -392,7 +392,7 @@ To tidy the dataset three steps are needed:
 
 -   "left joining" (i.e., merging two datasets, conforming the size of the second one to that of the first one) the molten data on content from the original dataset.
 
-Revealing the contributions of individual countries is an important goal of the project, so I am going to tidy the dataset with respect to "Countries" first. Tasks 1-2 are accomplished by functions `split.strings` and `extract.countries`, task 3 by `append.columns`. The unprocessed column is kept as primary key.
+Revealing the contributions of individual countries is an important goal of the project, so I am going to tidy the dataset with respect to "Countries" first. Tasks 1-2 are accomplished by functions `split.strings` and `extract.countries`, task 3 by `append.columns`. The raw variable is kept as primary key.
 
 #### **Split by and melt column variables**
 
@@ -681,7 +681,7 @@ world_base +
 
 <img src="./img/figure-01.png" width="816" />
 
-#### **Observations**
+### **Observations**
 
 ``` r
 custom_ticks <- c(0, 1, 10, 100, 1000)
@@ -707,7 +707,7 @@ ggplot(data = greatest.by_country,
 
 <img src="./img/figure-02.png" width="816" />
 
-#### **Observations**
+### **Observations**
 
 ``` r
 ggplot(data = greatest.by_country,
@@ -729,7 +729,7 @@ ggplot(data = greatest.by_country,
 
 <img src="./img/figure-03.png" width="816" />
 
-#### **Observations**
+### **Observations**
 
 ``` r
 linear.regression <- function(df, x, y, transform.x = NA, transform.y = NA) {
@@ -818,7 +818,7 @@ ggplot(data = greatest.by_decade, aes(x = Decade, y = Country)) +
 
 <img src="./img/figure-04.png" width="816" />
 
-#### **Observations**
+### **Observations**
 
 ### **Most frequent co-productions**
 
@@ -1067,7 +1067,7 @@ world_transparent +
 
 <img src="./img/figure-05.png" width="816" />
 
-#### **Observations**
+### **Observations**
 
 ### **Colour and black-and-white**
 
