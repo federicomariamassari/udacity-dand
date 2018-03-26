@@ -140,16 +140,14 @@ __Completion time:__
 
 __Supporting lesson content:__ _[Data Analysis with R](https://eu.udacity.com/course/data-analysis-with-r--ud651)_ (Intermediate)
 
-__Textbook:__ Ryan Mitchell, [_Web Scraping with Python. Collecting Data from the Modern Web_](http://shop.oreilly.com/product/0636920034391.do), O'Reilly Media, 2015
-
-__Acquired familiarity with:__ Beautiful Soup, R, Plotly
+__Acquired familiarity with:__ Requests, Beautiful Soup, R
 
 [Link to project specification](projects/p4/dand-p4-project-specification.md)
 
 ### Overview
 _Choose one of Udacity's curated datasets or find one of your own and perform a complete exploratory data analysis using R: investigate relationships in one variable to multiple variables, distributions, outliers, and anomalies._
 
-This project focuses on the __exploration__ phase of the data analysis process:
+This project focuses on the __exploration__ step of the data analysis process: revealing meaningful links among variables through assorted and compelling visualisations.
 
 <table>
   <tr>
@@ -159,15 +157,10 @@ This project focuses on the __exploration__ phase of the data analysis process:
 </table>
 
 ### What was the biggest challenge?
-Choosing the right dataset—one rich enough to be explored along many dimensions—as well as becoming familiar with the R language, proved two pretty challenging tasks. In the first case, I spent days surfing on _Kaggle_ before I decided to make my own dataset. In the end, I wrangled the content of a website I have long appreciated, _[TheyShootPictures.com](http://theyshootpictures.com)_. I discovered I could legally scrape the website from the _robots meta tags_:
-```html
-<html lang="en">
-  <head>
-    <meta name="robots" content="index, follow">
-```
-Python, especially the combination of `requests` and `BeautifulSoup`, proved invaluable during this phase. In the second case, learning the R syntax was not immediate, although familiarity with MATLAB, NumPy, and Pandas helped me catch up quickly.
+Choosing the right dataset—one rich enough to be explored along many dimensions—as well as becoming familiar with the R language, proved two pretty challenging tasks. In the first case, I decided to (ethically) scrape my own data using Python libraries Requests and Beautiful Soup. In the second, although the R syntax was not immediate to understand, I caught up quickly thanks to my experience with other programming languages.
 
 ### Which part of the code do you like best?
+The map of the principal two-country co-production relationships. The plot, modelled after [this one](https://github.com/dgrtwo/rpanama), took me three days to complete (as it involved a complex data tidying procedure), but the result was extremely pleasing.
 
 [Link to Python modules](/projects/p4/python-modules/)
 
