@@ -511,7 +511,7 @@ extract.countries <- function(df, column, old_names, new_names) {
 
 #### **Update country factor levels**
 
-Because the main dataset spans over a century of world cinema, some of its entries refer to countries that no longer exists (i.e., Czechoslovakia, USSR, West Germany, and Yugoslavia). In mapping these countries to modern nations, I accredited to Czech (not Slovak) Republic movies produced in Czechoslovakia, and to Serbia those shot in Yugoslavia. The decision was based on directors' nationality. I also attributed to Russia films made in the USSR, but this choice is less than optimal, as it ignored the contributions of other former Soviet members (i.e., Armenia, Georgia, Ukraine).
+Because the main dataset spans over a century of world cinema, some of its entries refer to countries that no longer exists (i.e., Czechoslovakia, USSR, West Germany, and Yugoslavia). In mapping these countries to modern nations, I accredited to Czech (not Slovak) Republic movies produced in Czechoslovakia, and to Serbia those shot in Yugoslavia. In both cases, the decision was based on directors' nationality. I also attributed to Russia films made in the USSR. Here, the choice was dictated by convenience (mapping to a unique factor level) rather than by accuracy (acknowledging the contributions of other former Soviet members).
 
 ``` r
 # Uniform Country levels with those of world map
