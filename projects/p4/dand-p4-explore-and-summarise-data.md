@@ -235,7 +235,7 @@ gdp[, cols] = apply(gdp[, cols], 2, function(x) as.numeric(as.character(x)))
 
 ### **Variables creation**
 
-Four variables are added to the data frame. "Co-Production" and "Co-Director" (Boolean) signal whether a certain movie was co-produced by different countries or shot by various directors; "Decade" and "Rank Category" provide a higher level of aggregation with respect to "Year" and "Position".
+Four variables are added to the data frame: "Co-Production" and "Co-Director" (Boolean) signal whether a certain movie was co-produced by different countries or shot by various directors; "Decade" and "Rank Category" provide a higher level of aggregation with respect to "Year" and "Position".
 
 ``` r
 add.bool.column <- function(df, cond.column, new.column, delimiter,
@@ -301,7 +301,7 @@ levels(greatest$Rank.Category) <- c("Top 10", "From 11 to 100",
 
 ### **Data tidying**
 
-Hadley Wickham (Wickham, 2014) defines as "tidy" any dataset with the following three characteristics: every row is an observation, every column a variable, and every table a type of observational unit. While most of the imported datasets are tidy, the main one falls short of the second requirement, since "Countries" and "Genre" both contain multiple variables. For example:
+Hadley Wickham (Wickham, 2014) defines as "tidy" any dataset with the following three characteristics: every row is an observation, every column a variable, and every table a type of observational unit. The main dataset falls short of the second requirement, since "Countries" and "Genre" both contain multiple variables. For example:
 
 <table>
 <thead>
@@ -508,6 +508,10 @@ extract.countries <- function(df, column, old_names, new_names) {
   return(df_out)
 }
 ```
+
+#### **Update country factor levels**
+
+Because the main dataset spans over a century of world cinema, some of its entries refer to countries that no longer exists (i.e., Czechoslovakia, USSR, West Germany, and Yugoslavia). In mapping these countries to modern nations, I accredited to Czech (not Slovak) Republic movies produced in Czechoslovakia, and to Serbia those shot in Yugoslavia. The decision was based on directors' nationality.
 
 ``` r
 # Uniform Country levels with those of world map
