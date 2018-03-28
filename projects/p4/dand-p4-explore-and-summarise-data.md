@@ -469,8 +469,10 @@ update.factor.columns <- function(df, old_names, new_names) {
   #   A data frame with the replaced factor levels in all columns.
   #
   for (column in names(df)) {
+
     # Add new factor levels to data frame column
     levels(df[[column]]) <- c(levels(df[[column]]), new_names)
+
     # Rename factor levels for each column
     df <- rename.all.factors(df, column, old_names, new_names)
   }
@@ -511,7 +513,53 @@ extract.countries <- function(df, column, old_names, new_names) {
 
 #### **Update country factor levels**
 
-Because the main dataset spans over a century of world cinema, some of its entries refer to countries that no longer exists (i.e., Czechoslovakia, USSR, West Germany, and Yugoslavia). In mapping these countries to modern nations, I accredited to Czech (not Slovak) Republic movies produced in Czechoslovakia, and to Serbia those shot in Yugoslavia. In both cases, the decision was based on directors' nationality. I also attributed to Russia films made in the USSR. Here, the choice was dictated by convenience (mapping to a unique factor level) rather than by accuracy (acknowledging the contributions of other former Soviet members).
+Because the main dataset spans over a century of world cinema, some of its entries refer to countries that no longer exists (i.e., Czechoslovakia, USSR, West Germany, and Yugoslavia). In mapping these countries to modern nations, I accredited to Czech (not Slovak) Republic movies produced in Czechoslovakia, to Serbia those shot in Yugoslavia, and to Armenia, Belarus, Georgia, Russia, and Ukraine those produced in the USSR. The decision was based on filmmakers' nationality.
+
+``` r
+replace.from.list <- function(df, cond.column, replace.in, to.replace,
+                              factor.list) {
+  # Replace factor level if a condition is met.
+  #
+  # Arguments:
+  #   df: Data frame.
+  #   cond.column: Name of the column with the condition to test.
+  #   replace.in: Name of the column in which to replace the factor level.
+  #   to.replace: The factor level to replace.
+  #   factor.list: A list of the key-value form, with key being the level to
+  #     replace, and value the particular condition to test.
+  #
+  # Returns:
+  #   The data frame, with new factor levels replacing the old ones in rows
+  #   in which a particular condition is met.
+  for (i in 1:length(factor.list)) {
+
+    # Add new factor level to data frame
+    levels(df[[replace.in]]) <-
+      c(levels(df[[replace.in]]), names(factor.list[i]))
+
+    # Replace factor level if condition is met
+    df[df[[cond.column]] %in% factor.list[[i]], ][[replace.in]] <-
+      gsub(to.replace, names(factor.list[i]),
+           df[df[[cond.column]] %in% factor.list[[i]], ][[replace.in]])
+  }
+  return(df)
+}
+```
+
+``` r
+# Replace "USSR" with factor level associated to the matched director
+nations <- list("Armenia" = c("Parajanov, Sergei", "Peleshian, Artavazd"),
+                "Belarus" = c("Kheifits, Iosif"),
+                "Georgia" = c("Kalatozov, Mikhail", "Khutsiev, Marlen"),
+                "Ukraine" = c("Bondarchuk, Sergei", "Chukhraj, Grigori",
+                              "Donskoi, Mark", "Dovzhenko, Alexander",
+                              "Kozintsev, Grigori", "Muratova, Kira",
+                              "Shepitko, Larisa"))
+
+greatest <- replace.from.list(df = greatest, cond.column = "Director",
+                              replace.in = "Countries", to.replace = "USSR",
+                              factor.list = nations)
+```
 
 ``` r
 # Uniform Country levels with those of world map
@@ -1002,18 +1050,18 @@ linear.regression(greatest.by_country, "n", "Services", transform.x = "log2")
     ##
     ## Residuals:
     ##      Min       1Q   Median       3Q      Max
-    ## -25.2054  -6.1729  -0.4477   5.8644  27.4260
+    ## -25.1300  -7.3470  -0.3758   6.6711  27.7849
     ##
     ## Coefficients:
     ##             Estimate Std. Error t value Pr(>|t|)    
-    ## (Intercept)  56.1412     2.1278  26.384  < 2e-16 ***
-    ## x             2.4328     0.5532   4.398 4.46e-05 ***
+    ## (Intercept)   55.711      2.087  26.697  < 2e-16 ***
+    ## x              2.504      0.552   4.536 2.58e-05 ***
     ## ---
     ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
     ##
-    ## Residual standard error: 10.29 on 61 degrees of freedom
-    ## Multiple R-squared:  0.2407, Adjusted R-squared:  0.2283
-    ## F-statistic: 19.34 on 1 and 61 DF,  p-value: 4.459e-05
+    ## Residual standard error: 10.28 on 64 degrees of freedom
+    ## Multiple R-squared:  0.2433, Adjusted R-squared:  0.2314
+    ## F-statistic: 20.57 on 1 and 64 DF,  p-value: 2.581e-05
 
 ### **Golden and silver periods of world cinema**
 
