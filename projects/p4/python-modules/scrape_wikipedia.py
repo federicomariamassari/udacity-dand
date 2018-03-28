@@ -154,8 +154,15 @@ def country_by_continent(soup):
             # Store each k,v pair in a dictionary, append the latter to list
             entry = {}
             entry['Continent'] = continents[i]
+
             # Country names are nested in attributes <a title="Country">
-            entry['Country'] = element.a.get("title")
+            country = element.a.get("title")
+
+            # Strip unnecessary text
+            if '(' in country:
+                entry['Country'] = country.split('(')[0].strip()
+            else:
+                entry['Country'] = country
 
             entries.append(entry)
 
