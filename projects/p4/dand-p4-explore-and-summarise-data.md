@@ -547,7 +547,7 @@ replace.from.list <- function(df, cond.column, replace.in, to.replace,
 ```
 
 ``` r
-# Replace "USSR" with factor level associated to the matched director
+# Replace "USSR" with the matched director's nation
 nations <- list("Armenia" = c("Parajanov, Sergei", "Peleshian, Artavazd"),
                 "Belarus" = c("Kheifits, Iosif"),
                 "Georgia" = c("Kalatozov, Mikhail", "Khutsiev, Marlen"),
@@ -873,7 +873,14 @@ rm(list = setdiff(ls(), required))
 **Data exploration**
 --------------------
 
-### **Atlas of the greatest films**
+### **Geography of the greatest films**
+
+The first dimension I would like to explore is the geographical one. Some interesting questions could be:
+
+-   *Where were the greatest movies produced?*
+-   *Are contributions evenly distributed, or is any particular area of the world under- or overrepresented?*
+
+The best way to answer these questions is through a choropleth map, a thematic chart in which colour intensity for each country is positively associated to the number of contributions that country made to the list (black areas reflect absence of contributions).
 
 #### **Aggregate data for exploration**
 
@@ -922,7 +929,7 @@ greatest.by_country <- merge(greatest.by_country,
 world <- plyr::join(world, greatest.by_country[, c(1:3)], by = "Country")
 ```
 
-#### **Generate choropleth**
+#### **Generate choropleth map**
 
 ``` r
 # Define attributes shared by plots, to override if necessary
@@ -951,7 +958,7 @@ world_base <- ggplot() +
 world_base +
   geom_polygon(data = subset(world, !is.na(bin)),
              aes(x = long, y = lat, group = group, fill = bin)) +
-  ggtitle(paste("Figure 1: Choropleth map of the greatest movies by Country",
+  ggtitle(paste("Figure 1: Choropleth map of the greatest movies by country",
                 "of production"))
 ```
 
@@ -971,7 +978,7 @@ ggplot(data = greatest.by_country,
   scale_x_continuous(breaks = log2(custom_ticks), labels = custom_ticks,
                      sec.axis = dup_axis(name = NULL)) +
   ggtitle(paste("Figure 2: Contributions to the list of greatest movies by",
-                "Country of production")) +
+                "country of production")) +
   xlab("Number of contributions, log2 scale") +
   ylab("Country") +
   labs(fill = "Contributions to list",
@@ -996,7 +1003,7 @@ ggplot(data = greatest.by_country,
   scale_x_continuous(breaks = log2(custom_ticks), labels = custom_ticks) +
   scale_y_continuous(breaks = seq(0, 100, 5)) +
   ggtitle(paste("Figure 3: Relationship between movies produced and resources",
-                "to the service sector (% GDP) by Country")) +
+                "to the service sector (% GDP) by country")) +
   xlab("Number of contributions, log2 scale") +
   ylab("Resources to the service sector (% GDP)") +
   labs(caption = "Data sources: theyshootpictures.com, Wikipedia") +
@@ -1085,7 +1092,7 @@ ggplot(data = greatest.by_decade, aes(x = Decade, y = Country)) +
   geom_tile(aes(fill = Rank.Category), colour = "black") +
   scale_x_discrete(position = "top") +
   scale_fill_brewer(palette = "Reds", direction = -1) +
-  ggtitle("Figure 4: Heatmap of peak positions by Country and decade") +
+  ggtitle("Figure 4: Heatmap of peak positions by country and decade") +
   labs(fill = "Maximum rank reached",
        caption = "Data source: theyshootpictures.com") +
   shared_themes +
@@ -1336,7 +1343,7 @@ world_transparent +
                  y = Latitude.x, yend = Latitude.y,
                  alpha = Two.Country.Relationships), color = "#a50026") +
   scale_alpha_manual(values = c(0.05, 0.1, 0.2, 0.5, 1)) +
-  ggtitle(paste("Figure 5: Most frequent two-Country co-production",
+  ggtitle(paste("Figure 5: Most frequent two-country co-production",
                 "relationships")) +
   labs(caption = "Data sources: theyshootpictures.com, Google Developers")
 ```
