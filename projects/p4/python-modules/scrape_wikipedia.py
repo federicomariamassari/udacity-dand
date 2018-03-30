@@ -59,6 +59,8 @@ def scrape_wiki(base_url, pages, directory='./data/csv/', sleep_time=10):
             fieldnames, entries = country_by_area(soup)
         elif page['id'] == 'Country by alpha-2 code':
             fieldnames, entries = country_by_code(soup)
+        elif page['id'] == 'Country by religion':
+            fieldnames, entries = country_by_religion(soup)
 
         write_csv(entries, fieldnames, page['filename'])
 
@@ -273,6 +275,67 @@ def country_by_code(soup):
 
     return fieldnames, entries
 
+def country_by_religion(soup):
+    """Return a breakdown of countries by religion.
+
+    https://en.wikipedia.org/wiki/Religions_by_country
+    """
+
+    from collections import OrderedDict
+
+    fieldnames = ['Country', 'Main']
+
+    table = soup.find("table", {"class": "wikitable sortable"})
+
+    for th in table.find_all("th", {"colspan": "2"}):
+        fieldname = th.get_text()
+        while fieldname not in fieldnames:
+            fieldnames.append(fieldname)
+
+    entries = []
+
+    exclude = ['Central Africa', 'Eastern Africa', 'North Africa',
+               'Middle East and North Africa', 'Southern Africa',
+               'Sub-Saharan Africa', 'Western Africa', 'Asia',
+               'Latin America and the Caribbean', 'Total', 'World']
+
+    for table in soup.find_all("table", {"class": "wikitable sortable"}):
+        for tr in table.find_all("tr"):
+            i = 2
+            entry = OrderedDict()
+            for td in tr.find_all("td"):
+                try:
+                    country = td.a.get_text()
+
+                    if country == '[3]':
+                        entry['Country'] = 'Philippines'
+                    else:
+                        entry['Country'] = country
+
+                except AttributeError:
+                    stat = td.get_text()
+
+                    if '.' in stat:
+                        try:
+                            entry[fieldnames[i]] = float(stat.strip('%'))
+                        except ValueError:
+                            # Replace statistics with value '<0.1'
+                            entry[fieldnames[i]] = 0.0
+                        i += 1
+
+            if entry != {}:
+
+                main = max([v for v in entry.values() if type(v) == float])
+                entry['Main'] = [k for k, v in entry.items() if v == main][0]
+
+                try:
+                    if entry['Country'] not in exclude:
+                        entries.append(entry)
+                except KeyError:
+                    pass
+
+    return fieldnames, entries
+
 if __name__ == '__main__':
     """Automatically scrape all pages in the list."""
 
@@ -297,7 +360,11 @@ if __name__ == '__main__':
 
     {'id': 'Country by alpha-2 code',
      'link': 'ISO_3166-1_alpha-2',
-     'filename': 'country_codes.csv'}
+     'filename': 'country_codes.csv'},
+
+    {'id': 'Country by religion',
+     'link': 'Religions_by_country',
+     'filename': 'religions.csv'}
      ]
 
     scrape_wiki(base_url, pages, directory='./data/csv/', sleep_time=10)
