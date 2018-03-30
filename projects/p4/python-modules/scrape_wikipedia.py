@@ -311,6 +311,8 @@ def country_by_religion(soup):
                         entry['Country'] = 'Philippines'
                     elif country == 'dubious':
                         entry['Country'] = 'Netherlands'
+                    elif country == 'Mainland China':
+                        entry['Country'] = 'China'
                     else:
                         entry['Country'] = country
 
