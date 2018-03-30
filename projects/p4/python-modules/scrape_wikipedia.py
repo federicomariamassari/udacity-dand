@@ -277,13 +277,12 @@ def country_by_code(soup):
 
 def country_by_religion(soup):
     """Return a breakdown of countries by religion.
-
     https://en.wikipedia.org/wiki/Religions_by_country
     """
 
     from collections import OrderedDict
 
-    fieldnames = ['Country', 'Main']
+    fieldnames = ['Country', 'Main Religion']
 
     table = soup.find("table", {"class": "wikitable sortable"})
 
@@ -330,7 +329,8 @@ def country_by_religion(soup):
             if entry != {}:
 
                 main = max([v for v in entry.values() if type(v) == float])
-                entry['Main'] = [k for k, v in entry.items() if v == main][0]
+                entry['Main Religion'] = [k for k, v in entry.items() \
+                                          if v == main][0]
 
                 try:
                     if entry['Country'] not in exclude:
