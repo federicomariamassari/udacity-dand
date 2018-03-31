@@ -30,7 +30,7 @@ To answer questions as they come to mind, in a stream-of-consciousness narrative
 
 -   [Top 250 Directors](http://www.theyshootpictures.com/gf1000_top250directors.htm): this provides information on the most critically acclaimed filmmakers of all-time, including current rankings, the number of movies appearing in "The 1,000 Greatest Films", and that of movies featured in other lists (i.e., "cited"). Particularly important is the directors' rankings, since I am going to manually determine, for each director, the number of films among the top 2,000. I could not find the list in an easily downloadable format, so I had to scrape the data from the webpage (on ethical scraping, see the next paragraph), and store them in a csv file;
 
--   Auxiliary data come from Wikipedia (breakdown of countries by continent, area, code, and gdp sector composition) and Google Developers (country coordinates).
+-   Auxiliary data come from Wikipedia (breakdown of countries by continent, area, code, gdp sector composition, and religion) and Google Developers (country coordinates).
 
 ### **Data acquisition process**
 
@@ -74,7 +74,7 @@ directors <- read.csv("./data/csv/top_250_directors.csv")
 
 # Import auxiliary documents as data frames
 variables <- c("continents", "coordinates", "country_area", "country_codes",
-               "gdp")
+               "religions", "gdp")
 
 for (variable in variables) {
   assign(variable, read.csv(paste("./data/csv/", variable, ".csv", sep = "")))
@@ -480,7 +480,7 @@ update.factor.columns <- function(df, old_names, new_names) {
 }
 
 extract.countries <- function(df, column, old_names, new_names) {
-  # Extract Countries from data frame column with delimiter-separated levels.
+  # Extract countries from data frame column with delimiter-separated levels.
   #
   # Arguments:
   #   df: Data frame.
@@ -503,7 +503,7 @@ extract.countries <- function(df, column, old_names, new_names) {
   # Add new factor levels to data frame
   levels(df_out$Country) <- c(levels(df_out$Country), new_names)
 
-  # Update Country names, sort factor levels alphabetically
+  # Update country names, sort factor levels alphabetically
   df_out <- rename.all.factors(df_out, "Country", old_names, new_names)
   df_out$Country <- as.factor(as.character(df_out$Country))
 
@@ -562,7 +562,7 @@ greatest <- replace.from.list(df = greatest, cond.column = "Director",
 ```
 
 ``` r
-# Uniform Country levels with those of world map
+# Uniform country levels with those of world map
 old_names <- c("Czechia", "Czechoslovakia", "Kingdom of the Netherlands",
                "Korea, South", "Palestinian Territories", "Republic of Ireland",
                "Republic of Macedonia", "State of Palestine", "United Kingdom",
@@ -573,7 +573,7 @@ new_names <- c("Czech Republic", "Czech Republic", "Netherlands", "South Korea",
                "Palestine", "Ireland", "Macedonia", "Palestine", "UK", "USA",
                "Russia", "Palestine", "Germany", "Serbia")
 
-# Single out all Countries of production (including co-production ones) and
+# Single out all countries of production (including co-production ones) and
 # store into "countries", which becomes the main dataset for exploration
 countries <- extract.countries(greatest, "Countries", old_names, new_names)
 ```
@@ -628,7 +628,8 @@ countries <- countries[, c("Pos", "Country")]
 ``` r
 # Append columns to data frame. This is an elegant, albeit space inefficient,
 # way to append multiple data frame columns to "countries"
-df.list <- list(country_codes, continents, coordinates, country_area, gdp)
+df.list <- list(country_codes, continents, coordinates, country_area,
+                religions[, 1:2], gdp)
 
 for (df in df.list) {
   countries <- append.columns(countries, df, "Country", old_names, new_names)
@@ -669,6 +670,9 @@ Land
 </th>
 <th style="text-align:right;">
 Water
+</th>
+<th style="text-align:left;">
+Main.Religion
 </th>
 <th style="text-align:right;">
 Agriculture
@@ -743,6 +747,9 @@ Europe
 <td style="text-align:right;">
 3374
 </td>
+<td style="text-align:left;">
+Christian
+</td>
 <td style="text-align:right;">
 1.8
 </td>
@@ -813,6 +820,9 @@ Asia
 </td>
 <td style="text-align:right;">
 1649
+</td>
+<td style="text-align:left;">
+Irreligion
 </td>
 <td style="text-align:right;">
 0.1
@@ -922,11 +932,18 @@ levels(greatest.by_country$bin) <- c("Single", "From 2 to 10", "From 11 to 50",
 
 # Append selected columns to the dataset
 greatest.by_country <- merge(greatest.by_country,
-                             unique(countries[, c(2:12)]),
+                             unique(countries[, c(2:13)]),
                              by = "Country")
 
+# Reorder factor levels based on prevalent world religions
+religion_levels <- c("Christian", "Islam", "Irreligion", "Hindu", "Buddhist",
+                     "Folk religion", "Jewish" )
+
+greatest.by_country$Main.Religion <- factor(greatest.by_country$Main.Religion,
+                                            levels = religion_levels)
+
 # Append selected columns to data frame "world"
-world <- plyr::join(world, greatest.by_country[, c(1:3)], by = "Country")
+world <- plyr::join(world, greatest.by_country[, c(1:3, 11)], by = "Country")
 ```
 
 #### **Generate choropleth map**
@@ -949,15 +966,15 @@ world_base <- ggplot() +
   geom_polygon(data = world, aes(x = long, y = lat, group = group)) +
   xlab("Longitude") +
   ylab("Latitude") +
-  labs(fill = "Contributions to list",
-       caption = "Data source: theyshootpictures.com") +
-  scale_fill_brewer(palette = "Reds") +
   shared_themes
 
 # Make choropleth map
 world_base +
   geom_polygon(data = subset(world, !is.na(bin)),
              aes(x = long, y = lat, group = group, fill = bin)) +
+  scale_fill_brewer(palette = "Reds") +
+  labs(fill = "Contributions to list",
+       caption = "Data source: theyshootpictures.com") +
   ggtitle(paste("Figure 1: Choropleth map of the greatest movies by country",
                 "of production"))
 ```
@@ -1070,10 +1087,41 @@ linear.regression(greatest.by_country, "n", "Services", transform.x = "log2")
     ## Multiple R-squared:  0.2433, Adjusted R-squared:  0.2314
     ## F-statistic: 20.57 on 1 and 64 DF,  p-value: 2.581e-05
 
+``` r
+ggplot(data = greatest.by_country,
+       aes(x = Main.Religion, y = n / sum(n), fill = Main.Religion)) +
+  geom_bar(stat = "identity") +
+  scale_y_continuous(breaks = seq(0, 1, 0.1)) +
+  ggtitle(paste("Figure 4: Breakdown of co-productions by countries'",
+                "predominant religion")) +
+  xlab("Religion") +
+  ylab("Relative frequency") +
+  labs(fill = "Religion",
+       caption = "Data sources: theyshootpictures.com, Wikipedia") +
+  shared_themes +
+  theme(legend.position = "none")
+```
+
+<img src="./img/figure-04.png" width="816" />
+
+``` r
+world_base +
+  geom_polygon(data = subset(world, !is.na(Main.Religion)),
+               aes(x = long, y = lat, group = group, fill = Main.Religion)) +
+  labs(fill = "Main religion",
+       caption = "Data source: theyshootpictures.com, Wikipedia") +
+  ggtitle(paste("Figure 5: Choropleth map of contributing countries",
+                "by predominant religion"))
+```
+
+<img src="./img/figure-05.png" width="816" />
+
+### **Observations**
+
 ### **Golden and silver periods of world cinema**
 
 ``` r
-# Aggregate data by Country and Decade, then summarise
+# Aggregate data by country and decade, then summarise
 greatest.by_decade <- countries %>%
   group_by(.dots = c("Country", "Decade")) %>%
   summarise(Max.Rank = min(Pos))
@@ -1092,14 +1140,14 @@ ggplot(data = greatest.by_decade, aes(x = Decade, y = Country)) +
   geom_tile(aes(fill = Rank.Category), colour = "black") +
   scale_x_discrete(position = "top") +
   scale_fill_brewer(palette = "Reds", direction = -1) +
-  ggtitle("Figure 4: Heatmap of peak positions by country and decade") +
+  ggtitle("Figure 6: Heatmap of peak positions by country and decade") +
   labs(fill = "Maximum rank reached",
        caption = "Data source: theyshootpictures.com") +
   shared_themes +
   theme(axis.text.x = element_text(angle = -45, hjust = 1.05))
 ```
 
-<img src="./img/figure-04.png" width="816" />
+<img src="./img/figure-06.png" width="816" />
 
 ### **Observations**
 
@@ -1193,18 +1241,18 @@ remove.duplicates <- function(df, column, na.rm = TRUE) {
 }
 
 count.movie.coproducers <- function(df, column, delimiter = ", ") {
-  # Count the number of co-producing Countries for each column entry.
+  # Count the number of co-producing countries for each column entry.
   #
   # Arguments:
   #   df: Data frame.
-  #   column: Data frame column with the individual Countries, separated by a
+  #   column: Data frame column with the individual countries, separated by a
   #     delimiter, to split. Enter column as text (i.e., "column").
   #
   # Keyword arguments:
   #   delimiter: The character separating the co-producers (default: ", ").
   #
   # Returns:
-  #   A vector containing the number of co-producing Countries for each film
+  #   A vector containing the number of co-producing countries for each film
   #   in the data frame column.
   n.times <- vector(mode = "integer", length = length(df[[column]]))
 
@@ -1254,7 +1302,7 @@ auxiliary.df <- greatest.by_connection %>%
 greatest.by_connection <- merge(subset(greatest.by_connection, select = -n),
                                 auxiliary.df, by = "Mean.Latitude.All")
 
-# Generate all possible combinations of two-Country co-productions
+# Generate all possible combinations of two-country co-productions
 combinations <- rbind.factor.comb(co_productions, "Countries", ", ")
 
 # Update column names and factor levels
@@ -1296,7 +1344,7 @@ combinations$Mean.Latitude <-
 combinations <- combinations[!duplicated(
   combinations[, c("Mean.Latitude", "Mean.Latitude.All")]), ]
 
-# Sum all two-Country co-productions
+# Sum all two-country co-productions
 greatest.by_coproduction <- combinations %>%
   group_by(.dots = c("Country.x", "Country.y")) %>%
   summarise(Total.Co.Productions = sum(Sum.Co.Productions))
@@ -1343,12 +1391,12 @@ world_transparent +
                  y = Latitude.x, yend = Latitude.y,
                  alpha = Two.Country.Relationships), color = "#a50026") +
   scale_alpha_manual(values = c(0.05, 0.1, 0.2, 0.5, 1)) +
-  ggtitle(paste("Figure 5: Most frequent two-country co-production",
+  ggtitle(paste("Figure 7: Most frequent two-country co-production",
                 "relationships")) +
   labs(caption = "Data sources: theyshootpictures.com, Google Developers")
 ```
 
-<img src="./img/figure-05.png" width="816" />
+<img src="./img/figure-07.png" width="816" />
 
 ### **Observations**
 
