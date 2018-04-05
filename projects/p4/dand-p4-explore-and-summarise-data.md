@@ -30,7 +30,7 @@ To answer questions as they come to mind, in a stream-of-consciousness narrative
 
 -   [Top 250 Directors](http://www.theyshootpictures.com/gf1000_top250directors.htm): this provides information on the most critically acclaimed filmmakers of all-time, including current rankings, the number of movies appearing in "The 1,000 Greatest Films", and that of movies featured in other lists (i.e., "cited"). Particularly important is the directors' rankings, since I am going to manually determine, for each director, the number of films among the top 2,000. I could not find the list in an easily downloadable format, so I had to scrape the data from the webpage (on ethical scraping, see the next paragraph), and store them in a csv file;
 
--   Auxiliary data come from Wikipedia (breakdown of countries by continent, area, code, gdp sector composition, and religion) and Google Developers (country coordinates).
+-   Auxiliary data come from Wikipedia (breakdown of countries into continent, area, code, gdp sector composition, and religion) and Google Developers (country coordinates).
 
 ### **Data acquisition process**
 
@@ -639,6 +639,90 @@ for (df in df.list) {
 countries <- merge(countries, greatest, by = "Pos")
 ```
 
+#### **Additional data processing**
+
+``` r
+add.continent.region <- function(df, column, test.column, continent, group,
+                                 if_group) {
+  # Break down continent into regions based on a condition.
+  #
+  # Arguments:
+  #   df: Data frame.
+  #   column: Name of the column in which to replace the factor level.
+  #   test.column: Name of the column with the condition to test.
+  #   continent: The continent name. Replace with the new factor level if
+  #     tested condition is True.
+  #   group: Group of countries belonging to a particular region.
+  #   if_group: The name of the continent region.
+  #
+  # Returns:
+  #   The data frame, with new factor levels replacing the old ones in rows
+  #   in which a particular condition is met.
+  #
+  levels(df[[column]]) <- c(levels(df[[column]]), if_group)
+
+  df[[column]][which(df[[test.column]] %in% group)] <- if_group
+
+return(df)
+}
+
+reorder.factor.levels <- function(df, column, ordered.levels) {
+  # Custom reorder factor levels.
+  #
+  # Arguments:
+  #  df: Data frame.
+  #  column: The data frame column containing the factor levels to reorder.
+  #  ordered.levels: An array of reordered factor levels.
+  #
+  # Returns:
+  #  The data frame, with reordered factor levels in the specified column.
+  #
+  df[[column]] <- factor(df[[column]], levels = ordered.levels)
+
+  return(df)
+}
+```
+
+``` r
+# Break down Europe into Western and Eastern regions
+eu.regions <- list("Western Europe" = c("Austria", "Belgium", "Denmark",
+                                        "Finland", "France", "Germany",
+                                        "Greece", "Iceland", "Ireland",
+                                        "Italy", "Luxembourg", "Netherlands",
+                                        "Norway", "Portugal", "Spain",
+                                        "Sweden", "Switzerland", "UK"),
+                   "Eastern Europe" = c("Albania", "Belarus",
+                                        "Bosnia and Herzegovina",
+                                        "Czech Republic", "Hungary",
+                                        "Macedonia", "Poland", "Romania",
+                                        "Russia", "Serbia", "Ukraine"))
+
+for (i in 1:length(eu.regions)) {
+  countries <- add.continent.region(df = countries,
+                                    column = "Continent",
+                                    test.column = "Country",
+                                    continent = "Europe",
+                                    group = eu.regions[[i]],
+                                    if_group = names(eu.regions[i]))
+}
+
+# Reorder factor levels
+continent_levels <- c("Africa", "Asia", "Western Europe", "Eastern Europe",
+                      "North America", "South America", "Oceania")
+
+countries <- reorder.factor.levels(countries, "Continent", continent_levels)
+```
+
+``` r
+# Reorder factor levels based on prevalent world religions
+religion_levels <- c("Christian", "Islam", "Irreligion", "Hindu", "Buddhist",
+                     "Folk religion", "Jewish")
+
+countries <- reorder.factor.levels(countries, "Main.Religion", religion_levels)
+```
+
+#### **Tidied data frame**
+
 The result of tidying with respect to "Countries" is the following:
 
 <table>
@@ -730,7 +814,7 @@ France
 FR
 </td>
 <td style="text-align:left;">
-Europe
+Western Europe
 </td>
 <td style="text-align:right;">
 46.22764
@@ -935,13 +1019,6 @@ greatest.by_country <- merge(greatest.by_country,
                              unique(countries[, c(2:13)]),
                              by = "Country")
 
-# Reorder factor levels based on prevalent world religions
-religion_levels <- c("Christian", "Islam", "Irreligion", "Hindu", "Buddhist",
-                     "Folk religion", "Jewish" )
-
-greatest.by_country$Main.Religion <- factor(greatest.by_country$Main.Religion,
-                                            levels = religion_levels)
-
 # Append selected columns to data frame "world"
 world <- plyr::join(world, greatest.by_country[, c(1:3, 11)], by = "Country")
 ```
@@ -985,7 +1062,7 @@ world_base +
 
 The distribution of co-productions appears to be heavily skewed, with very few countries contributing most entries to the list. These countries (France, Germany, Italy, Japan, the United Kingdom, and the United States) either produced or helped to produce more than 100 films each. The USSR (not shown) was the only territory committing between 51 and 100 movies to the list, but total contributions are now split among former bloc members. Of the latter, Russia is the most prolific, with 11-50 films made. The least represented continent, in terms of both countries shown and number of co-productions, is certainly Africa. In particular, with the exception of Cameroon, no state in the Central, Eastern, or Southern region of Africa appears in the list. Other prominent black areas are in the Middle East (Syria, Iraq, and the Arabian Peninsula), Central and East Asia (the *-stan* nations, Mongolia), South-East Asia (Malaysia and Indonesia, among the others), and Latin America.
 
-These findings raise three interesting questions. First, how skewed is the distribution of co-productions? Specifically, how many films did the top six countries shoot, or help shoot, and what fraction of the total do their combined efforts account for? Second, is there a positive link between the amount of resources destined to cinema and the number of critically acclaimed movies produced? It appears that the major contributors to the list are among the most developed countries in the world, and these usually devote a larger portion of GDP to the service sector. Third, is there any association between a country's predominant religion and the number of movies that country co-produced? For example, several black regions in the map belong to the so-called Muslim world, and apart from Iran, Islamic countries seem to have historically contributed less to the list than states with a different prevalent religion. Let's find out.
+These findings raise three interesting questions. First, how skewed is the distribution of co-productions? Specifically, how many films did the top six countries shoot, or help shoot, and what fraction of the total do their efforts account for? Second, is there a positive relationship between the amount of resources destined to cinema and the number of critically acclaimed movies produced? It appears that the major contributors to the list are among the most developed countries in the world, and these usually devote a larger portion of GDP to the service sector. Third, is there any association between a country's predominant religion and the number of movies that country co-produced? For example, several black regions in the map belong to the so-called Muslim world, and apart from Iran, Islamic countries seem to have historically contributed less to the list than states with a different prevalent religion.
 
 ``` r
 custom_ticks <- c(0, 1, 10, 100, 1000)
@@ -1011,7 +1088,24 @@ ggplot(data = greatest.by_country,
 
 <img src="./img/figure-02.png" width="816" />
 
+``` r
+# Statistics related to the division of contributions into continent
+plyr::ddply(greatest.by_country, ~Continent, summarise,
+            mean = mean(n), median = median(n), sd = sd(n))
+```
+
+    ##        Continent       mean median         sd
+    ## 1         Africa   2.555556    2.0   1.810463
+    ## 2           Asia  18.312500    4.0  27.740990
+    ## 3 Western Europe  63.388889   16.5 105.201285
+    ## 4 Eastern Europe   9.454545    5.0  12.052914
+    ## 5  North America 192.200000   16.0 400.270159
+    ## 6  South America   7.800000    4.0   8.671793
+    ## 7        Oceania  13.500000   13.5   7.778175
+
 ### **Observations**
+
+The distribution of co-productions is, as expected, highly asymmetric. The United States and France are by far the largest contributors: the former made, or helped make, almost half or all the movies in the list, the latter about a fifth. Some of the reasons of their prevalence could be, on one hand, the significant role the United States played in post-war reconstruction, on the other, the prestige of France as the place of birth of cinema.
 
 ``` r
 ggplot(data = greatest.by_country,
@@ -1096,7 +1190,7 @@ ggplot(data = greatest.by_country,
        aes(x = Main.Religion, y = n / sum(n), fill = Main.Religion)) +
   geom_bar(stat = "identity") +
   scale_y_continuous(breaks = seq(0, 1, 0.1)) +
-  ggtitle(paste("Figure 4: Breakdown of co-productions by countries'",
+  ggtitle(paste("Figure 4: Breakdown of co-productions into countries'",
                 "predominant religion")) +
   xlab("Religion") +
   ylab("Relative frequency") +
