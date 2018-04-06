@@ -640,6 +640,7 @@ countries <- merge(countries, greatest, by = "Pos")
 ```
 
 #### **Additional data processing**
+I also distinguished between Western European countries (historically wealthier) and Eastern European ones, and sorted religions according to their prevalence worldwide.
 
 ``` r
 add.continent.region <- function(df, column, test.column, continent, group,
@@ -1106,6 +1107,13 @@ plyr::ddply(greatest.by_country, ~Continent, summarise,
 ### **Observations**
 
 The distribution of co-productions is, as expected, highly asymmetric. The United States and France are by far the largest contributors: the former made, or helped make, almost half or all the movies in the list, the latter about a fifth. Some of the reasons of their prevalence could be, on one hand, the significant role the United States played in post-war reconstruction, on the other, the prestige of France as the place of birth of cinema.
+
+- Africa least contrib. median, mean, smallest sd.
+- Western Eu most active.
+- Can't aggregate because the contributions overlap, and may count the same movie twice.
+- North America has the greatest standard deviation.
+- Asia also big standard deviation, as there's huge difference between Japan/Chinas and others.
+- Note: Turkey is labelled as Asian
 
 ``` r
 ggplot(data = greatest.by_country,
