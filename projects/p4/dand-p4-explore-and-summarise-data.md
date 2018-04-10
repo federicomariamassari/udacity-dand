@@ -640,6 +640,7 @@ countries <- merge(countries, greatest, by = "Pos")
 ```
 
 #### **Additional data processing**
+
 I also distinguished between Western European countries (historically wealthier) and Eastern European ones, and sorted religions according to their prevalence worldwide.
 
 ``` r
@@ -1002,6 +1003,26 @@ aggregate.df <- function(df, column) {
 
   return(df_out)
 }
+
+cut.density <- function(df, to_cut, new_column, breaks, labels) {
+  # Cut a continuous density into discrete bins.
+  #
+  # Arguments:
+  #  df: Data frame.
+  #  to_cut: Name of the column with the continuous density to cut.
+  #  new_column: Name of the output column containing the discrete bins.
+  #  breaks: Array of breaks, with limits (-Inf; +Inf).
+  #  labels: Array of bin labels.
+  #
+  # Returns:
+  #  The data frame, augmented by column "new_column", breaking a continuous
+  #  density into discrete bins.
+  #
+  df[[new_column]] <- cut(df[[to_cut]], breaks = breaks)
+  levels(df[[new_column]]) <- labels
+
+  return(df)
+}
 ```
 
 ``` r
@@ -1009,11 +1030,12 @@ aggregate.df <- function(df, column) {
 greatest.by_country <- aggregate.df(countries, Country)
 
 # Group and label factor levels for convenient representation
-greatest.by_country$bin <- cut(greatest.by_country$n,
-                               breaks = c(-Inf, 1,  10, 50, 100, +Inf))
-
-levels(greatest.by_country$bin) <- c("Single", "From 2 to 10", "From 11 to 50",
-                                     "From 51 to 100", "More than 100")
+greatest.by_country <- cut.density(greatest.by_country, "n", "bin",
+                                   breaks = c(-Inf, 1,  10, 50, 100, +Inf),
+                                   labels = c("Single", "From 2 to 10",
+                                              "From 11 to 50",
+                                              "From 51 to 100",
+                                              "More than 100"))
 
 # Append selected columns to the dataset
 greatest.by_country <- merge(greatest.by_country,
@@ -1063,7 +1085,7 @@ world_base +
 
 The distribution of co-productions appears to be heavily skewed, with very few countries contributing most entries to the list. These countries (France, Germany, Italy, Japan, the United Kingdom, and the United States) either produced or helped to produce more than 100 films each. The USSR (not shown) was the only territory committing between 51 and 100 movies to the list, but total contributions are now split among former bloc members. Of the latter, Russia is the most prolific, with 11-50 films made. The least represented continent, in terms of both countries shown and number of co-productions, is certainly Africa. In particular, with the exception of Cameroon, no state in the Central, Eastern, or Southern region of Africa appears in the list. Other prominent black areas are in the Middle East (Syria, Iraq, and the Arabian Peninsula), Central and East Asia (the *-stan* nations, Mongolia), South-East Asia (Malaysia and Indonesia, among the others), and Latin America.
 
-These findings raise three interesting questions. First, how skewed is the distribution of co-productions? Specifically, how many films did the top six countries shoot, or help shoot, and what fraction of the total do their efforts account for? Second, is there a positive relationship between the amount of resources destined to cinema and the number of critically acclaimed movies produced? It appears that the major contributors to the list are among the most developed countries in the world, and these usually devote a larger portion of GDP to the service sector. Third, is there any association between a country's predominant religion and the number of movies that country co-produced? For example, several black regions in the map belong to the so-called Muslim world, and apart from Iran, Islamic countries seem to have historically contributed less to the list than states with a different prevalent religion.
+These findings raise some interesting questions. First, how skewed is the distribution of co-productions? That is, how many films did the top six countries actually shoot, or help shoot, and what fraction of the total do their efforts account for? Second, is there a positive link between the amount of resources to cinema and the number of critically acclaimed movies produced? It appears that the major contributors to the list are among the most developed countries in the world, and these usually devote a larger portion of GDP to the service sector. Third, could other factors, such as country size, also have affected the number of productions? Fourth, is there any association between a country's predominant religion and the number of movies that country co-produced? For example, several black regions in the map belong to the so-called Muslim world, and apart from Iran, Islamic countries seem to have historically contributed less to the list than states with a different prevalent religion.
 
 ``` r
 custom_ticks <- c(0, 1, 10, 100, 1000)
@@ -1111,7 +1133,7 @@ The distribution of co-productions is, as expected, highly asymmetric. The Unite
 ``` r
 ggplot(data = greatest.by_country,
        aes(x = log2(n), y = Services, color = Continent)) +
-  geom_point(size = 1) +
+  geom_point(aes(size = Land, alpha = 0.2)) +
   # Use ggrepel to avoid label overlapping
   ggrepel::geom_text_repel(aes(label = Country), size = 2.5,
                            show.legend = FALSE) +
@@ -1123,7 +1145,9 @@ ggplot(data = greatest.by_country,
   xlab("Number of contributions, log2 scale") +
   ylab("Resources to the service sector (% GDP)") +
   labs(caption = "Data sources: theyshootpictures.com, Wikipedia") +
-  shared_themes
+  shared_themes +
+  scale_size(guide = "none") +
+  scale_alpha(guide = "none")
 ```
 
 <img src="./img/figure-03.png" width="816" />
