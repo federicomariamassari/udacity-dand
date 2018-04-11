@@ -969,7 +969,7 @@ rm(list = setdiff(ls(), required))
 **Data exploration**
 --------------------
 
-### **Geography of the greatest films**
+### **A. Geography of the greatest films**
 
 The first dimension I would like to explore is the geographical one. Some interesting questions could be:
 
@@ -1046,7 +1046,7 @@ greatest.by_country <- merge(greatest.by_country,
 world <- plyr::join(world, greatest.by_country[, c(1:3, 11)], by = "Country")
 ```
 
-#### **Generate choropleth map**
+### **I. Choropleth map of countries of production**
 
 ``` r
 # Define attributes shared by plots, to override if necessary
@@ -1087,7 +1087,7 @@ The distribution of co-productions appears to be heavily skewed, with very few c
 
 These findings raise some interesting questions. First of all, how skewed is the distribution of co-productions? That is, how many films did the top countries actually shoot, or help shoot, and what fraction of the total do their efforts account for? Second, is there a positive relationship between the amount of resources destined to cinema, and the number of critically acclaimed films produced? It appears that the major contributors to the list are among the most developed countries in the world, and these usually devote a larger portion of GDP to the service sector. Third, could other factors, such as country size, also have played a role in determining a country's weight on the list? And finally, is there any association between a country's predominant religion and the number of movies that country co-produced? For example, several black regions in the map belong to the so-called Muslim world, and apart from Iran, Islamic countries seem to have historically contributed less to the list than states with a different prevalent religion.
 
-### **Contributions by country**
+### **II. Contributions by country**
 
 ``` r
 custom_ticks <- c(0, 1, 10, 100, 1000)
@@ -1134,7 +1134,7 @@ The distribution of co-productions is, as expected, highly asymmetric. The Unite
 
 Why are the United States and Western Europe so prominent, and why is Africa largely absent from the list? The difference in output could be linked, among the others, to the amount of resources historically devoted to the service sector (which comprises cinema) and to country size.
 
-### **Contributions by resources to cinema and country size**
+### **III. Contributions by resources to cinema and country size**
 
 ``` r
 ggplot(data = greatest.by_country,
@@ -1146,8 +1146,8 @@ ggplot(data = greatest.by_country,
   geom_smooth(method = "lm", se = FALSE, size = 0.5, color = "royalblue") +
   scale_x_continuous(breaks = log2(custom_ticks), labels = custom_ticks) +
   scale_y_continuous(breaks = seq(0, 100, 5)) +
-  ggtitle(paste("Figure 3: Relationship between movies produced and resources",
-                "to the service sector (% GDP) by country")) +
+  ggtitle(paste("Figure 3: Relationship among movies produced, resources to",
+                "the service sector (% GDP), and country size")) +
   xlab("Number of contributions, log2 scale") +
   ylab("Resources to the service sector (% GDP)") +
   labs(caption = "Data sources: theyshootpictures.com, Wikipedia") +
@@ -1159,9 +1159,12 @@ ggplot(data = greatest.by_country,
 <img src="./img/figure-03.png" width="816" />
 
 ### **Observations**
-_Note: The plot gives, at best, an approximate picture of the amount of resources historically destined to cinema by each country, for at least two reasons. First, the year these data were recorded ranges from 2007 (Luxembourg) to 2016 (e.g., Australia). Second, the composition of country GDP changed dramatically in over a century. For instance, Western Europe generally spent more on agriculture and industry in the years immediately following World War II, and more on services since the Sixties._
 
+Above is a scatter plot of country co-productions in terms of resources devoted to the service sector. The size of each dot is proportional to the land size of the corresponding country (i.e., the bigger the nation, the larger the point diameter). The plot could ideally be divided into four quadrants, counter-clockwise, with the first quadrant being the upper right one. I & III could be referred to as the "regular" quadrants, those for which a small (III) or significant (I) amount of resources to cinema corresponds to a small or large number of entries to the list of critically acclaimed films. II could collect countries which are either "inefficient" (i.e., those which have been involved in far fewer co-productions than their large share of GDP to the tertiary sector would imply) or "too small" (i.e., those which lack the critical mass to participate in many co-productions, no matter how much money they invest on services). IV, instead, could gather "virtuous" countries (i.e., those which managed to work on several films on a tight budget).
 
+It is important to stress that the plot gives, at best, an approximate picture of the amount of resources historically destined to cinema by each country, for at least two reasons. First, the data on GDP breakdown were recorded in different years, ranging from 2007 (Luxembourg) to 2016 (e.g., for Australia). Second, GDP composition may have changed dramatically in over a century. For instance, Western European nations spent more on agriculture and industry in the years immediately following World War II, and more on services since the Sixties.
+
+In addition, two assumptions were made. One is that countries tend to invest more resources on the tertiary sector when they develop; the other is that, as the latter increase, proportionally do those to cinema.
 
 ``` r
 linear.regression <- function(df, x, y, transform.x = NA, transform.y = NA) {
@@ -1218,6 +1221,29 @@ linear.regression(greatest.by_country, "n", "Services", transform.x = "log2")
     ## Residual standard error: 10.28 on 64 degrees of freedom
     ## Multiple R-squared:  0.2433, Adjusted R-squared:  0.2314
     ## F-statistic: 20.57 on 1 and 64 DF,  p-value: 2.581e-05
+
+``` r
+linear.regression(greatest.by_country, "n", "Land")
+```
+
+    ##
+    ## Call:
+    ## lm(formula = y ~ x)
+    ##
+    ## Residuals:
+    ##      Min       1Q   Median       3Q      Max
+    ## -3344009 -1046446  -908064  -311718 15039637
+    ##
+    ## Coefficients:
+    ##             Estimate Std. Error t value Pr(>|t|)   
+    ## (Intercept)  1046440     369022   2.836  0.00611 **
+    ## x               7114       2850   2.496  0.01515 *
+    ## ---
+    ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+    ##
+    ## Residual standard error: 2857000 on 64 degrees of freedom
+    ## Multiple R-squared:  0.08871,    Adjusted R-squared:  0.07447
+    ## F-statistic:  6.23 on 1 and 64 DF,  p-value: 0.01515
 
 ``` r
 ggplot(data = greatest.by_country,
