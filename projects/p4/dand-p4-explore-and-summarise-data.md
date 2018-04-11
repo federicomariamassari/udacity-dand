@@ -976,7 +976,7 @@ The first dimension I would like to explore is the geographical one. Some intere
 -   *Where were the greatest movies produced?*
 -   *Are contributions evenly distributed, or is any particular area of the world under- or overrepresented?*
 
-The best way to answer these questions is through a choropleth map, a thematic chart in which colour intensity for each country is positively associated to the number of contributions that country made to the list (black areas reflect absence of contributions).
+The best way to answer these questions is through a choropleth map, a thematic chart in which colour intensity for each country is positively associated to the number of contributions that country made to the list (with black areas reflecting absence of contributions).
 
 #### **Aggregate data for exploration**
 
@@ -1087,6 +1087,8 @@ The distribution of co-productions appears to be heavily skewed, with very few c
 
 These findings raise some interesting questions. First of all, how skewed is the distribution of co-productions? That is, how many films did the top countries actually shoot, or help shoot, and what fraction of the total do their efforts account for? Second, is there a positive relationship between the amount of resources destined to cinema, and the number of critically acclaimed films produced? It appears that the major contributors to the list are among the most developed countries in the world, and these usually devote a larger portion of GDP to the service sector. Third, could other factors, such as country size, also have played a role in determining a country's weight on the list? And finally, is there any association between a country's predominant religion and the number of movies that country co-produced? For example, several black regions in the map belong to the so-called Muslim world, and apart from Iran, Islamic countries seem to have historically contributed less to the list than states with a different prevalent religion.
 
+### **Contributions by country**
+
 ``` r
 custom_ticks <- c(0, 1, 10, 100, 1000)
 
@@ -1130,7 +1132,9 @@ plyr::ddply(greatest.by_country, ~Continent, summarise,
 
 The distribution of co-productions is, as expected, highly asymmetric. The United States and France are by far the largest contributors: the former made, or helped make, almost half or all the movies in the list, the latter about a fifth. Some of the reasons of their prevalence could be, on one hand, the significant role the United States played in post-war reconstruction, on the other, the prestige of France as the place of birth of cinema. Both visually and in terms of median values (which are generally more robust to outliers), Western European countries have been the most prolific ones, with an average of 16.5 movies co-produced per country and six places among the top ten in the list. By contrast, African nations have been the least fecund, as evidenced by both their concentration in the bottom area of the plot and their small statistics (median and standard deviation). The latter show that the distribution of contributions is, for African countries, tight around a very small average value.
 
-Why are the United States and Western Europe so prominent, and why is Africa largely absent from the list?
+Why are the United States and Western Europe so prominent, and why is Africa largely absent from the list? The difference in output could be linked, among the others, to the amount of resources historically devoted to the service sector (which comprises cinema) and to country size.
+
+### **Contributions by resources to cinema and country size**
 
 ``` r
 ggplot(data = greatest.by_country,
@@ -1155,6 +1159,9 @@ ggplot(data = greatest.by_country,
 <img src="./img/figure-03.png" width="816" />
 
 ### **Observations**
+_Note: The plot gives, at best, an approximate picture of the amount of resources historically destined to cinema by each country, for at least two reasons. First, the year these data were recorded ranges from 2007 (Luxembourg) to 2016 (e.g., Australia). Second, the composition of country GDP changed dramatically in over a century. For instance, Western Europe generally spent more on agriculture and industry in the years immediately following World War II, and more on services since the Sixties._
+
+
 
 ``` r
 linear.regression <- function(df, x, y, transform.x = NA, transform.y = NA) {
