@@ -51,7 +51,9 @@ def scrape_wiki(base_url, pages, directory='./data/csv/', sleep_time=10):
         url = ''.join(base_url + page['link'])
         soup = get_soup(url)
 
-        if page['id'] == 'GDP to services':
+        if page['id'] == "Nominal GDP":
+            fieldnames, entries = country_by_gdp(soup)
+        elif page['id'] == 'GDP to services':
             fieldnames, entries = country_gdp_by_sector(soup)
         elif page['id'] == 'Country by continent':
             fieldnames, entries = country_by_continent(soup)
@@ -74,10 +76,81 @@ def scrape_wiki(base_url, pages, directory='./data/csv/', sleep_time=10):
 
 Request HTML content and store it in a BeautifulSoup constructor.
 """
-def country_gdp_by_sector(soup):
-    """Get Countries' GDP by sector from Wikipedia.
+def country_by_gdp(soup):
+    """Scrape countries' nominal GDP from Wikipedia.
 
-    Retrieve Countries' GDP by sector (Agriculture, Industry, Services) from
+    Retrieve countries' nominal GDP, in USD millions, from
+    https://en.wikipedia.org/wiki/List_of_countries_by_GDP_(nominal)
+    and store the output in a list of dictionaries.
+
+    Arguments:
+        soup -- bs4.BeautifulSoup. BeautifulSoup constructor from 'get_soup'.
+
+    Returns:
+        fieldnames -- list. List of field names, header row of the csv file.
+        entries -- list of dict. List of dictionaries, each containing a row,
+            or entry, of the table.
+
+    Pass the output to function 'write_csv'.
+    """
+    from collections import OrderedDict
+
+    fieldnames = ['Country', 'Nominal GDP']
+
+    entries = []
+    for e, table in enumerate(soup.find_all("table", \
+                                {"class": "wikitable sortable"})):
+
+        # The entry for Taiwan is only available in the first chart
+        if e == 0:
+            entry = OrderedDict()
+            for td in table.find_all("td"):
+                try:
+                    country_name = td.a.get_text()
+                    if country_name == 'Taiwan':
+                        entry['Country'] = country_name
+                        # Figure for nominal GDP is in the next "td" tag
+                        entry['Nominal GDP'] = int(td.find_next("td")\
+                                                .get_text().replace(',', ''))
+                except:
+                    pass
+
+            if entry != {}:
+                entries.append(entry)
+
+        # There are three, vertically aligned, tables in the page. Scrape the
+        # last one only.
+        if e == 2:
+            for tr in table.find_all("tr"):
+
+                entry = OrderedDict()
+                for td in tr.find_all("td"):
+                    try:
+                        # Country names are the content of anchor tags
+                        entry['Country'] = td.a.get_text()
+                    except AttributeError:
+                        # Ignore "td" entries without an anchor tag
+                        pass
+
+                for span in tr.find_all("span", {"class": "sortkey"}):
+                    try:
+                        # GDP figures are the next sibling of the "span" tag.
+                        # Strip commas, convert to int, and add to dictionary
+                        gdp = int(span.next_sibling.replace(',', ''))
+                        entry['Nominal GDP'] = gdp
+                    except TypeError:
+                        # Ignore "span" entries without next sibling
+                        pass
+
+                if entry != {}:
+                    entries.append(entry)
+
+    return fieldnames, entries
+
+def country_gdp_by_sector(soup):
+    """Get countries' GDP by sector from Wikipedia.
+
+    Retrieve countries' GDP by sector (Agriculture, Industry, Services) from
     https://en.wikipedia.org/wiki/List_of_countries_by_GDP_sector_composition
     and store the results in a list of dictionaries.
 
@@ -117,9 +190,9 @@ def country_gdp_by_sector(soup):
     return fieldnames, entries
 
 def country_by_continent(soup):
-    """Retrieve continent, Country pairs from Wikipedia.
+    """Retrieve continent, country pairs from Wikipedia.
 
-    Return a list of Countries by associated continents, from
+    Return a list of countries by associated continents, from
     https://en.wikipedia.org/wiki/List_of_sovereign_states_and_dependent
     _territories_by_continent
 
@@ -171,9 +244,9 @@ def country_by_continent(soup):
     return fieldnames, entries
 
 def country_by_area(soup):
-    """Retrieve Country area divided between land and water.
+    """Retrieve country area divided between land and water.
 
-    Return a list of Countries by area (total and land/water only), from
+    Return a list of countries by area (total and land/water only), from
     https://en.wikipedia.org/wiki/List_of_countries_and_dependencies_by_area.
 
     Arguments:
@@ -199,7 +272,7 @@ def country_by_area(soup):
             for i, row in enumerate(tr.find_all("td")):
                 if i == 1:
                     """Country name is the content of tag <a>. This method
-                    ignored the names of those Countries whose entry includes
+                    ignored the names of those countries whose entry includes
                     a clickable flag (a few small islands). An alternative
                     method would look at the content of attribute 'title' in
                     row.find("a")['title'], however this also fails whenever
@@ -231,9 +304,9 @@ def country_by_area(soup):
     return fieldnames, entries
 
 def country_by_code(soup):
-    """Retrieve ISO 3166-1 alpha-2 Country codes.
+    """Retrieve ISO 3166-1 alpha-2 country codes.
 
-    Return a list of Countries by area (total and land/water only), from
+    Return a list of countries by area (total and land/water only), from
     https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2.
 
     Arguments:
@@ -350,9 +423,13 @@ if __name__ == '__main__':
     produces a fully working web address, and the name of the file to save.
     """
     pages = [
+    {'id': 'Nominal GDP',
+     'link': 'List_of_countries_by_GDP_(nominal)',
+     'filename': 'nominal_gdp.csv'},
+
     {'id': 'GDP to services',
      'link': 'List_of_countries_by_GDP_sector_composition',
-     'filename': 'gdp.csv'},
+     'filename': 'gdp_by_sector.csv'},
 
     {'id': 'Country by continent',
      'link': 'List_of_sovereign_states_and_dependent_territories_by_continent',
