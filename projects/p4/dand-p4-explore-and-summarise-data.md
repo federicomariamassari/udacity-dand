@@ -30,7 +30,7 @@ To answer questions as they come to mind, in a stream-of-consciousness narrative
 
 -   [Top 250 Directors](http://www.theyshootpictures.com/gf1000_top250directors.htm): this provides information on the most critically acclaimed filmmakers of all-time, including current rankings, the number of movies appearing in "The 1,000 Greatest Films", and that of movies featured in other lists (i.e., "cited"). Particularly important is the directors' rankings, since I am going to manually determine, for each director, the number of films among the top 2,000. I could not find the list in an easily downloadable format, so I had to scrape the data from the webpage (on ethical scraping, see the next paragraph), and store them in a csv file;
 
--   Auxiliary data come from Wikipedia (breakdown of countries into continent, area, code, gdp sector composition, and religion) and Google Developers (country coordinates).
+-   Auxiliary data come from Wikipedia (breakdown of countries into continent, area, code, gdp, gdp sector composition, and religion) and Google Developers (country coordinates).
 
 ### **Data acquisition process**
 
@@ -52,10 +52,10 @@ See the [related folder](https://github.com/federicomariamassari/udacity-dand/tr
 
 ``` r
 # Run this command while "p4" is the current working directory
-modules <- c("get_xls.py", "scrape_webpage.py", "scrape_wikipedia.py",
-             "scrape_others.py")
-sapply(modules,
-       function(x) system(paste("python3 ./python-modules/", x, sep = "")))
+#modules <- c("get_xls.py", "scrape_webpage.py", "scrape_wikipedia.py",
+#             "scrape_others.py")
+#sapply(modules,
+#       function(x) system(paste("python3 ./python-modules/", x, sep = "")))
 ```
 
 #### **Import datasets into R**
@@ -74,7 +74,7 @@ directors <- read.csv("./data/csv/top_250_directors.csv")
 
 # Import auxiliary documents as data frames
 variables <- c("continents", "coordinates", "country_area", "country_codes",
-               "religions", "gdp")
+               "religions", "nominal_gdp", "gdp_by_sector")
 
 for (variable in variables) {
   assign(variable, read.csv(paste("./data/csv/", variable, ".csv", sep = "")))
@@ -228,9 +228,10 @@ greatest$Director <- gsub("/", "; ", greatest$Director)
 ### **Other type conversions**
 
 ``` r
-# Convert "gdp" factor columns to numeric using lambda function
+# Convert "gdp_by_sector" factor columns to numeric using lambda function
 cols <- c("Agriculture", "Industry", "Services")
-gdp[, cols] = apply(gdp[, cols], 2, function(x) as.numeric(as.character(x)))
+gdp_by_sector[, cols] = apply(gdp_by_sector[, cols], 2,
+                              function(x) as.numeric(as.character(x)))
 ```
 
 ### **Variables creation**
@@ -563,15 +564,16 @@ greatest <- replace.from.list(df = greatest, cond.column = "Director",
 
 ``` r
 # Uniform country levels with those of world map
-old_names <- c("Czechia", "Czechoslovakia", "Kingdom of the Netherlands",
-               "Korea, South", "Palestinian Territories", "Republic of Ireland",
+old_names <- c("Arab Palestinian areas", "Czechia", "Czechoslovakia",
+               "Kingdom of the Netherlands", "Korea, South",
+               "Palestinian Territories", "Republic of Ireland",
                "Republic of Macedonia", "State of Palestine", "United Kingdom",
                "United States", "USSR", "West Bank and Gaza", "West Germany",
                "Yugoslavia")
 
-new_names <- c("Czech Republic", "Czech Republic", "Netherlands", "South Korea",
-               "Palestine", "Ireland", "Macedonia", "Palestine", "UK", "USA",
-               "Russia", "Palestine", "Germany", "Serbia")
+new_names <- c("Palestine", "Czech Republic", "Czech Republic", "Netherlands",
+               "South Korea", "Palestine", "Ireland", "Macedonia", "Palestine",
+               "UK", "USA", "Russia", "Palestine", "Germany", "Serbia")
 
 # Single out all countries of production (including co-production ones) and
 # store into "countries", which becomes the main dataset for exploration
@@ -629,7 +631,7 @@ countries <- countries[, c("Pos", "Country")]
 # Append columns to data frame. This is an elegant, albeit space inefficient,
 # way to append multiple data frame columns to "countries"
 df.list <- list(country_codes, continents, coordinates, country_area,
-                religions[, 1:2], gdp)
+                religions[, 1:2], nominal_gdp, gdp_by_sector)
 
 for (df in df.list) {
   countries <- append.columns(countries, df, "Country", old_names, new_names)
@@ -761,6 +763,9 @@ Water
 Main.Religion
 </th>
 <th style="text-align:right;">
+Nominal.GDP
+</th>
+<th style="text-align:right;">
 Agriculture
 </th>
 <th style="text-align:right;">
@@ -837,6 +842,9 @@ Western Europe
 Christian
 </td>
 <td style="text-align:right;">
+2465453
+</td>
+<td style="text-align:right;">
 1.8
 </td>
 <td style="text-align:right;">
@@ -911,6 +919,9 @@ Asia
 Irreligion
 </td>
 <td style="text-align:right;">
+274027
+</td>
+<td style="text-align:right;">
 0.1
 </td>
 <td style="text-align:right;">
@@ -978,6 +989,8 @@ The first dimension I would like to explore is the geographical one. Some intere
 
 The best way to answer these questions is through a choropleth map, a thematic chart in which colour intensity for each country is positively associated to the number of contributions that country made to the list (with black areas reflecting absence of contributions).
 
+### **Choropleth map of countries of production**
+
 #### **Aggregate data for exploration**
 
 ``` r
@@ -1039,14 +1052,18 @@ greatest.by_country <- cut.density(greatest.by_country, "n", "bin",
 
 # Append selected columns to the dataset
 greatest.by_country <- merge(greatest.by_country,
-                             unique(countries[, c(2:13)]),
+                             unique(countries[, c(2:14)]),
                              by = "Country")
+
+# Append column on actual amount of country GDP to services
+greatest.by_country$GDP.to.Services <- greatest.by_country$Nominal.GDP *
+  greatest.by_country$Services / 100
 
 # Append selected columns to data frame "world"
 world <- plyr::join(world, greatest.by_country[, c(1:3, 11)], by = "Country")
 ```
 
-### **I. Choropleth map of countries of production**
+#### **Generate choropleth map**
 
 ``` r
 # Define attributes shared by plots, to override if necessary
@@ -1081,13 +1098,43 @@ world_base +
 
 <img src="./img/figure-01.png" width="816" />
 
-### **Observations**
+#### **Observations**
 
 The distribution of co-productions appears to be heavily skewed, with very few countries contributing most entries to the list. These countries (France, Germany, Italy, Japan, the United Kingdom, and the United States) either produced or helped to produce more than 100 films each. The USSR (not shown) was the only territory committing between 51 and 100 movies to the list, but total contributions are now split among former bloc members. Of the latter, Russia is the most prolific, with 11-50 films made. The least represented continent, in terms of both countries shown and number of co-productions, is certainly Africa. In particular, with the exception of Cameroon, no state in the Central, Eastern, or Southern region of Africa appears in the list. Other prominent black areas are in the Middle East (Syria, Iraq, and the Arabian Peninsula), Central and East Asia (the *-stan* nations, Mongolia), South-East Asia (Malaysia and Indonesia, among the others), and Latin America.
 
-These findings raise some interesting questions. First of all, how skewed is the distribution of co-productions? That is, how many films did the top countries actually shoot, or help shoot, and what fraction of the total do their efforts account for? Second, is there a positive relationship between the amount of resources destined to cinema, and the number of critically acclaimed films produced? It appears that the major contributors to the list are among the most developed countries in the world, and these usually devote a larger portion of GDP to the service sector. Third, could other factors, such as country size, also have played a role in determining a country's weight on the list? And finally, is there any association between a country's predominant religion and the number of movies that country co-produced? For example, several black regions in the map belong to the so-called Muslim world, and apart from Iran, Islamic countries seem to have historically contributed less to the list than states with a different prevalent religion.
+These findings raise interesting questions.
 
-### **II. Contributions by country**
+-   First, how skewed is the distribution of co-productions? That is, how many films did the top contributing nations actually shoot, or help shoot, and what fraction of the total do their efforts account for?
+
+-   Second, does any of the following variables help explain why a country has a particular number of entries in the list: the desire to boost the cinema industry (a behaviour proxied by the *share* of nominal GDP to services); the amount of money invested in cinema (as proxied by the *amount* of nominal GDP to services); the size of a country? It appears that the major contributors to the list are among the most developed countries in the world, and these usually devote a larger portion of GDP to the tertiary sector.
+
+-   Third, is there any link between a country's predominant religion and the number of movies that country co-produced? For example, several black regions in the map belong to the so-called Muslim world, and Islamic countries, apart from Iran, seem to have historically contributed less to the list than states with a different prevalent religion.
+
+### **Contributions by country**
+
+``` r
+stats.table <- function(df, group, column) {
+  # Summarise data using measures of central tendency and dispersion.
+  #
+  # Arguments:
+  #  df: Data frame.
+  #  group: The data frame column used to divide data into groups. Enter as a
+  #   variable (i.e., without quotes).
+  #  column: The data frame column to summarise.
+  #
+  # Returns:
+  #  A summary data frame with group means, medians, and standard deviations.
+  #
+  group <- enquo(group)
+  column <- enquo(column)
+
+  df %>%
+    group_by(!!group) %>%
+    summarise(mean = mean(!!column),
+              median = median(!!column),
+              sd = sd(!!column))
+}
+```
 
 ``` r
 custom_ticks <- c(0, 1, 10, 100, 1000)
@@ -1114,42 +1161,42 @@ ggplot(data = greatest.by_country,
 <img src="./img/figure-02.png" width="816" />
 
 ``` r
-# Statistics related to the division of contributions into continent
-plyr::ddply(greatest.by_country, ~Continent, summarise,
-            mean = mean(n), median = median(n), sd = sd(n))
+# Contributions by continent statistics
+stats.table(greatest.by_country, Continent, n)
 ```
 
-    ##        Continent       mean median         sd
-    ## 1         Africa   2.555556    2.0   1.810463
-    ## 2           Asia  18.312500    4.0  27.740990
-    ## 3 Western Europe  63.388889   16.5 105.201285
-    ## 4 Eastern Europe   9.454545    5.0  12.052914
-    ## 5  North America 192.200000   16.0 400.270159
-    ## 6  South America   7.800000    4.0   8.671793
-    ## 7        Oceania  13.500000   13.5   7.778175
+    ##   Continent        mean median     sd
+    ## 1 Africa           2.56   2.00   1.81
+    ## 2 Asia            18.30   4.00  27.74
+    ## 3 Western Europe  63.39  16.50 105.20  
+    ## 4 Eastern Europe   9.45   5.00  12.05
+    ## 5 North America  192.20  16.00 400.27  
+    ## 6 South America    7.80   4.00   8.67
+    ## 7 Oceania         13.50  13.50   7.78
 
-### **Observations**
 
-The distribution of co-productions is, as expected, highly asymmetric. The United States and France are by far the largest contributors: the former made, or helped make, almost half or all the movies in the list, the latter about a fifth. Some of the reasons of their prevalence could be, on one hand, the significant role the United States played in post-war reconstruction, on the other, the prestige of France as the place of birth of cinema. Both visually and in terms of median values (which are generally more robust to outliers), Western European countries have been the most prolific ones, with an average of 16.5 movies co-produced per country and six places among the top ten in the list. By contrast, African nations have been the least fecund, as evidenced by both their concentration in the bottom area of the plot and their small statistics (median and standard deviation). The latter show that the distribution of contributions is, for African countries, tight around a very small average value.
+#### **Observations**
 
-Why are the United States and Western Europe so prominent, and why is Africa largely absent from the list? The difference in output could be linked, among the others, to the amount of resources historically devoted to the service sector (which comprises cinema) and to country size.
+The distribution of co-productions is, as expected, highly asymmetric. The United States and France are by far the largest contributors: the former made, or helped make, almost half or all the movies in the list, the latter about a fifth. Some of the reasons of their prevalence could be, on one hand, the significant role the United States played in post-war reconstruction, on the other, the prestige of France as the place of birth of cinema. Both visually and in terms of median values (which are generally robust to outliers), Western European countries have been the most prolific ones, with an average of 16.5 movies co-produced per country and six places among the top ten in the list. UK, Italy, and Germany contributed ~8% films each, while Spain and Sweden ~2% each—a higher level of aggregation (i.e., by continent) is, unfortunately, not possible, since the procedure would double-count contributions by same-continent nations that worked on the same movies, and would therefore return distorted statistics. By contrast, African countries have been the least fecund, as evidenced by both their concentration in the bottom area of the plot and their small values for median and standard deviation. The latter show that the distribution of co-productions for Africa is tight around a very small average statistic.
 
-### **III. Contributions by resources to cinema and country size**
+Why are the United States and Western Europe so prominent, and why is Africa largely absent from the list? The difference in output could be linked, among the others, to the willingness of a country to bet on the cinema industry on the one hand, and to the amount of resources that country can afford to invest on the other.
+
+### **Contributions by share of GDP to services**
 
 ``` r
 ggplot(data = greatest.by_country,
-       aes(x = log2(n), y = Services, color = Continent)) +
+       aes(x = Services, y = log2(n), color = Continent)) +
   geom_point(aes(size = Land, alpha = 0.2)) +
   # Use ggrepel to avoid label overlapping
   ggrepel::geom_text_repel(aes(label = Country), size = 2.5,
                            show.legend = FALSE) +
   geom_smooth(method = "lm", se = FALSE, size = 0.5, color = "royalblue") +
-  scale_x_continuous(breaks = log2(custom_ticks), labels = custom_ticks) +
-  scale_y_continuous(breaks = seq(0, 100, 5)) +
-  ggtitle(paste("Figure 3: Relationship among movies produced, resources to",
-                "the service sector (% GDP), and country size")) +
-  xlab("Number of contributions, log2 scale") +
-  ylab("Resources to the service sector (% GDP)") +
+  scale_x_continuous(breaks = seq(0, 100, 5)) +
+  scale_y_continuous(breaks = log2(custom_ticks), labels = custom_ticks) +
+  ggtitle(paste("Figure 3: Relationship between movies produced and share",
+                "of GDP to services")) +
+  xlab("Resources to the service sector (% GDP)") +
+  ylab("Number of contributions, log2 scale") +
   labs(caption = "Data sources: theyshootpictures.com, Wikipedia") +
   shared_themes +
   scale_size(guide = "none") +
@@ -1158,13 +1205,29 @@ ggplot(data = greatest.by_country,
 
 <img src="./img/figure-03.png" width="816" />
 
-### **Observations**
+``` r
+# Contributions by share of GDP to services statistics
+stats.table(greatest.by_country, Continent, Services)
+```
 
-Above is a scatter plot of country co-productions in terms of resources devoted to the service sector. The size of each dot is proportional to the land size of the corresponding country (i.e., the bigger the nation, the larger the point diameter). The plot could ideally be divided into four quadrants, counter-clockwise, with the first quadrant being the upper right one. I & III could be referred to as the "regular" quadrants, those for which a small (III) or significant (I) amount of resources to cinema corresponds to a small or large number of entries to the list of critically acclaimed films. II could collect countries which are either "inefficient" (i.e., those which have been involved in far fewer co-productions than their large share of GDP to the tertiary sector would imply) or "too small" (i.e., those which lack the critical mass to participate in many co-productions, no matter how much money they invest on services). IV, instead, could gather "virtuous" countries (i.e., those which managed to work on several films on a tight budget).
+    ##   Continent       mean median    sd
+    ## 1 Africa          48.8   48.2  6.86
+    ## 2 Asia            60.6   57.3 14.04
+    ## 3 Western Europe  73.0   72.2  6.05
+    ## 4 Eastern Europe  60.8   63.0  6.56
+    ## 5 North America   69.4   71.0  8.71
+    ## 6 South America   58.9   58.4  5.32
+    ## 7 Oceania         69.4   69.4  1.77
 
-It is important to stress that the plot gives, at best, an approximate picture of the amount of resources historically destined to cinema by each country, for at least two reasons. First, the data on GDP breakdown were recorded in different years, ranging from 2007 (Luxembourg) to 2016 (e.g., for Australia). Second, GDP composition may have changed dramatically in over a century. For instance, Western European nations spent more on agriculture and industry in the years immediately following World War II, and more on services since the Sixties.
+#### **Observations**
 
-In addition, two assumptions were made. One is that countries tend to invest more resources on the tertiary sector when they develop; the other is that, as the latter increase, proportionally do those to cinema.
+Above is a scatter plot of country co-productions in terms of resources devoted to the service sector. The size of each dot is proportional to the land size of the corresponding country (i.e., the bigger the nation, the larger the point diameter). The plot could ideally be divided into four quadrants, counter-clockwise, with the first quadrant being the upper right one. I & III could be referred to as the "regular" quadrants, those for which a small (III) or significant (I) amount of resources to cinema corresponds to a small or large number of entries to the list of critically acclaimed films. IV could collect countries that are either "inefficient" (i.e., those which have been involved in far fewer co-productions than their large share of GDP to the tertiary sector would imply) or "too small" (i.e., those which lack the critical mass to participate in many co-productions, no matter how much money they invest in services). II, instead, could gather "virtuous" countries (i.e., those which managed to work on several films on a tight budget).
+
+It is important to stress that the plot gives, at best, an approximate picture of the amount of resources historically destined to cinema by each country, for at least two reasons. First, the data on GDP breakdown were recorded in different years, ranging from 2007 (Luxembourg) to 2016 (e.g., Australia). Second, GDP composition may have changed dramatically in over a century. For instance, Western European nations spent more on agriculture and industry in the years immediately following World War II, and more on services since the Sixties.
+
+In addition, two assumptions were made. One is that countries tend to invest more resources in the tertiary sector when they develop; the other is that, when the share of GDP to services increases, so does the one to cinema, in proportion.
+
+Number of contributions and amount of resources to cinema seem to be positively correlated, as shown by the positive slope of the regression line. This means that, on average, the more a country has invested in services over the years, the more films it has co-produced. As expected, African countries all locate in the third quadrant (few resources to services, few contributions).
 
 ``` r
 linear.regression <- function(df, x, y, transform.x = NA, transform.y = NA) {
@@ -1200,7 +1263,7 @@ linear.regression <- function(df, x, y, transform.x = NA, transform.y = NA) {
 ```
 
 ``` r
-linear.regression(greatest.by_country, "n", "Services", transform.x = "log2")
+linear.regression(greatest.by_country, "Services", "n", transform.y = "log2")
 ```
 
     ##
@@ -1208,49 +1271,49 @@ linear.regression(greatest.by_country, "n", "Services", transform.x = "log2")
     ## lm(formula = y ~ x)
     ##
     ## Residuals:
-    ##      Min       1Q   Median       3Q      Max
-    ## -25.1300  -7.3470  -0.3758   6.6711  27.7849
+    ##    Min     1Q Median     3Q    Max
+    ## -4.218 -1.205 -0.060  1.107  5.230
     ##
     ## Coefficients:
     ##             Estimate Std. Error t value Pr(>|t|)    
-    ## (Intercept)   55.711      2.087  26.697  < 2e-16 ***
-    ## x              2.504      0.552   4.536 2.58e-05 ***
+    ## (Intercept) -3.13774    1.37737  -2.278   0.0261 *  
+    ## x            0.09716    0.02142   4.536 2.58e-05 ***
     ## ---
     ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
     ##
-    ## Residual standard error: 10.28 on 64 degrees of freedom
+    ## Residual standard error: 2.025 on 64 degrees of freedom
     ## Multiple R-squared:  0.2433, Adjusted R-squared:  0.2314
     ## F-statistic: 20.57 on 1 and 64 DF,  p-value: 2.581e-05
 
+### **Contributions by amount of nominal GDP to services**
+
 ``` r
-linear.regression(greatest.by_country, "n", "Land")
+ggplot(data = greatest.by_country,
+       aes(x = log10(GDP.to.Services), y = log2(n), color = Continent)) +
+  geom_point(aes(size = Land, alpha = 0.2)) +
+  ggrepel::geom_text_repel(aes(label = Country), size = 2.5,
+                           show.legend = FALSE) +
+  geom_smooth(method = "lm", se = TRUE, size = 0.5, color = "royalblue") +
+  scale_x_continuous(breaks = seq(0, 8, 1), labels = 10 ** seq(0, 8, 1)) +
+  scale_y_continuous(breaks = log2(custom_ticks), labels = custom_ticks) +
+  ggtitle(paste("Figure 4: Relationship between movies produced and amount of",
+                "nominal GDP to services (USD millions)")) +
+  xlab("Nominal GDP to services (USD millions), log10 scale") +
+  ylab("Number of contributions, log2 scale") +
+  labs(caption = "Data sources: theyshootpictures.com, Wikipedia") +
+  shared_themes +
+  scale_size(guide = "none") +
+  scale_alpha(guide = "none")
 ```
 
-    ##
-    ## Call:
-    ## lm(formula = y ~ x)
-    ##
-    ## Residuals:
-    ##      Min       1Q   Median       3Q      Max
-    ## -3344009 -1046446  -908064  -311718 15039637
-    ##
-    ## Coefficients:
-    ##             Estimate Std. Error t value Pr(>|t|)   
-    ## (Intercept)  1046440     369022   2.836  0.00611 **
-    ## x               7114       2850   2.496  0.01515 *
-    ## ---
-    ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
-    ##
-    ## Residual standard error: 2857000 on 64 degrees of freedom
-    ## Multiple R-squared:  0.08871,    Adjusted R-squared:  0.07447
-    ## F-statistic:  6.23 on 1 and 64 DF,  p-value: 0.01515
+<img src="./img/figure-04.png" width="816" />
 
 ``` r
 ggplot(data = greatest.by_country,
        aes(x = Main.Religion, y = n / sum(n), fill = Main.Religion)) +
   geom_bar(stat = "identity") +
   scale_y_continuous(breaks = seq(0, 1, 0.1)) +
-  ggtitle(paste("Figure 4: Breakdown of co-productions into countries'",
+  ggtitle(paste("Figure 5: Breakdown of co-productions into countries'",
                 "predominant religion")) +
   xlab("Religion") +
   ylab("Relative frequency") +
@@ -1260,7 +1323,7 @@ ggplot(data = greatest.by_country,
   theme(legend.position = "none")
 ```
 
-<img src="./img/figure-04.png" width="816" />
+<img src="./img/figure-05.png" width="816" />
 
 ``` r
 world_base +
@@ -1268,13 +1331,13 @@ world_base +
                aes(x = long, y = lat, group = group, fill = Main.Religion)) +
   labs(fill = "Main religion",
        caption = "Data source: theyshootpictures.com, Wikipedia") +
-  ggtitle(paste("Figure 5: Choropleth map of contributing countries",
+  ggtitle(paste("Figure 6: Choropleth map of contributing countries",
                 "by predominant religion"))
 ```
 
-<img src="./img/figure-05.png" width="816" />
+<img src="./img/figure-06.png" width="816" />
 
-### **Observations**
+#### **Observations**
 
 ### **Golden and silver periods of world cinema**
 
@@ -1298,14 +1361,15 @@ ggplot(data = greatest.by_decade, aes(x = Decade, y = Country)) +
   geom_tile(aes(fill = Rank.Category), colour = "black") +
   scale_x_discrete(position = "top") +
   scale_fill_brewer(palette = "Reds", direction = -1) +
-  ggtitle("Figure 6: Heatmap of peak positions by country and decade") +
+  ggtitle("Figure 7
+          : Heatmap of peak positions by country and decade") +
   labs(fill = "Maximum rank reached",
        caption = "Data source: theyshootpictures.com") +
   shared_themes +
   theme(axis.text.x = element_text(angle = -45, hjust = 1.05))
 ```
 
-<img src="./img/figure-06.png" width="816" />
+<img src="./img/figure-07.png" width="816" />
 
 ### **Observations**
 
@@ -1549,12 +1613,12 @@ world_transparent +
                  y = Latitude.x, yend = Latitude.y,
                  alpha = Two.Country.Relationships), color = "#a50026") +
   scale_alpha_manual(values = c(0.05, 0.1, 0.2, 0.5, 1)) +
-  ggtitle(paste("Figure 7: Most frequent two-country co-production",
+  ggtitle(paste("Figure 8: Most frequent two-country co-production",
                 "relationships")) +
   labs(caption = "Data sources: theyshootpictures.com, Google Developers")
 ```
 
-<img src="./img/figure-07.png" width="816" />
+<img src="./img/figure-08.png" width="816" />
 
 ### **Observations**
 
