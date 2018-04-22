@@ -1174,7 +1174,6 @@ stats.table(greatest.by_country, Continent, n)
     ## 6 South America    7.80   4.00   8.67
     ## 7 Oceania         13.50  13.50   7.78
 
-
 #### **Observations**
 
 The distribution of co-productions is, as expected, highly asymmetric. The United States and France are by far the largest contributors: the former made, or helped make, almost half or all the movies in the list, the latter about a fifth. Some of the reasons of their prevalence could be, on one hand, the significant role the United States played in post-war reconstruction, on the other, the prestige of France as the place of birth of cinema. Both visually and in terms of median values (which are generally robust to outliers), Western European countries have been the most prolific ones, with an average of 16.5 movies co-produced per country and six places among the top ten in the list. UK, Italy, and Germany contributed ~8% films each, while Spain and Sweden ~2% each—a higher level of aggregation (i.e., by continent) is, unfortunately, not possible, since the procedure would double-count contributions by same-continent nations that worked on the same movies, and would therefore return distorted statistics. By contrast, African countries have been the least fecund, as evidenced by both their concentration in the bottom area of the plot and their small values for median and standard deviation. The latter show that the distribution of co-productions for Africa is tight around a very small average statistic.
@@ -1210,24 +1209,24 @@ ggplot(data = greatest.by_country,
 stats.table(greatest.by_country, Continent, Services)
 ```
 
-    ##   Continent       mean median    sd
-    ## 1 Africa          48.8   48.2  6.86
-    ## 2 Asia            60.6   57.3 14.04
-    ## 3 Western Europe  73.0   72.2  6.05
-    ## 4 Eastern Europe  60.8   63.0  6.56
-    ## 5 North America   69.4   71.0  8.71
-    ## 6 South America   58.9   58.4  5.32
-    ## 7 Oceania         69.4   69.4  1.77
+    ##   Continent        mean  median    sd
+    ## 1 Africa          48.83   48.20  6.86
+    ## 2 Asia            60.64   57.30 14.04
+    ## 3 Western Europe  73.03   72.20  6.05
+    ## 4 Eastern Europe  60.84   63.00  6.56
+    ## 5 North America   69.36   71.00  8.71
+    ## 6 South America   58.88   58.40  5.32
+    ## 7 Oceania         69.45   69.45  1.77
 
 #### **Observations**
 
-Above is a scatter plot of country co-productions in terms of resources devoted to the service sector. The size of each dot is proportional to the land size of the corresponding country (i.e., the bigger the nation, the larger the point diameter). The plot could ideally be divided into four quadrants, counter-clockwise, with the first quadrant being the upper right one. I & III could be referred to as the "regular" quadrants, those for which a small (III) or significant (I) amount of resources to cinema corresponds to a small or large number of entries to the list of critically acclaimed films. IV could collect countries that are either "inefficient" (i.e., those which have been involved in far fewer co-productions than their large share of GDP to the tertiary sector would imply) or "too small" (i.e., those which lack the critical mass to participate in many co-productions, no matter how much money they invest in services). II, instead, could gather "virtuous" countries (i.e., those which managed to work on several films on a tight budget).
+Above is a scatter plot of country co-productions against the share of GDP to services, a possible proxy for the desire of a country to invest in the cinema industry. The size of each dot is proportional to the land size of the corresponding country (i.e., the bigger the nation, the larger the point diameter). The plot could ideally be divided into four quadrants, counter-clockwise, with the first quadrant being the upper right one. I & III could be referred to as the "regular" quadrants, those for which a small (III) or significant (I) percentage of resources to cinema translates to a small or large number of entries to the list of critically acclaimed films. IV could collect countries that are either "inefficient" (i.e., those which have been involved in far fewer co-productions than their large share of GDP to services would imply) or "too small" (i.e., those which lack the critical mass to participate in many co-productions, no matter how much money they invest in services). II, instead, could gather "virtuous" countries (i.e., those which managed to work on several films on a tight budget).
 
-It is important to stress that the plot gives, at best, an approximate picture of the amount of resources historically destined to cinema by each country, for at least two reasons. First, the data on GDP breakdown were recorded in different years, ranging from 2007 (Luxembourg) to 2016 (e.g., Australia). Second, GDP composition may have changed dramatically in over a century. For instance, Western European nations spent more on agriculture and industry in the years immediately following World War II, and more on services since the Sixties.
+It is important to stress that the plot gives, at best, an approximate picture of the share of resources historically destined to cinema by each country, for at least two reasons. First, the data on GDP breakdown were recorded in different years, ranging from 2007 (Luxembourg) to 2016 (e.g., Australia). Second, GDP composition may have changed dramatically in over a century. For instance, Western European nations spent more on agriculture and industry in the years immediately following World War II, and more on services since the Sixties.
 
 In addition, two assumptions were made. One is that countries tend to invest more resources in the tertiary sector when they develop; the other is that, when the share of GDP to services increases, so does the one to cinema, in proportion.
 
-Number of contributions and amount of resources to cinema seem to be positively correlated, as shown by the positive slope of the regression line. This means that, on average, the more a country has invested in services over the years, the more films it has co-produced. As expected, African countries all locate in the third quadrant (few resources to services, few contributions).
+Number of contributions and percentage of GDP to cinema seem to be positively correlated, as shown by the positive slope of the regression line. This means that, on average, the more a country has invested in services over the years, the more films it has co-produced. As expected, African countries all locate in the third quadrant.
 
 ``` r
 linear.regression <- function(df, x, y, transform.x = NA, transform.y = NA) {
@@ -1361,8 +1360,7 @@ ggplot(data = greatest.by_decade, aes(x = Decade, y = Country)) +
   geom_tile(aes(fill = Rank.Category), colour = "black") +
   scale_x_discrete(position = "top") +
   scale_fill_brewer(palette = "Reds", direction = -1) +
-  ggtitle("Figure 7
-          : Heatmap of peak positions by country and decade") +
+  ggtitle("Figure 7: Heatmap of peak positions by country and decade") +
   labs(fill = "Maximum rank reached",
        caption = "Data source: theyshootpictures.com") +
   shared_themes +
