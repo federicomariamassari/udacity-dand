@@ -1113,6 +1113,32 @@ These findings raise interesting questions.
 ### **Contributions by country**
 
 ``` r
+custom_ticks <- c(0, 1, 10, 100, 1000)
+
+ggplot(data = greatest.by_country,
+       aes(x = log2(n), y = reorder(Country, n), color = Continent)) +
+  geom_point(size = 2) +
+  geom_segment(aes(x = 0, xend = log2(n), y = Country, yend = Country),
+               size = 0.5) +
+  geom_text(aes(label = n), size = 2, nudge_x = 0.35, check_overlap = TRUE) +
+  scale_x_continuous(breaks = log2(custom_ticks), labels = custom_ticks,
+                     sec.axis = dup_axis(name = NULL)) +
+  ggtitle(paste("Figure 2: Contributions to the list of greatest movies by",
+                "country of production")) +
+  xlab("Number of contributions, log2 scale") +
+  ylab("Country") +
+  labs(fill = "Contributions to list",
+       caption = "Data sources: theyshootpictures.com, Wikipedia") +
+  shared_themes +
+  # Override "shared_themes" legend position
+  theme(legend.position = "right")
+```
+
+<img src="./img/figure-02.png" width="816" />
+
+#### **Table 1: Contributions by continent statistics**
+
+``` r
 stats.table <- function(df, group, column) {
   # Summarise data using measures of central tendency and dispersion.
   #
@@ -1137,31 +1163,6 @@ stats.table <- function(df, group, column) {
 ```
 
 ``` r
-custom_ticks <- c(0, 1, 10, 100, 1000)
-
-ggplot(data = greatest.by_country,
-       aes(x = log2(n), y = reorder(Country, n), color = Continent)) +
-  geom_point(size = 2) +
-  geom_segment(aes(x = 0, xend = log2(n), y = Country, yend = Country),
-               size = 0.5) +
-  geom_text(aes(label = n), size = 2, nudge_x = 0.35, check_overlap = TRUE) +
-  scale_x_continuous(breaks = log2(custom_ticks), labels = custom_ticks,
-                     sec.axis = dup_axis(name = NULL)) +
-  ggtitle(paste("Figure 2: Contributions to the list of greatest movies by",
-                "country of production")) +
-  xlab("Number of contributions, log2 scale") +
-  ylab("Country") +
-  labs(fill = "Contributions to list",
-       caption = "Data sources: theyshootpictures.com, Wikipedia") +
-  shared_themes +
-  # Override "shared_themes" legend position
-  theme(legend.position = "right")
-```
-
-<img src="./img/figure-02.png" width="816" />
-
-``` r
-# Contributions by continent statistics
 stats.table(greatest.by_country, Continent, n)
 ```
 
@@ -1204,8 +1205,9 @@ ggplot(data = greatest.by_country,
 
 <img src="./img/figure-03.png" width="816" />
 
+#### **Table 2: Contributions by share of GDP to services statistics**
+
 ``` r
-# Contributions by share of GDP to services statistics
 stats.table(greatest.by_country, Continent, Services)
 ```
 
@@ -1227,6 +1229,8 @@ It is important to stress that the plot gives, at best, an approximate picture o
 In addition, two assumptions were made. One is that countries tend to invest more resources in the tertiary sector when they develop; the other is that, when the share of GDP to services increases, so does the one to cinema, in proportion.
 
 Number of contributions and percentage of GDP to cinema seem to be positively correlated, as shown by the positive slope of the regression line. This means that, on average, the more a country has invested in services over the years, the more films it has co-produced. As expected, African countries all locate in the third quadrant.
+
+#### **Table 3: Linear regression, no. of contributions and share of GDP to services**
 
 ``` r
 linear.regression <- function(df, x, y, transform.x = NA, transform.y = NA) {
@@ -1283,6 +1287,31 @@ linear.regression(greatest.by_country, "Services", "n", transform.y = "log2")
     ## Residual standard error: 2.025 on 64 degrees of freedom
     ## Multiple R-squared:  0.2433, Adjusted R-squared:  0.2314
     ## F-statistic: 20.57 on 1 and 64 DF,  p-value: 2.581e-05
+
+#### **Table 4: Kendall's Tau, no. of contributions and share of GDP to services**
+
+``` r
+kendall.tau <- function(df, x, y) {
+  # Compute Kendall's Tau, a correlation measure robust to transformations.
+  #
+  # Arguments:
+  #   df: Data frame.
+  #   x: The independent, or explanatory, variable. Enter as text (i.e., "x"
+  #    instead of x).
+  #   y: The dependent, or explained variable (see x for input).
+  #
+  # Returns:
+  #  Kendall's Tau for the two variables above.
+  #
+  cor(df[[x]], df[[y]], method = "kendall")
+}
+```
+
+``` r
+kendall.tau(greatest.by_country, x = "Services", y = "n")
+```
+
+    ## [1] 0.3767375
 
 ### **Contributions by amount of nominal GDP to services**
 
