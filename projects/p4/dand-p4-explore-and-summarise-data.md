@@ -1234,7 +1234,7 @@ As expected, African countries locate in the third quadrant, an area in which a 
 
 Russia is the only "virtuous" country in quadrant II: despite the relatively small fraction of GDP to services, Russia managed to contribute a large number of high-quality films to the list. One of the reasons could be the high caliber of its filmmakers, above all _Sergei Eisenstein_ (Battleship Potëmkin, Ivan the Terrible parts I & II, October, Alexander Nevsky) as well as _Andrei Tarkovsky_ (Andrei Rublëv, Mirror, Stalker, Solaris, Ivan's Childhood).
 
-China and Hong Kong are an interesting pair.
+China and Hong Kong are an interesting pair. The two have historically destined very different portions of GDP to services (and to cinema), they are extremely different in size, however they contributed almost the same number of movies to the list. Some good reasons may be that, despite its size, Hong Kong has one of the most developed cinema industries in the world, it is a popular co-production partner, and prides itself on acclaimed filmmakers such as Wong Kar-wai (Chungking Express, In The Mood for Love).
 
 #### **Table 3: Linear regression, no. of contributions and share of GDP to services**
 
