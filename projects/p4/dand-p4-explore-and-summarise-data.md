@@ -1232,6 +1232,10 @@ Number of contributions and share of GDP to services seem to be positively corre
 
 As expected, African countries locate in the third quadrant, an area in which a small share of GDP to services corresponds to few contributions to the list (Africa has the smallest median share among all continents, see Table 2). Eastern European countries, slightly more virtuous than the African ones, also place in quadrant III. Apart from Norway, for which investment in the tertiary sector appears to be less notable, Western European countries all place in quadrants I & IV. This means that, while the economies in this group commit a similar (and large) share of GDP to services, individual outcomes vary widely. Indeed, dispersion of contributions for Western Europe is very high (standard deviation: 105, see Table 1), and the statistic might be influenced by a mix of factors. One of them could be _geographic size_ (e.g., Luxembourg vs Germany), though the association may not be so clear-cut: for example, the United States and Canada have similar country size but very different number of co-productions. Another one could be _economic size_ (i.e., the amount of nominal GDP to services, in dollars), a dimension analysed in the next figure.
 
+Russia is the only "virtuous" country in quadrant II: despite the relatively small fraction of GDP to services, Russia managed to contribute a large number of high-quality films to the list. One of the reasons could be the high caliber of its filmmakers, above all _Sergei Eisenstein_ (Battleship Potëmkin, Ivan the Terrible parts I & II, October, Alexander Nevsky) as well as _Andrei Tarkovsky_ (Andrei Rublëv, Mirror, Stalker, Solaris, Ivan's Childhood).
+
+China and Hong Kong are an interesting pair.
+
 #### **Table 3: Linear regression, no. of contributions and share of GDP to services**
 
 ``` r
