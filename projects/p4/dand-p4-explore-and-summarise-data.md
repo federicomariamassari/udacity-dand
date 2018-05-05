@@ -1349,9 +1349,9 @@ The plot could ideally be divided into three sections:
 
 - The *shaded region* corresponding to the 95% confidence bands of the regression line—an area in which the number of co-productions for a country generally match the value predicted, given the amount of nominal GDP to services of that country;
 
-- The region *above the upper band*
+- The region *above the upper band*, in which virtuous countries—the ones contributing more films to the list than their nominal GDP to services would suggest—lie;
 
-- The region *below the lower band*
+- The region *below the lower band*, where inefficient countries—those which participated in a lower number of co-productions than their investment in the tertiary sector would suggest—are located.
 
 
 #### **Table 5: Kendall's Tau, no. of contributions and nominal GDP to services**
