@@ -1222,7 +1222,7 @@ stats.table(greatest.by_country, Continent, Services)
 
 #### **Observations**
 
-Above is a scatter plot of country co-productions against the share of GDP to services, a possible proxy for the **desire** of a country to invest in the cinema industry. The size of each dot is proportional to the land size of the corresponding country (i.e., the bigger the nation, the larger the point diameter). The plot could ideally be divided into four quadrants, counter-clockwise, with the first quadrant being the upper right one. I & III could be referred to as the "regular" quadrants, those for which a small (III) or significant (I) percentage of resources to cinema translates to a small or large number of entries to the list of critically acclaimed films. IV could collect countries that are either "inefficient" (i.e., those which have been involved in far fewer co-productions than their large share of GDP to services would imply) or "too small" (i.e., those which lack the critical mass to participate in many co-productions, no matter how much money they invest in services). II, instead, could gather "virtuous" countries (i.e., those which managed to work on several films on a tight budget).
+Figure 3 is a scatter plot of country co-productions against the share of GDP to services, a possible proxy for the **desire** of a country to invest in the cinema industry. The size of each dot is proportional to the land size of the corresponding state (i.e., the bigger the nation, the larger the point diameter). The plot could ideally be divided into four quadrants, counter-clockwise, with the first quadrant being the upper right one. I & III could be referred to as the "regular" quadrants, those for which a small (III) or significant (I) percentage of resources to cinema translates to a small or large number of entries to the list of critically acclaimed films. IV could collect countries that are either "inefficient" (i.e., those which have been involved in far fewer co-productions than their large share of GDP to services would imply) or "too small" (i.e., those which lack the critical mass to participate in many co-productions, no matter how much money they invest in services). II, instead, could gather "virtuous" countries (i.e., those which managed to work on several films on a tight budget).
 
 It is important to stress that the plot gives, at best, an approximate picture of the share of resources historically destined to cinema by each country, for at least two reasons. First, the data on GDP breakdown were recorded in different years, ranging from 2007 (Luxembourg) to 2016 (e.g., Australia). Second, GDP composition may have changed dramatically in over a century. For instance, Western European nations spent more on agriculture and industry in the years immediately following World War II, and more on services since the Sixties.
 
@@ -1230,7 +1230,7 @@ In addition, two assumptions were made. One is that countries tend to invest mor
 
 Number of contributions and share of GDP to services seem to be positively correlated, as shown by the positive slope of the regression line. This means that, on average, the more a country has invested in cinema over the years, the more films it has contributed to the list. The line has equation y = -3.14 + 0.097x (Table 3), but the meaningful part is actually the sign of the slope: while the magnitude, together with the associated p-value of the t-test, can be heavily influenced by the particular transformation used (in this case, log2 on y), the sign is invariant, as long as the transformation is monotonically increasing (i.e., square root, logarithm). To measure the association between the two variables one can rely on *Kendall's tau* (Table 4), which is robust to transformations. Kendall's tau is positive and quite significant (~38%), and confirms the previous findings.
 
-As expected, African countries locate in the third quadrant, an area in which a small share of GDP to services corresponds to few contributions to the list (Africa has the smallest median share among all continents, see Table 2). Eastern European countries, slightly more virtuous than the African ones, also place in quadrant III. Apart from Norway, for which investment in the tertiary sector appears to be less notable, Western European countries all place in quadrants I & IV. This means that, while the economies in this group commit a similar (and large) share of GDP to services, individual outcomes vary widely. Indeed, dispersion of contributions for Western Europe is very high (standard deviation: 105, see Table 1), and the statistic might be influenced by a mix of factors. One of them could be *geographic size* (e.g., Luxembourg vs Germany), though the association may not be so clear-cut: for example, the United States and Canada have similar country size but very different number of co-productions. Another one could be *economic size* (i.e., the amount of nominal GDP to services, in dollars), a dimension analysed in the next figure.
+As expected, African countries locate in the third quadrant, an area in which a small share of GDP to services corresponds to few contributions to the list (Africa has the smallest median share among all continents, see Table 2). Eastern European countries, slightly more virtuous than the African ones, also place in quadrant III. Apart from Norway, for which investment in the tertiary sector appears to be less notable, Western European countries all place in quadrants I & IV. This means that, while the economies in this group commit a similar (and large) share of GDP to services, individual outcomes vary widely. Indeed, dispersion of contributions for Western Europe is very high (standard deviation: 105, see Table 1), and the statistic might be influenced by a mix of factors. One of them could be *geographic size* (e.g., Luxembourg vs Germany), though the association may not be so clear-cut: for example, the United States and Canada have similar country size but very different number of co-productions. Another one could be *economic size* (i.e., the amount of nominal GDP to services, in dollars), a dimension analysed in Figure 4.
 
 Russia is the only "virtuous" country in quadrant II: despite the relatively small fraction of GDP to services, Russia managed to contribute a large number of high-quality films to the list. One of the reasons could be the high caliber of its filmmakers, like *Sergei Eisenstein* (Battleship Potëmkin, Ivan the Terrible parts I & II, October, Alexander Nevsky) and *Andrei Tarkovsky* (Andrei Rublëv, Mirror, Stalker, Solaris, Ivan's Childhood).
 
@@ -1342,18 +1342,6 @@ ggplot(data = greatest.by_country,
 
 <img src="./img/figure-04.png" width="816" />
 
-#### **Observations**
-Above is a plot of country co-productions against the amount of nominal GDP to services, a possible proxy for the **ability** of a country to invest in the cinema industry.
-
-The plot could ideally be divided into three sections:
-
-- The *shaded region* corresponding to the 95% confidence bands of the regression line—an area in which the number of co-productions for a country generally match the value predicted, given the amount of nominal GDP to services of that country;
-
-- The region *above the upper band*, in which virtuous countries—the ones contributing more films to the list than their nominal GDP to services would suggest—lie;
-
-- The region *below the lower band*, where inefficient countries—those which participated in a lower number of co-productions than their investment in the tertiary sector would suggest—are located.
-
-
 #### **Table 5: Kendall's Tau, no. of contributions and nominal GDP to services**
 
 ``` r
@@ -1361,6 +1349,20 @@ kendall.tau(greatest.by_country, "GDP.to.Services", "n")
 ```
 
     ## [1] 0.6504686
+
+#### **Observations**
+Figure 4 is a plot of country co-productions against the amount of nominal GDP to services, a possible proxy for the **ability** of a country to invest in the cinema industry.
+
+The plot could ideally be divided into three sections:
+
+- The *shaded region* corresponding to the 95% confidence bands of the regression line—an area in which the number of co-productions for a country generally match the value predicted, given the amount of nominal GDP to services of that country;
+
+- The region *above the upper band*, in which virtuous countries—the ones contributing more films to the list than their nominal GDP to services would suggest—lie;
+
+- The region *below the lower band*, where inefficient countries—those which participated in a smaller number of co-productions than their investment in the tertiary sector would suggest—are located.
+
+Amount of nominal GDP to services and number of co-productions appear to be positively and strongly associated, as the value for Kendall's tau implies (~65%, see Table 5). Accounting for magnitude reveals some interesting insights. To begin with, the poorest African countries now appear to be the most virtuous ones (above all Senegal, with ~10,000 USD million GDP to services and 7 contributed films) while the wealthiest nations (e.g., Algeria, Egypt) are the most inefficient ones.
+
 
 ``` r
 ggplot(data = greatest.by_country,
