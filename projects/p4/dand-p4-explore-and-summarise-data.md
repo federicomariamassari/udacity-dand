@@ -1351,7 +1351,7 @@ kendall.tau(greatest.by_country, "GDP.to.Services", "n")
     ## [1] 0.6504686
 
 #### **Observations**
-Figure 4 is a plot of country co-productions against the amount of nominal GDP to services, a possible proxy for the **ability** of a country to invest in the cinema industry.
+Figure 4 is a plot of country co-productions against the amount of nominal GDP to services, a possible proxy for the **ability** of a country to invest in the cinema industry. The problems highlighted in the previous figure, as well as the assumptions made, also apply to this one.
 
 The plot could ideally be divided into three sections:
 
@@ -1363,6 +1363,13 @@ The plot could ideally be divided into three sections:
 
 Amount of nominal GDP to services and number of co-productions appear to be positively and strongly associated, as the value for Kendall's tau implies (~65%, see Table 5). Accounting for magnitude reveals some interesting insights. To begin with, the poorest African countries now appear to be the most virtuous ones (above all Senegal, with ~10,000 USD million GDP to services and 7 contributed films) while the wealthiest nations (e.g., Algeria, Egypt) are the most inefficient ones.
 
+The top contributing Western European countries are also the most virtuous ones; among them, France (with a nominal GDP to services of ~2 trillion USD and a whooping 413 co-productions) is the best performing, placing farthest from the upper confidence band. Moreover, the top 10 contributing countries (as in Figure 2) are all generally efficient.
+
+On average, South American nations have contributed a lower number of films to the list than their nominal investment in the tertiary sector would suggest. In this group, Colombia has been by far the least efficient, with a single contribution in spite of approximately ~200 billion USD to services. Colombia is also the most distant country from the lower confidence band.
+
+Hong Kong is confirmed as a virtuous region, while China, with only 32 movies in the list despite almost 5 trillion USD to services, seems to be less efficient than originally thought. However, due to the issues highlighted in the previous section (i.e., change in the composition of GDP throughout the decades, technological progress and increased wealth of a nation), this statistic may be highly unreliable.
+
+### **Contributions by country predominant religion**
 
 ``` r
 ggplot(data = greatest.by_country,
