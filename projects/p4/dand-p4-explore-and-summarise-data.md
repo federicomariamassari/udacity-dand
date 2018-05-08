@@ -1351,15 +1351,16 @@ kendall.tau(greatest.by_country, "GDP.to.Services", "n")
     ## [1] 0.6504686
 
 #### **Observations**
+
 Figure 4 is a plot of country co-productions against the amount of nominal GDP to services, a possible proxy for the **ability** of a country to invest in the cinema industry. The problems highlighted in the previous figure, as well as the assumptions made, also apply to this one.
 
 The plot could ideally be divided into three sections:
 
-- The *shaded region* corresponding to the 95% confidence bands of the regression line—an area in which the number of co-productions for a country generally match the value predicted, given the amount of nominal GDP to services of that country;
+-   The *shaded region* corresponding to the 95% confidence bands of the regression line—an area in which the number of co-productions for a country generally match the value predicted, given the amount of nominal GDP to services of that country;
 
-- The region *above the upper band*, in which virtuous countries—the ones contributing more films to the list than their nominal GDP to services would suggest—lie;
+-   The region *above the upper band*, in which virtuous countries—the ones contributing more films to the list than their nominal GDP to services would suggest—lie;
 
-- The region *below the lower band*, where inefficient countries—those which participated in a smaller number of co-productions than their investment in the tertiary sector would suggest—are located.
+-   The region *below the lower band*, where inefficient countries—those which participated in a smaller number of co-productions than their investment in the tertiary sector would suggest—are located.
 
 Amount of nominal GDP to services and number of co-productions appear to be positively and strongly associated, as the value for Kendall's tau implies (~65%, see Table 5). Accounting for magnitude reveals some interesting insights. To begin with, the poorest African countries now appear to be the most virtuous ones (above all Senegal, with ~10,000 USD million GDP to services and 7 contributed films) while the wealthiest nations (e.g., Algeria, Egypt) are the most inefficient ones.
 
@@ -1400,7 +1401,33 @@ world_base +
 
 <img src="./img/figure-06.png" width="816" />
 
+#### **Table 6: Frequency of contributions by predominant religion**
+
+``` r
+countries %>%
+  group_by(Main.Religion) %>%
+  # Calculate absolute and relative frequencies
+  summarise(n = n()) %>%
+  mutate(freq = n / sum(n) * 100)
+```
+
+    ##   Main.Religion     n   freq
+    ## 1 Christian      2273  87.83
+    ## 2 Islam            50   1.93
+    ## 3 Irreligion      203   7.84
+    ## 4 Hindu            26   1.00
+    ## 5 Buddhist          4   0.16
+    ## 6 Folk religion    29   1.12
+    ## 7 Jewish            3   0.12
+
 #### **Observations**
+Figure 5 breaks down individual contributions into their associated countries’ predominant religions, and gives the relative frequency for each group. The unit of measure in this chart is contributions, not films (i.e., the total number is 2,588 single efforts, which resulted in 2,000 movies). The religions are sorted descendingly, according to [worldwide diffusion](https://en.wikipedia.org/wiki/Religions_by_country).
+
+Figure 6 is a choropleth map of contributing countries by predominant faith, and shows the distribution of religions around the globe for the particular areas of interest.
+
+Approximately 87.5% of individual contributions belong to nations whose prevailing faith (which may or may not be the official one) is Christian (Table 6). These nations include, among the others, the United States and Western Europe, which alone make up for ~80% of total contributions.
+
+The second most common faith in the list is Irreligion, with ~8% (mainly because of Japan, Hong Kong, and China), while Islam places third, with only ~2%. Apart from Iran, the countries in which Islam is prevalent have historically contributed a scant number of movies to the list (e.g., North African ones, compare Figures 1 and 6).
 
 ### **Golden and silver periods of world cinema**
 
