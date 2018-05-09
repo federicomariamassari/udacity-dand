@@ -576,8 +576,8 @@ new_names <- c("Palestine", "Czech Republic", "Czech Republic", "Netherlands",
                "UK", "USA", "Russia", "Palestine", "Germany", "Serbia")
 
 # Single out all countries of production (including co-production ones) and
-# store into "countries", which becomes the main dataset for exploration
-countries <- extract.countries(greatest, "Countries", old_names, new_names)
+# store into "contributions", which becomes the main dataset for exploration
+contributions <- extract.countries(greatest, "Countries", old_names, new_names)
 ```
 
 #### **Left join molten data on the original dataset**
@@ -613,32 +613,33 @@ append.columns <- function(df, to_append, shared_col, old_names, new_names) {
 
 ``` r
 # Determine the number of array repetitions
-nreps <- nrow(countries) / nrow(greatest)
+nreps <- nrow(contributions) / nrow(greatest)
 
-# Uniform column "Pos" to the length of "countries". "Pos" will work as a
+# Uniform column "Pos" to the length of "contributions". "Pos" will work as a
 # primary key in order to migrate content from "greatest"
 added_column <- do.call("rbind", replicate(nreps, greatest["Pos"],
                                            simplify = FALSE))
 
 # Column bind, then shrink, the two datasets
-countries <- subset(cbind(countries, added_column), !Country == "")
+contributions <- subset(cbind(contributions, added_column), !Country == "")
 
 # Swap columns
-countries <- countries[, c("Pos", "Country")]
+contributions <- contributions[, c("Pos", "Country")]
 ```
 
 ``` r
 # Append columns to data frame. This is an elegant, albeit space inefficient,
-# way to append multiple data frame columns to "countries"
+# way to append multiple data frame columns to "contributions"
 df.list <- list(country_codes, continents, coordinates, country_area,
                 religions[, 1:2], nominal_gdp, gdp_by_sector)
 
 for (df in df.list) {
-  countries <- append.columns(countries, df, "Country", old_names, new_names)
+  contributions <- append.columns(contributions, df, "Country", old_names,
+                                  new_names)
 }
 
-# Migrate content of data frame "greatest" to "countries"
-countries <- merge(countries, greatest, by = "Pos")
+# Migrate content of data frame "greatest" to "contributions"
+contributions <- merge(contributions, greatest, by = "Pos")
 ```
 
 #### **Additional data processing**
@@ -702,19 +703,20 @@ eu.regions <- list("Western Europe" = c("Austria", "Belgium", "Denmark",
                                         "Russia", "Serbia", "Ukraine"))
 
 for (i in 1:length(eu.regions)) {
-  countries <- add.continent.region(df = countries,
-                                    column = "Continent",
-                                    test.column = "Country",
-                                    continent = "Europe",
-                                    group = eu.regions[[i]],
-                                    if_group = names(eu.regions[i]))
+  contributions <- add.continent.region(df = contributions,
+                                        column = "Continent",
+                                        test.column = "Country",
+                                        continent = "Europe",
+                                        group = eu.regions[[i]],
+                                        if_group = names(eu.regions[i]))
 }
 
 # Reorder factor levels
 continent_levels <- c("Africa", "Asia", "Western Europe", "Eastern Europe",
                       "North America", "South America", "Oceania")
 
-countries <- reorder.factor.levels(countries, "Continent", continent_levels)
+contributions <- reorder.factor.levels(contributions, "Continent",
+                                       continent_levels)
 ```
 
 ``` r
@@ -722,7 +724,8 @@ countries <- reorder.factor.levels(countries, "Continent", continent_levels)
 religion_levels <- c("Christian", "Islam", "Irreligion", "Hindu", "Buddhist",
                      "Folk religion", "Jewish")
 
-countries <- reorder.factor.levels(countries, "Main.Religion", religion_levels)
+contributions <- reorder.factor.levels(contributions, "Main.Religion",
+                                       religion_levels)
 ```
 
 #### **Tidied data frame**
@@ -972,8 +975,8 @@ This dataset is used for most of the exploratory analysis.
 
 ``` r
 # Remove all but necessary variables and functions
-required <- c(lsf.str(), "countries", "directors", "world", "old_names",
-              "new_names")
+required <- c(lsf.str(), "greatest", "contributions", "directors", "world",
+              "old_names", "new_names")
 rm(list = setdiff(ls(), required))
 ```
 
@@ -1040,7 +1043,7 @@ cut.density <- function(df, to_cut, new_column, breaks, labels) {
 
 ``` r
 # Aggregate data
-greatest.by_country <- aggregate.df(countries, Country)
+greatest.by_country <- aggregate.df(contributions, Country)
 
 # Group and label factor levels for convenient representation
 greatest.by_country <- cut.density(greatest.by_country, "n", "bin",
@@ -1052,7 +1055,7 @@ greatest.by_country <- cut.density(greatest.by_country, "n", "bin",
 
 # Append selected columns to the dataset
 greatest.by_country <- merge(greatest.by_country,
-                             unique(countries[, c(2:14)]),
+                             unique(contributions[, c(2:14)]),
                              by = "Country")
 
 # Append column on actual amount of country GDP to services
@@ -1404,7 +1407,7 @@ world_base +
 #### **Table 6: Frequency of contributions by predominant religion**
 
 ``` r
-countries %>%
+contributions %>%
   group_by(Main.Religion) %>%
   # Calculate absolute and relative frequencies
   summarise(n = n()) %>%
@@ -1421,6 +1424,7 @@ countries %>%
     ## 7 Jewish            3   0.12
 
 #### **Observations**
+
 Figure 5 breaks down individual contributions into their associated countries’ predominant religions, and gives the relative frequency for each group. The unit of measure in this chart is contributions, not films (i.e., the total number is 2,588 single efforts, which resulted in 2,000 movies). The religions are sorted descendingly, according to [worldwide diffusion](https://en.wikipedia.org/wiki/Religions_by_country).
 
 Figure 6 is a choropleth map of contributing countries by predominant faith, and shows the distribution of religions around the globe for the particular areas of interest.
@@ -1433,7 +1437,7 @@ The second most common faith in the list is Irreligion, with ~8% (mainly because
 
 ``` r
 # Aggregate data by country and decade, then summarise
-greatest.by_decade <- countries %>%
+greatest.by_decade <- contributions %>%
   group_by(.dots = c("Country", "Decade")) %>%
   summarise(Max.Rank = min(Pos))
 
@@ -1460,7 +1464,64 @@ ggplot(data = greatest.by_decade, aes(x = Decade, y = Country)) +
 
 <img src="./img/figure-07.png" width="816" />
 
-### **Observations**
+#### **Observations**
+
+``` r
+ggplot(data = subset(greatest, !is.na(Length)), aes(x = Length)) +
+  geom_histogram(binwidth = 5, colour = "black", size = 0.1) +
+  scale_x_continuous(breaks = seq(0, 250, 10)) +
+  coord_cartesian(xlim = c(0, 240)) +
+  geom_vline(aes(xintercept = median(Length, na.rm = TRUE)),
+             linetype = "dashed", color = "tomato", size = 0.3) +
+  ggtitle("Figure 8: Histogram of movie lengths") +
+  labs(caption = "Data source: theyshootpictures.com") +
+  xlab("Length (minutes)") +
+  ylab("Count") +
+  shared_themes
+```
+
+<img src="./img/figure-08.png" width="816" />
+
+``` r
+summary(subset(greatest, !is.na(Length))$Length)
+```
+
+    ##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max.
+    ##     1.0    92.0   106.0   115.7   123.5  3600.0
+
+``` r
+# Generate boxplot of movie durations by decade
+box_plt <- ggplot(data = subset(greatest, !is.na(Length)),
+                  aes(x = Decade, y = Length)) +
+  geom_boxplot(size = 0.3, outlier.shape = NA) +
+  geom_jitter(width = 0.2, color = "royalblue", alpha = 0.25) +
+  scale_x_discrete(position = "top") +
+  scale_y_continuous(breaks = seq(0, 240, 10),
+                     sec.axis = dup_axis(name = NULL)) +
+  # Do not display movies longer than 4 hours (240 mins)
+  coord_cartesian(ylim = c(0, 240)) +
+  # Include mean duration per decade
+  stat_summary(fun.y = mean, geom = "point", size = 1, shape = 3,
+               color = "tomato", show.legend = FALSE) +
+  ggtitle("Figure 9: Boxplot of movie durations by decade") +
+  xlab("Decade") +
+  ylab("Duration (minutes)") +
+  shared_themes
+
+# Generate barplot of movies by decade
+bar_plt <- ggplot(data = greatest, aes(x = Decade)) +
+  geom_bar() +
+  scale_y_continuous(sec.axis = dup_axis(name = NULL)) +
+  labs(caption = "Data source: theyshootpictures.com") +
+  xlab("Decade") +
+  ylab("Count") +
+  shared_themes
+
+# Combine plots
+gridExtra::grid.arrange(box_plt, bar_plt, layout_matrix = cbind(c(1, 1, 1, 2)))
+```
+
+<img src="./img/figure-09.png" width="816" />
 
 ### **Most frequent co-productions**
 
@@ -1596,7 +1657,7 @@ expand.to.comb <- function(df, column, times) {
 
 ``` r
 # Single out and sum co-productions
-co_productions <- subset(countries, Co.Production == "Yes")
+co_productions <- subset(contributions, Co.Production == "Yes")
 
 greatest.by_connection <- co_productions %>%
   group_by(Countries) %>%
@@ -1679,9 +1740,10 @@ levels(greatest.by_coproduction$Two.Country.Relationships) <-
 
 ``` r
 # Remove all but necessary variables and functions
-required <- c(lsf.str(), "countries", "directors", "world", "old_names",
+required <- c(lsf.str(), "contributions", "directors", "world", "old_names",
               "new_names", "greatest.by_country", "greatest.by_decade",
-              "greatest.by_coproduction", "shared_themes", "world_base")
+              "greatest.by_coproduction", "shared_themes", "world_base",
+              "greatest")
 rm(list = setdiff(ls(), required))
 ```
 
@@ -1695,19 +1757,19 @@ world_transparent <- ggplot() +
   ggthemes::theme_map()
 
 world_transparent +
-  geom_point(data = countries, aes(x = Longitude, y = Latitude),
+  geom_point(data = contributions, aes(x = Longitude, y = Latitude),
              color = "orange", size = 1.2) +
   geom_curve(data = greatest.by_coproduction,
              aes(x = Longitude.x, xend = Longitude.y,
                  y = Latitude.x, yend = Latitude.y,
                  alpha = Two.Country.Relationships), color = "#a50026") +
   scale_alpha_manual(values = c(0.05, 0.1, 0.2, 0.5, 1)) +
-  ggtitle(paste("Figure 8: Most frequent two-country co-production",
+  ggtitle(paste("Figure 10: Most frequent two-country co-production",
                 "relationships")) +
   labs(caption = "Data sources: theyshootpictures.com, Google Developers")
 ```
 
-<img src="./img/figure-08.png" width="816" />
+<img src="./img/figure-10.png" width="816" />
 
 ### **Observations**
 
