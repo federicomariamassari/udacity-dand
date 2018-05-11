@@ -1433,6 +1433,36 @@ Approximately 87.5% of individual contributions belong to nations whose prevaili
 
 The second most common faith in the list is Irreligion, with ~8% (mainly because of Japan, Hong Kong, and China), while Islam places third, with only ~2%. Apart from Iran, the countries in which Islam is prevalent have historically contributed a scant number of movies to the list (e.g., North African ones, compare Figures 1 and 6).
 
+### **Timeline of contributions by continent**
+
+``` r
+# Add median year by continent
+contributions <- contributions[!is.na(contributions$Year), ] %>%
+  group_by(Continent) %>%
+  mutate(Median.Year = median(Year))
+
+ggplot(data = subset(contributions, !is.na(Year)),
+       aes(x = Year, fill = Continent)) +
+  geom_histogram(binwidth = 5, size = 0.1, show.legend = FALSE) +
+  scale_x_continuous(breaks = seq(1890, 2020, 10)) +
+  # Also plot conditional medians
+  geom_vline(aes(xintercept = Median.Year, group = Continent),
+             linetype = "dashed", size = 0.3, color = "tomato") +
+  facet_wrap(~Continent) +
+  ggtitle("Figure 7: Timeline of contributions by continent") +
+  xlab("Year") +
+  ylab("Number of contributions") +
+  labs(caption = "Data source: theyshootpictures.com, Wikipedia") +
+  shared_themes +
+  # Override "shared_themes" x tick labels font size and orientation
+  theme(axis.text.x = element_text(size = 6, angle = -45,
+                                   hjust = 0, vjust = 1))
+```
+
+<img src="./img/figure-07.png" width="816" />
+
+#### **Observations**
+
 ### **Golden and silver periods of world cinema**
 
 ``` r
@@ -1455,39 +1485,16 @@ ggplot(data = greatest.by_decade, aes(x = Decade, y = Country)) +
   geom_tile(aes(fill = Rank.Category), colour = "black") +
   scale_x_discrete(position = "top") +
   scale_fill_brewer(palette = "Reds", direction = -1) +
-  ggtitle("Figure 7: Heatmap of peak positions by country and decade") +
+  ggtitle("Figure 8: Heatmap of peak positions by country and decade") +
   labs(fill = "Maximum rank reached",
        caption = "Data source: theyshootpictures.com") +
   shared_themes +
   theme(axis.text.x = element_text(angle = -45, hjust = 1.05))
 ```
 
-<img src="./img/figure-07.png" width="816" />
-
-#### **Observations**
-
-``` r
-ggplot(data = subset(greatest, !is.na(Length)), aes(x = Length)) +
-  geom_histogram(binwidth = 5, colour = "black", size = 0.1) +
-  scale_x_continuous(breaks = seq(0, 250, 10)) +
-  coord_cartesian(xlim = c(0, 240)) +
-  geom_vline(aes(xintercept = median(Length, na.rm = TRUE)),
-             linetype = "dashed", color = "tomato", size = 0.3) +
-  ggtitle("Figure 8: Histogram of movie lengths") +
-  labs(caption = "Data source: theyshootpictures.com") +
-  xlab("Length (minutes)") +
-  ylab("Count") +
-  shared_themes
-```
-
 <img src="./img/figure-08.png" width="816" />
 
-``` r
-summary(subset(greatest, !is.na(Length))$Length)
-```
-
-    ##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max.
-    ##     1.0    92.0   106.0   115.7   123.5  3600.0
+#### **Observations**
 
 ``` r
 # Generate boxplot of movie durations by decade
