@@ -1379,6 +1379,8 @@ Hong Kong is confirmed as a virtuous region, while China, with only 32 movies in
 ggplot(data = greatest.by_country,
        aes(x = Main.Religion, y = n / sum(n), fill = Main.Religion)) +
   geom_bar(stat = "identity") +
+  geom_text(aes(label = paste(round(..y.. * 100, 2), "%")),
+            fun.y = "sum", stat = "summary", size = 3, vjust = -0.5) +
   scale_y_continuous(breaks = seq(0, 1, 0.1)) +
   ggtitle(paste("Figure 5: Breakdown of co-productions into countries'",
                 "predominant religion")) +
@@ -1396,7 +1398,10 @@ ggplot(data = greatest.by_country,
 world_base +
   geom_polygon(data = subset(world, !is.na(Main.Religion)),
                aes(x = long, y = lat, group = group, fill = Main.Religion)) +
-  labs(fill = "Main religion",
+  geom_point(data = greatest.by_country,
+             aes(x = Longitude, y = Latitude, size = n, alpha = 0.2),
+             show.legend = FALSE) +
+  labs(size = "Contributions", fill = "Main religion",
        caption = "Data source: theyshootpictures.com, Wikipedia") +
   ggtitle(paste("Figure 6: Choropleth map of contributing countries",
                 "by predominant religion"))
@@ -1404,34 +1409,17 @@ world_base +
 
 <img src="./img/figure-06.png" width="816" />
 
-#### **Table 6: Frequency of contributions by predominant religion**
-
-``` r
-contributions %>%
-  group_by(Main.Religion) %>%
-  # Calculate absolute and relative frequencies
-  summarise(n = n()) %>%
-  mutate(freq = n / sum(n) * 100)
-```
-
-    ##   Main.Religion     n   freq
-    ## 1 Christian      2273  87.83
-    ## 2 Islam            50   1.93
-    ## 3 Irreligion      203   7.84
-    ## 4 Hindu            26   1.00
-    ## 5 Buddhist          4   0.16
-    ## 6 Folk religion    29   1.12
-    ## 7 Jewish            3   0.12
-
 #### **Observations**
 
 Figure 5 breaks down individual contributions into their associated countries’ predominant religions, and gives the relative frequency for each group. The unit of measure in this chart is contributions, not films (i.e., the total number is 2,588 single efforts, which resulted in 2,000 movies). The religions are sorted descendingly, according to [worldwide diffusion](https://en.wikipedia.org/wiki/Religions_by_country).
 
-Figure 6 is a choropleth map of contributing countries by predominant faith, and shows the distribution of religions around the globe for the particular areas of interest.
+Figure 6 is a choropleth map of contributing countries by predominant faith, and shows the distribution of religions around the globe for the particular areas of interest. The dots on top of the map locate each represented country, and their size is proportional to the number of contributions that country made to the list.
 
-Approximately 87.5% of individual contributions belong to nations whose prevailing faith (which may or may not be the official one) is Christian (Table 6). These nations include, among the others, the United States and Western Europe, which alone make up for ~80% of total contributions.
+Approximately 87.5% of individual contributions belong to nations whose prevailing faith (which may or may not be the official one) is Christian. These nations include, among the others, the United States and Western Europe, which alone make up for ~80% of total contributions.
 
 The second most common faith in the list is Irreligion, with ~8% (mainly because of Japan, Hong Kong, and China), while Islam places third, with only ~2%. Apart from Iran, the countries in which Islam is prevalent have historically contributed a scant number of movies to the list (e.g., North African ones, compare Figures 1 and 6).
+
+### **B. Timeline of contributions to the list**
 
 ### **Timeline of contributions by continent**
 
@@ -1448,6 +1436,9 @@ ggplot(data = subset(contributions, !is.na(Year)),
   # Also plot conditional medians
   geom_vline(aes(xintercept = Median.Year, group = Continent),
              linetype = "dashed", size = 0.3, color = "tomato") +
+  # Add conditional median values on top of vlines
+  geom_text(aes(x = Median.Year, y = 125, label = Median.Year,
+                group = Continent), size = 3) +
   facet_wrap(~Continent) +
   ggtitle("Figure 7: Timeline of contributions by continent") +
   xlab("Year") +
@@ -1773,7 +1764,8 @@ world_transparent +
   scale_alpha_manual(values = c(0.05, 0.1, 0.2, 0.5, 1)) +
   ggtitle(paste("Figure 10: Most frequent two-country co-production",
                 "relationships")) +
-  labs(caption = "Data sources: theyshootpictures.com, Google Developers")
+  labs(alpha = "Two-country relationships",
+       caption = "Data sources: theyshootpictures.com, Google Developers")
 ```
 
 <img src="./img/figure-10.png" width="816" />
