@@ -1379,6 +1379,7 @@ Hong Kong is confirmed as a virtuous region, while China, with only 32 movies in
 ggplot(data = greatest.by_country,
        aes(x = Main.Religion, y = n / sum(n), fill = Main.Religion)) +
   geom_bar(stat = "identity") +
+  # Add percentages on top of the bars
   geom_text(aes(label = paste(round(..y.. * 100, 2), "%")),
             fun.y = "sum", stat = "summary", size = 3, vjust = -0.5) +
   scale_y_continuous(breaks = seq(0, 1, 0.1)) +
@@ -1411,7 +1412,7 @@ world_base +
 
 #### **Observations**
 
-Figure 5 breaks down individual contributions into their associated countries’ predominant religions, and gives the relative frequency for each group. The unit of measure in this chart is contributions, not films (i.e., the total number is 2,588 single efforts, which resulted in 2,000 movies). The religions are sorted descendingly, according to [worldwide diffusion](https://en.wikipedia.org/wiki/Religions_by_country).
+Figure 5 breaks down individual contributions into their associated countries’ predominant religions, and gives the relative frequency for each group. The unit of measure in this chart is contributions, not films (i.e., the total number is 2,588 single efforts, which resulted in 2,000 movies). The religions are sorted descendingly, according to [worldwide diffusion](https://en.wikipedia.org/wiki/Religions_by_country#World).
 
 Figure 6 is a choropleth map of contributing countries by predominant faith, and shows the distribution of religions around the globe for the particular areas of interest. The dots on top of the map locate each represented country, and their size is proportional to the number of contributions that country made to the list.
 
@@ -1770,9 +1771,58 @@ world_transparent +
 
 <img src="./img/figure-10.png" width="816" />
 
-### **Observations**
+#### **Observations**
 
 ### **Colour and black-and-white**
+
+``` r
+# Group films by colour and year
+greatest.by_colour <- greatest %>%
+  group_by(.dots = c("Colour", "Year")) %>%
+  summarise(n = n())
+```
+
+``` r
+# Single out years with both BW and colour films in the list
+both <- inner_join(subset(greatest.by_colour, Colour == "BW"),
+                   subset(greatest.by_colour, Colour == "Col"),
+                   by = "Year")
+```
+
+``` r
+p1 <- ggplot(data = both, aes(x = Year, y = both$n.x / both$n.y)) +
+  geom_point(size = 0.75) +
+  # Include parity line (ratio of BW-to-colour films equal to 1)
+  geom_hline(yintercept = 1, linetype = 2, size = 0.25) +
+  scale_x_continuous(breaks = seq(1925, 2015, 5), limits = c(1925, 2015),
+                     position = "top") +
+  scale_y_log10() +
+  # Highlight BW-colour trend reversals
+  annotate("rect", xmin = c(1953, 1965), xmax = c(1958, 1970),
+           ymin = 0, ymax = Inf, alpha = 0.4) +
+  ggtitle("Figure 11: Timeline of colour/black-and-white prevalence") +
+  xlab("Year") +
+  ylab("BW-to-colour ratio") +
+  shared_themes
+
+p2 <- ggplot(data = subset(greatest, Colour %in% c("BW", "Col")),
+             aes(x = Year, fill = Colour)) +
+  geom_bar() +
+  scale_x_continuous(breaks = seq(1925, 2015, 5), limits = c(1925, 2015)) +
+  # Uniform y-axis label formatting to that of p1
+  scale_y_continuous(labels = function(x) sprintf("%.1f", x)) +
+  xlab("Year") +
+  ylab("Count") +
+  labs(caption = "Data source: theyshootpictures.com") +
+  shared_themes
+
+# Plot p1, p2 in the same figure
+gridExtra::grid.arrange(p1, p2, ncol = 1, heights = 2:1, widths = 1:1)
+```
+
+<img src="./img/figure-11.png" width="816" />
+
+#### **Observations**
 
 **Bibliography**
 ----------------
