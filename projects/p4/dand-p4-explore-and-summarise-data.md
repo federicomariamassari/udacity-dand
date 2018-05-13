@@ -1403,7 +1403,7 @@ world_base +
              aes(x = Longitude, y = Latitude, size = n, alpha = 0.2),
              show.legend = FALSE) +
   labs(size = "Contributions", fill = "Main religion",
-       caption = "Data source: theyshootpictures.com, Wikipedia") +
+       caption = "Data sources: theyshootpictures.com, Wikipedia") +
   ggtitle(paste("Figure 6: Choropleth map of contributing countries",
                 "by predominant religion"))
 ```
@@ -1444,7 +1444,7 @@ ggplot(data = subset(contributions, !is.na(Year)),
   ggtitle("Figure 7: Timeline of contributions by continent") +
   xlab("Year") +
   ylab("Number of contributions") +
-  labs(caption = "Data source: theyshootpictures.com, Wikipedia") +
+  labs(caption = "Data sources: theyshootpictures.com, Wikipedia") +
   shared_themes +
   # Override "shared_themes" x tick labels font size and orientation
   theme(axis.text.x = element_text(size = 6, angle = -45,
@@ -1487,6 +1487,8 @@ ggplot(data = greatest.by_decade, aes(x = Decade, y = Country)) +
 <img src="./img/figure-08.png" width="816" />
 
 #### **Observations**
+
+### **C. Duration**
 
 ``` r
 # Generate boxplot of movie durations by decade
@@ -1783,7 +1785,7 @@ greatest.by_colour <- greatest %>%
 ```
 
 ``` r
-# Single out years with both BW and colour films in the list
+# Single out years with both black-and-white and colour films in the list
 both <- inner_join(subset(greatest.by_colour, Colour == "BW"),
                    subset(greatest.by_colour, Colour == "Col"),
                    by = "Year")
@@ -1792,17 +1794,17 @@ both <- inner_join(subset(greatest.by_colour, Colour == "BW"),
 ``` r
 p1 <- ggplot(data = both, aes(x = Year, y = both$n.x / both$n.y)) +
   geom_point(size = 0.75) +
-  # Include parity line (ratio of BW-to-colour films equal to 1)
+  # Include parity line (ratio of black-and-white-to-colour films equal to 1)
   geom_hline(yintercept = 1, linetype = 2, size = 0.25) +
   scale_x_continuous(breaks = seq(1925, 2015, 5), limits = c(1925, 2015),
                      position = "top") +
   scale_y_log10() +
-  # Highlight BW-colour trend reversals
+  # Highlight black-and-white-colour trend reversals
   annotate("rect", xmin = c(1953, 1965), xmax = c(1958, 1970),
            ymin = 0, ymax = Inf, alpha = 0.4) +
   ggtitle("Figure 11: Timeline of colour/black-and-white prevalence") +
   xlab("Year") +
-  ylab("BW-to-colour ratio") +
+  ylab("Black-and-white-to-colour ratio") +
   shared_themes
 
 p2 <- ggplot(data = subset(greatest, Colour %in% c("BW", "Col")),
