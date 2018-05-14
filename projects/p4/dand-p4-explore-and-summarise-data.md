@@ -1422,6 +1422,12 @@ The second most common faith in the list is Irreligion, with ~8% (mainly because
 
 ### **B. Timeline of contributions to the list**
 
+The second dimension I would like to explore is time. Interesting questions could be:
+
+-   *What are the conditional (i.e., by continent) distributions of co-productions through time?*
+
+-   *Which are the golden and silver periods of cinema, if any, for each of the represented countries in the list?*
+
 ### **Timeline of contributions by continent**
 
 ``` r
