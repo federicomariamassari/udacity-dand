@@ -1461,6 +1461,9 @@ ggplot(data = subset(contributions, !is.na(Year)),
 
 #### **Observations**
 
+Figure 7 breaks down the timeline of co-productions by continent. For each subplot, a conditional median value—the year in which half of the entries for the related group were produced—is included as a dashed red line with superimposed text. Also, to both make timelines (abscissae) uniform and account for magnitude (ordinatae), axes scales are not freed (that is, they are kept constant for each subplot).
+
+
 ### **Golden and silver periods of world cinema**
 
 ``` r
