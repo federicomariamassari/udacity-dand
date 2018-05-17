@@ -1467,6 +1467,10 @@ In general, the conditional distributions appear to be negatively skewed. They h
 
 - a _long left tail_, showing that fewer contributions to the list were made in the early years of world cinema;
 
+- the _body shifted to the right_, meaning that, on average, most of the contributions to the list were made since the 1970s. This latter feature is also evident in the conditional median values, which are all higher than 1970 (i.e., for each continent, 50% of the contributions were not included until at least the 1970s).
+
+
+
 ### **Golden and silver periods of world cinema**
 
 ``` r
