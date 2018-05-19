@@ -30,3 +30,22 @@ world <- filter(map_data("world"), region != "Antarctica")
 
 # Uniform the data frames, append pt2 to pt1
 greatest <- rbind(greatest_pt1[, -c(2:3)], greatest_pt2)
+
+# DATA CLEANING
+
+# Character-to-factor conversion
+convert.to.factor <- function(df) {
+    # Convert all "chr" columns of a data frame to "Factor".
+    #
+    # Arguments:
+    #   df: Data frame with columns of type "chr" to convert to "Factor".
+    #
+    # Returns:
+    #   Data frame df with converted column types.
+    #
+    df <- as.data.frame(unclass(df))
+    return(df)
+}
+
+world <- convert.to.factor(world)
+greatest <- convert.to.factor(greatest)
