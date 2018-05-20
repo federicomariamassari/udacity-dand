@@ -1459,26 +1459,165 @@ ggplot(data = subset(contributions, !is.na(Year)),
 
 <img src="./img/figure-07.png" width="816" />
 
+#### **Table 6: Largest co-productions in the list**
+
+``` r
+# Select largest co-productions
+largest.contrib <- contributions %>%
+  group_by(Pos, Title, Year, Countries) %>%
+  summarise(n = n()) %>%
+  arrange(desc(n), desc(Year))
+
+# Print the largest six
+knitr::kable(largest.contrib %>% head(6), format = "html", row.names = FALSE)
+```
+
+<table>
+<thead>
+<tr>
+<th style="text-align:right;">
+Pos
+</th>
+<th style="text-align:left;">
+Title
+</th>
+<th style="text-align:right;">
+Year
+</th>
+<th style="text-align:left;">
+Countries
+</th>
+<th style="text-align:right;">
+n
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:right;">
+603
+</td>
+<td style="text-align:left;">
+Dancer in the Dark
+</td>
+<td style="text-align:right;">
+2000
+</td>
+<td style="text-align:left;">
+Denmark, France, Sweden, Italy, Germany, Norway, Netherlands, Iceland, Finland, UK, USA
+</td>
+<td style="text-align:right;">
+11
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+1042
+</td>
+<td style="text-align:left;">
+Waltz with Bashir
+</td>
+<td style="text-align:right;">
+2008
+</td>
+<td style="text-align:left;">
+Israel, France, Germany, USA, Japan, Finland, Switzerland, Belgium, Australia
+</td>
+<td style="text-align:right;">
+9
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+381
+</td>
+<td style="text-align:left;">
+Dogville
+</td>
+<td style="text-align:right;">
+2003
+</td>
+<td style="text-align:left;">
+Denmark, Sweden, France, UK, Germany, Finland, Italy, Netherlands, Norway
+</td>
+<td style="text-align:right;">
+9
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+1099
+</td>
+<td style="text-align:left;">
+Ulysses' Gaze
+</td>
+<td style="text-align:right;">
+1995
+</td>
+<td style="text-align:left;">
+Greece, France, Italy, Germany, UK, Yugoslavia, Bosnia and Herzegovina, Albania, Romania
+</td>
+<td style="text-align:right;">
+9
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+1133
+</td>
+<td style="text-align:left;">
+Five Obstructions, The
+</td>
+<td style="text-align:right;">
+2003
+</td>
+<td style="text-align:left;">
+Denmark, Belgium, Switzerland, France, Sweden, Finland, UK, Norway
+</td>
+<td style="text-align:right;">
+8
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+1169
+</td>
+<td style="text-align:left;">
+Moolaadé
+</td>
+<td style="text-align:right;">
+2004
+</td>
+<td style="text-align:left;">
+Senegal, Burkina Faso, Morocco, Tunisia, Cameroon, Switzerland, Germany
+</td>
+<td style="text-align:right;">
+7
+</td>
+</tr>
+</tbody>
+</table>
+Data source: theyshootpictures.com
+
 #### **Observations**
 
 Figure 7 breaks down the timeline of co-productions by continent. For each subplot, a conditional median value—the year in which half of the entries for the related group were produced—is included as a dashed red line with superimposed text. Also, axes scales are not freed (i.e., they are kept constant across subplots), so that timelines (x-axis) are uniform, and magnitude (y-axis) is accounted for. Histogram binwidth is equal to 5 years.
 
 In general, the conditional distributions appear to be negatively skewed. They have:
 
-- a _long left tail_, showing that fewer contributions to the list were made in the early years of world cinema;
+-   a *long left tail*, showing that fewer contributions to the list were made in the early years of world cinema;
 
-- the _body shifted to the right_, meaning that, on average, most of the contributions to the list were made since the 1970s. This latter feature is also evident in the conditional median values, which are all higher than 1970 (i.e., for each continent, 50% of the contributions were not included until at least the 1970s).
+-   the *body shifted to the right*, meaning that, on average, most of the contributions to the list were made since the 1970s. This latter feature is also evident in the conditional median values, which are all higher than 1970 (i.e., for each continent, 50% of the contributions were not included until at least the 1970s).
 
 In addition, the distributions appear to be "humped", or bimodal, with at least one decade in between the two peaks in which contributions were fewer than usual. The humps are particularly visible in the densities of Western Europe and Asia, and less in that of North America (whose distribution more closely resembles a Gaussian or Student's t).
 
 Let us analyse a few of the humps further:
 
-- For **Western Europe**, the humps relate to the periods 1960s-1970s and 1990s-2000s. The first period includes contributions from critically acclaimed directors Federico Fellini (_8½_, _La Dolce Vita_), Jean-Luc Godard (_Breathless_, _Contempt_), Ingmar Bergman (_Persona_, _The Seventh Seal_), Stanley Kubrick (_2001: A Space Odyssey_, _Dr. Strangelove or: How I Learned to Stop Worrying and Love the Bomb_), and Luis Buñuel (_Viridiana_, _The Exterminating Angel_). The second one, however, has a peak due to same continent co-productions: an example is Lars von Triers' _Dancer in the Dark_ (2000), shot in no less than ten Western European countries.
+-   For **Western Europe**, the humps relate to the periods 1960s-1970s and 1990s-2000s. The first period includes contributions from critically acclaimed directors Federico Fellini (*8½*, *La Dolce Vita*), Jean-Luc Godard (*Breathless*, *Contempt*), Ingmar Bergman (*Persona*, *The Seventh Seal*), Stanley Kubrick (*2001: A Space Odyssey*, *Dr. Strangelove or: How I Learned to Stop Worrying and Love the Bomb*), and Luis Buñuel (*Viridiana*, *The Exterminating Angel*). The second one, however, has a peak due to same continent co-productions: an example is Lars von Triers' *Dancer in the Dark* (2000), shot in no less than ten Western European countries.
 
-- For **Asia**, the humps correspond to the periods 1950s-1960s and 1980s-2000s. The first period is widely regarded as the Golden Age of Asian cinema, when legendary Japanese directors Kenji Mizoguchi (_Ugetsu Monogatari_, _Sansho the Bailiff_, _The Life of Oharu_), Akira Kurosawa (_Seven Samurai_, _Rashomon_, _Ikiru_, _Throne of Blood_, _Yojimbo_), Yasujiro Ozu (_Tokyo Story_, _Late Spring_, _An Autumn Afternoon_), and Indian filmmaker Satyajit Ray (_The Apu Trilogy_, _Charulata_, _The Music Room_) made their masterpieces. The second period includes, among the others, movies by Taiwan's New Wave directors Edward Yang (_A Brighter Summer's Day_, _Yi Yi_) and Hou Hsiao-hsien (_A City of Sadness_), China's Chen Kaige (_Yellow Earth_, _Farewell My Concubine_) and Zhang Yimou (_Raise the Red Lantern_, _Red Sorghum_), Hong Kong's Wong Kar-wai (_In the Mood for Love_, _Chungking Express_), Japan's Hideo Miyazaki (_Spirited Away_, _My Neighbour Totoro_) and Thailand's Apichatpong Weerasethakul (_Tropical Malady_).
+-   For **Asia**, the humps correspond to the periods 1950s-1960s and 1980s-2000s. The first period is widely regarded as the Golden Age of Asian cinema, when legendary Japanese directors Kenji Mizoguchi (*Ugetsu Monogatari*, *Sansho the Bailiff*, *The Life of Oharu*), Akira Kurosawa (*Seven Samurai*, *Rashomon*, *Ikiru*, *Throne of Blood*, *Yojimbo*), Yasujiro Ozu (*Tokyo Story*, *Late Spring*, *An Autumn Afternoon*), and Indian filmmaker Satyajit Ray (*The Apu Trilogy*, *Charulata*, *The Music Room*) made their masterpieces. The second period includes, among the others, movies by Taiwan's New Wave directors Edward Yang (*A Brighter Summer's Day*, *Yi Yi*) and Hou Hsiao-hsien (*A City of Sadness*), China's Chen Kaige (*Yellow Earth*, *Farewell My Concubine*) and Zhang Yimou (*Raise the Red Lantern*, *Red Sorghum*), Hong Kong's Wong Kar-wai (*In the Mood for Love*, *Chungking Express*), Japan's Hideo Miyazaki (*Spirited Away*, *My Neighbour Totoro*) and Thailand's Apichatpong Weerasethakul (*Tropical Malady*).
 
-- For **North America** (mostly the United States), the humps are wider and less pronounced, showing that productions in the continent have been largely consistent throughout the history of cinema.
-
+-   For **North America** (mostly the United States), the humps are wider and less pronounced, showing that productions in the continent have been largely consistent throughout the history of cinema.
 
 ### **Golden and silver periods of world cinema**
 
