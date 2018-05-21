@@ -1152,7 +1152,8 @@ stats.table <- function(df, group, column) {
   #  column: The data frame column to summarise.
   #
   # Returns:
-  #  A summary data frame with group means, medians, and standard deviations.
+  #  A summary data frame with group means, medians, and standard deviations
+  #  rounded to the second decimal.
   #
   group <- enquo(group)
   column <- enquo(column)
