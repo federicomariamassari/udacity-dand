@@ -1157,11 +1157,14 @@ stats.table <- function(df, group, column) {
   group <- enquo(group)
   column <- enquo(column)
 
-  df %>%
+  tab <- df %>%
     group_by(!!group) %>%
     summarise(mean = mean(!!column),
               median = median(!!column),
               sd = sd(!!column))
+
+  # Round summary statistics to the second decimal
+  cbind(tab[, 1], round(tab[, 2:4], 2))
 }
 ```
 
@@ -1169,14 +1172,14 @@ stats.table <- function(df, group, column) {
 stats.table(greatest.by_country, Continent, n)
 ```
 
-    ##   Continent        mean median     sd
-    ## 1 Africa           2.56   2.00   1.81
-    ## 2 Asia            18.30   4.00  27.74
-    ## 3 Western Europe  63.39  16.50 105.20  
-    ## 4 Eastern Europe   9.45   5.00  12.05
-    ## 5 North America  192.20  16.00 400.27  
-    ## 6 South America    7.80   4.00   8.67
-    ## 7 Oceania         13.50  13.50   7.78
+    ##        Continent   mean median     sd
+    ## 1         Africa   2.56    2.0   1.81
+    ## 2           Asia  18.31    4.0  27.74
+    ## 3 Western Europe  63.39   16.5 105.20
+    ## 4 Eastern Europe   9.45    5.0  12.05
+    ## 5  North America 192.20   16.0 400.27
+    ## 6  South America   7.80    4.0   8.67
+    ## 7        Oceania  13.50   13.5   7.78
 
 #### **Observations**
 
@@ -1214,14 +1217,14 @@ ggplot(data = greatest.by_country,
 stats.table(greatest.by_country, Continent, Services)
 ```
 
-    ##   Continent        mean  median    sd
-    ## 1 Africa          48.83   48.20  6.86
-    ## 2 Asia            60.64   57.30 14.04
-    ## 3 Western Europe  73.03   72.20  6.05
-    ## 4 Eastern Europe  60.84   63.00  6.56
-    ## 5 North America   69.36   71.00  8.71
-    ## 6 South America   58.88   58.40  5.32
-    ## 7 Oceania         69.45   69.45  1.77
+    ##        Continent  mean median    sd
+    ## 1         Africa 48.83  48.20  6.86
+    ## 2           Asia 60.64  57.30 14.04
+    ## 3 Western Europe 73.03  72.20  6.05
+    ## 4 Eastern Europe 60.85  63.00  6.56
+    ## 5  North America 69.36  71.00  8.71
+    ## 6  South America 58.88  58.40  5.32
+    ## 7        Oceania 69.45  69.45  1.77
 
 #### **Observations**
 
@@ -1466,10 +1469,11 @@ ggplot(data = subset(contributions, !is.na(Year)),
 largest.contrib <- contributions %>%
   group_by(Pos, Title, Year, Countries) %>%
   summarise(n = n()) %>%
+  # Sort descendingly by "n" then "Year"
   arrange(desc(n), desc(Year))
 
 # Print the largest six
-knitr::kable(largest.contrib %>% head(6), format = "html", row.names = FALSE)
+knitr::kable(largest.contrib[1:6, ], format = "html", row.names = FALSE)
 ```
 
 <table>
@@ -1649,6 +1653,24 @@ ggplot(data = greatest.by_decade, aes(x = Decade, y = Country)) +
 ```
 
 <img src="./img/figure-08.png" width="816" />
+
+**Table 7: Top 10 greatest movies (2018 ranking)**
+
+``` r
+greatest[1:10, c("Title", "Director", "Year", "Countries", "Decade")]
+```
+
+    ##                     Title              Director Year Countries Decade
+    ## 1            Citizen Kane         Welles, Orson 1941       USA  1940s
+    ## 2                 Vertigo     Hitchcock, Alfred 1958       USA  1950s
+    ## 3   2001: A Space Odyssey      Kubrick, Stanley 1968   UK, USA  1960s
+    ## 4  Rules of the Game, The          Renoir, Jean 1939    France  1930s
+    ## 5             Tokyo Story         Ozu, Yasujiro 1953     Japan  1950s
+    ## 6          Godfather, The Coppola, Francis Ford 1972       USA  1970s
+    ## 7                      8½     Fellini, Federico 1963     Italy  1960s
+    ## 8                 Sunrise          Murnau, F.W. 1927       USA  1920s
+    ## 9          Searchers, The            Ford, John 1956       USA  1950s
+    ## 10          Seven Samurai       Kurosawa, Akira 1954     Japan  1950s
 
 #### **Observations**
 
