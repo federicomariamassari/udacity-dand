@@ -33,7 +33,7 @@ greatest <- rbind(greatest_pt1[, -c(2:3)], greatest_pt2)
 
 # DATA CLEANING
 
-# Character-to-factor conversion
+# (1) Character-to-factor conversion
 convert.to.factor <- function(df) {
     # Convert all "chr" columns of a data frame to "Factor".
     #
@@ -49,3 +49,13 @@ convert.to.factor <- function(df) {
 
 world <- convert.to.factor(world)
 greatest <- convert.to.factor(greatest)
+
+# (2)Factor level inclusion
+# Distinguish between China and Hong Kong at level "region"
+levels(world$region) <- c(levels(world$region), "Hong Kong")
+index <- as.numeric(rownames(subset(world, subregion == "Hong Kong")))
+world[index, ]$region <- "Hong Kong"
+
+# Add new row related to Hong Kong in auxiliary data frame
+continents <- rbind(continents,
+data.frame(Continent = "Asia", Country = "Hong Kong"))
