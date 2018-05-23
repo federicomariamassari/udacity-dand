@@ -59,3 +59,8 @@ world[index, ]$region <- "Hong Kong"
 # Add new row related to Hong Kong in auxiliary data frame
 continents <- rbind(continents,
 data.frame(Continent = "Asia", Country = "Hong Kong"))
+
+# (3) Rename columns
+world <- rename(world, Country = region)
+greatest <- rename(greatest, Countries = Country)
+directors <- rename(directors, Dir.Rank = Rank)
