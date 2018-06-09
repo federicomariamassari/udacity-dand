@@ -1422,7 +1422,7 @@ Figure 6 is a choropleth map of contributing countries by predominant faith, and
 
 Approximately 87.5% of individual contributions belong to nations whose prevailing faith (which may or may not be the official one) is Christian. These nations include, among the others, the United States and Western Europe, which alone make up for ~80% of total contributions.
 
-The second most common faith in the list is Irreligion, with ~8% (mainly because of Japan, Hong Kong, and China), while Islam places third, with only ~2%. Apart from Iran, the countries in which Islam is prevalent have historically contributed a scant number of movies to the list (e.g., North African ones, compare Figures 1 and 6).
+The second most common faith in the list is Irreligion, with ~8% (mainly because of Japan, Hong Kong, and China), while Islam places third, with only ~2%. Apart from Iran, the countries in which Islam is prevalent have historically contributed a scant number of movies to the list (e.g., North African nations, compare Figures 1 and 6).
 
 ### **B. Timeline of contributions to the list**
 
@@ -1606,19 +1606,19 @@ Data source: theyshootpictures.com
 
 #### **Observations**
 
-Figure 7 breaks down the timeline of co-productions by continent. For each subplot, a conditional median value—the year in which half of the entries for the related group were produced—is included as a dashed red line with superimposed text. Also, axes scales are not freed (i.e., they are kept constant across subplots), so that timelines (x-axis) are uniform, and magnitude (y-axis) is accounted for. Histogram binwidth is equal to 5 years.
+Figure 7 breaks down the timeline of co-productions by continent. For each subplot, a conditional median value—the year in which half of the entries for the related group were produced—is included as a dashed red line with superimposed text. Also, axes scales are not freed (i.e., they are kept constant across subplots), so that the timelines (x-axis) are uniform, and magnitude (y-axis) is accounted for. Histogram binwidth is equal to 5 years.
 
 In general, the conditional distributions appear to be negatively skewed. They have:
 
--   a *long left tail*, showing that fewer contributions to the list were made in the early years of world cinema;
+-   *a long left tail*, showing that fewer contributions to the list were made in the early years of world cinema;
 
--   the *body shifted to the right*, meaning that, on average, most of the contributions to the list were made since the 1970s. This latter feature is also evident in the conditional median values, which are all higher than 1970 (i.e., for each continent, 50% of the contributions were not included until at least the 1970s).
+-   *the body shifted to the right*, meaning that, on average, most contributions to the list were made since the 1970s. This latter feature is also evident in the conditional median values, which are all higher than 1970 (i.e., for each continent, 50% of the contributions were not included until at least the 1970s).
 
 In addition, the distributions appear to be "humped", or bimodal, with at least one decade in between the two peaks in which contributions were fewer than usual. The humps are particularly visible in the densities of Western Europe and Asia, and less in that of North America (whose distribution more closely resembles a Gaussian or Student's t).
 
 Let us analyse a few of the humps further:
 
--   For **Western Europe**, the humps relate to the periods 1960s-1970s and 1990s-2000s. The first period includes contributions from critically acclaimed directors Federico Fellini (*8½*, *La Dolce Vita*), Jean-Luc Godard (*Breathless*, *Contempt*), Ingmar Bergman (*Persona*, *The Seventh Seal*), Stanley Kubrick (*2001: A Space Odyssey*, *Dr. Strangelove or: How I Learned to Stop Worrying and Love the Bomb*), and Luis Buñuel (*Viridiana*, *The Exterminating Angel*). The second one, however, has a peak due to same continent co-productions: an example is Lars von Triers' *Dancer in the Dark* (2000), shot in no less than ten Western European countries.
+-   For **Western Europe**, the humps relate to the periods 1960s-1970s and 1990s-2000s. The first period is the Golden Age of European cinema, and includes genuine contributions from critically acclaimed directors such as: Federico Fellini (*8½*, *La Dolce Vita*), Ingmar Bergman (*Persona*, *The Seventh Seal*), Jean-Luc Godard (*Breathless*, *Contempt*), Luis Buñuel (*Viridiana*, *The Exterminating Angel*), and Stanley Kubrick (*2001: A Space Odyssey*, *Dr. Strangelove or: How I Learned to Stop Worrying and Love the Bomb*). The second period, however, has a spurious peak due to same continent co-productions (he largest co-production efforts were all made between the 90s and the 00s): an example is Lars von Triers' *Dancer in the Dark* (2000), shot in no less than eleven Western European countries (Table 6).
 
 -   For **Asia**, the humps correspond to the periods 1950s-1960s and 1980s-2000s. The first period is widely regarded as the Golden Age of Asian cinema, when legendary Japanese directors Kenji Mizoguchi (*Ugetsu Monogatari*, *Sansho the Bailiff*, *The Life of Oharu*), Akira Kurosawa (*Seven Samurai*, *Rashomon*, *Ikiru*, *Throne of Blood*, *Yojimbo*), Yasujiro Ozu (*Tokyo Story*, *Late Spring*, *An Autumn Afternoon*), and Indian filmmaker Satyajit Ray (*The Apu Trilogy*, *Charulata*, *The Music Room*) made their masterpieces. The second period includes, among the others, movies by Taiwan's New Wave directors Edward Yang (*A Brighter Summer's Day*, *Yi Yi*) and Hou Hsiao-hsien (*A City of Sadness*), China's Chen Kaige (*Yellow Earth*, *Farewell My Concubine*) and Zhang Yimou (*Raise the Red Lantern*, *Red Sorghum*), Hong Kong's Wong Kar-wai (*In the Mood for Love*, *Chungking Express*), Japan's Hideo Miyazaki (*Spirited Away*, *My Neighbour Totoro*) and Thailand's Apichatpong Weerasethakul (*Tropical Malady*).
 
