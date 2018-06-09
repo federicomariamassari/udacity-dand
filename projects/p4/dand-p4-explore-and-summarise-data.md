@@ -1681,6 +1681,14 @@ greatest[1:10, c("Title", "Director", "Year", "Countries", "Decade")]
 
 Figure 8 is a heatmap of the maximum ranks attained, throughout the decades, by each country represented in the list. The redder a particular tile is, the higher the position reached by the associated country in a given decade. Thus, maroon tiles (or clusters of dark red tiles) may help detect the Golden and Silver Ages of cinema, if any, for the desired countries.
 
+It may be useful to make some preliminary comments on the figure. In my opinion, the following features of the plot stand out the most:
+
+- _The continuous series of dark red tiles for France_. France is the only nation to have produced at least one critically acclaimed movie since the birth of cinema, and the maximum ranked movie in each decade has never been in the bottom 1,000. Also—almost uninterruptedly since the 1920s—France has contributed at least one top 100 film to the list every ten years;
+
+a continuous, dark red line for France: almost uninterruptedly since the 1920s, France has never failed to contribute a top 100 film to the list in each decade; France the only one with movie since the 1890s, and no maximum rank attained in each decade below 1000.
+
+- several maroon clusters for the United States (an uninterrupted cluster of maroon tiles from the '40s to the '70s).
+
 
 ### **C. Duration**
 
