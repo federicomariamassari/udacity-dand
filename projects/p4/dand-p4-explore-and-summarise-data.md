@@ -1428,7 +1428,7 @@ The second most common faith in the list is Irreligion, with ~8% (mainly because
 
 The second dimension I would like to explore is time. Interesting questions could be:
 
--   *What are the conditional (i.e., by continent) distributions of co-productions through time?*
+-   *Which shapes do the conditional (i.e., by continent) distributions of co-productions through time have?*
 
 -   *Which are the golden and silver periods of cinema, if any, for each of the represented countries in the list?*
 
@@ -1626,7 +1626,7 @@ Let us analyse the humps further:
 
 - For **Africa**, **Eastern Europe**, **South America**, and **Oceania**, the humps are less visible, but it is still possible to detect the peaks associated to the years of greatest contribution to the list. For Africa, the peak is in the 2000s; however, this is spurious, since it double counts contributions for Ousmane Sembene's film _Moolaadé_ (Table 6). For Eastern Europe (including Russia) the peaks are in the '30s, '60s, and across the centuries. The first period includes films mostly by Soviet directors (e.g., Dziga Vertov, and the above cited Sergei Eisenstein). The second one—interestingly—movies by filmmakers outside the bloc, especially from Czechoslovakia (e.g., Vera Chytilová, Milos Forman), Poland (e.g., Roman Polanski), Hungary (e.g., Miklós Jancsó), and Ukraine (e.g., Larisa Shepitko, Sergei Bondarchuk). The last one includes several co-production efforts between Western and Eastern European nations—possibly the reason why a larger than average number of Eastern European films were contributed to the list—as well as Theo Angelopoulos' *Ulysses' Gaze* (Table 6), which double counts contributions by four of the latter. For South America, the peaks are in the '60s-'70s and in the '80s. In the first period, additions to the list are mostly from Brazil (e.g., Glauber Rocha, Nelson Pereira dos Santos) and Argentina (e.g., Getino Octavio and Fernando E. Solanas), with a notable effort by Patricio Guzmán (*The Battle of Chile, Pts. 1-3*) co-produced by Chile, Cuba, and Venezuela. In the last one, contributions are almost all by Brazil. Finally, for Oceania, the peaks are in the '70s-'80s and across the centuries. Australian films dominate the first period (thanks to filmmakers like Peter Weir and George Miller), while co-production efforts between Australia and New Zealand prevail in the latter.
 
-
+The shapes of the conditional distributions tell us something about the number of films produced in a given period (with some caveats related to spurious peaks), but do not say much about the relative quality of such movies. The latter is well described by the _ranking_ dimension. To understand more about the Golden and Silver Ages of world cinema, it could be useful to incorporate such dimension in our timeline.
 
 ### **Golden and silver periods of world cinema**
 
