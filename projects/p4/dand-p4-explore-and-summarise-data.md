@@ -1679,6 +1679,9 @@ greatest[1:10, c("Title", "Director", "Year", "Countries", "Decade")]
 
 #### **Observations**
 
+Figure 8 is a heatmap of the maximum ranks attained, throughout the decades, by each country represented in the list. The redder a particular tile is, the higher the position reached by the associated country in a given decade. Thus, maroon tiles (or clusters of dark red tiles) may help detect the Golden and Silver Ages of cinema, if any, for the desired countries.
+
+
 ### **C. Duration**
 
 ``` r
