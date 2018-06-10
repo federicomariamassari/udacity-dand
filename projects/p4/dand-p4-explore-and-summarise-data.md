@@ -1685,7 +1685,7 @@ It may be useful to make some preliminary comments on the figure. In my opinion,
 
 - _The continuous series of dark red tiles for France._ France is the only nation to have produced at least one critically acclaimed movie since the birth of cinema, and the maximum ranked movie in each decade has never been in the bottom 1,000. Also—almost uninterruptedly since the 1920s—France has contributed at least one top 100 film to the list every ten years;
 
-- _The impressive cluster of maroon tiles (signalling top 10 movies) for the United States._
+- _The impressive cluster of maroon tiles (signalling top 10 movies) for the United States._ In the 1920s, and in each decade between the 1940s and the 1970s included, the United States contributed at least one top 10 film to the list. Also, for at least eighty years, they have been co-producing at least one top 100 movie each decade.
 
 ### **C. Duration**
 
