@@ -1694,9 +1694,19 @@ Let us now analyse the Golden and Silver Ages of cinema for a few selected count
 -   The first one I am interested in is **Japan**.
 
 ``` r
-# Filter out movies not co-produced in Japan and among the bottom 1,000
-ggplot(data = subset(greatest, Countries %in% "Japan" &
-                       Rank.Category != "Bottom 1000"),
+# List non-Japanese directors whose films were co-produced in Japan
+not_japanese <- c("Andersson, Roy", "Bong Joon-ho", "Cissé, Souleymane",
+                  "Coppola, Sofia", "Denis, Claire", "Folman, Ari",
+                  "Hou Hsiao-hsien", "Jia Zhangke", "Resnais, Alain",
+                  "Salles, Walter", "Sokurov, Aleksandr",
+                  "von Sternberg, Josef", "Yang, Edward")
+```
+
+``` r
+# Filter out movies by non-Japanese directors and among the bottom 1,000
+ggplot(data = subset(greatest, grepl("Japan", Countries)
+                     & !Director %in% not_japanese
+                     & Rank.Category != "Bottom 1000"),
        aes(x = Year, y = Pos, color = Rank.Category)) +
   geom_point() +
   # Include film titles and ranking
@@ -1705,7 +1715,7 @@ ggplot(data = subset(greatest, Countries %in% "Japan" &
   scale_x_continuous(breaks = seq(1920, 2010, 5)) +
   # Reverse y-axis scale, so that highest ranked movies are on top
   scale_y_reverse(breaks = seq(0, 1000, 100)) +
-  # Use inverted viridis colour scale to signal ranking
+  # Use inverted viridis colour scale to signal rank categories
   viridis::scale_color_viridis(discrete = TRUE, direction = -1) +
   ggtitle("Figure 9: Timeline of Japan's greatest films") +
   ylab("Rank") +
@@ -1716,7 +1726,7 @@ ggplot(data = subset(greatest, Countries %in% "Japan" &
 
 <img src="./img/figure-09.png" width="816" />
 
-#### __Observations__
+#### **Observations**
 
 ### **C. Duration**
 
