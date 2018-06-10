@@ -1103,7 +1103,7 @@ world_base +
 
 #### **Observations**
 
-The distribution of co-productions appears to be heavily skewed, with very few countries contributing most entries to the list. These countries (France, Germany, Italy, Japan, the United Kingdom, and the United States) either produced or helped to produce more than 100 films each. The USSR (not shown) was the only territory committing between 51 and 100 movies to the list, but total contributions are now split among former bloc members. Of the latter, Russia is the most prolific, with 11-50 films made. The least represented continent, in terms of both countries shown and number of co-productions, is certainly Africa. In particular, with the exception of Cameroon, no state in the Central, Eastern, or Southern region of Africa appears in the list. Other prominent black areas are in the Middle East (Syria, Iraq, and the Arabian Peninsula), Central and East Asia (the *-stan* nations, Mongolia), South-East Asia (Malaysia and Indonesia, among the others), and Latin America.
+The distribution of co-productions appears to be heavily skewed, with very few countries contributing most entries to the list. These countries (France, Germany, Italy, Japan, the United Kingdom, and the United States) either produced or helped produce more than 100 films each. The USSR (not shown) was the only territory committing between 51 and 100 movies to the list, but total contributions are now split among former bloc members. Of the latter, Russia is the most prolific, with 11-50 films made. The least represented continent, in terms of both countries shown and number of co-productions, is certainly Africa. In particular, with the exception of Cameroon, no state in the Central, Eastern, or Southern region of Africa appears in the list. Other prominent black areas are in the Middle East (Syria, Iraq, and the Arabian Peninsula), Central and East Asia (the *-stan* nations, Mongolia), South-East Asia (Malaysia and Indonesia, among the others), and Latin America.
 
 These findings raise interesting questions.
 
@@ -1152,7 +1152,7 @@ stats.table <- function(df, group, column) {
   #  column: The data frame column to summarise.
   #
   # Returns:
-  #  A summary data frame with group means, medians, and standard deviations
+  #  A summary data frame with group means, medians, and standard deviations,
   #  rounded to the second decimal.
   #
   group <- enquo(group)
@@ -1622,11 +1622,11 @@ Let us analyse the humps further:
 
 -   For **Asia**, the humps correspond to the periods 1950s-1960s and 1980s-2000s. The first period is also regarded as the Golden Age of Asian cinema, when legendary Japanese directors Kenji Mizoguchi (*Ugetsu Monogatari*, *Sansho the Bailiff*, *The Life of Oharu*), Akira Kurosawa (*Seven Samurai*, *Rashomon*, *Ikiru*, *Throne of Blood*, *Yojimbo*), Yasujiro Ozu (*Tokyo Story*, *Late Spring*, *An Autumn Afternoon*), and Indian filmmaker Satyajit Ray (*The Apu Trilogy*, *Charulata*, *The Music Room*) made their masterpieces. The second period includes, among the others, movies by Taiwan's New Wave directors Edward Yang (*A Brighter Summer's Day*, *Yi Yi*) and Hou Hsiao-hsien (*A City of Sadness*), China's Chen Kaige (*Yellow Earth*, *Farewell My Concubine*) and Zhang Yimou (*Raise the Red Lantern*, *Red Sorghum*), Hong Kong's Wong Kar-wai (*In the Mood for Love*, *Chungking Express*), Japan's Hideo Miyazaki (*Spirited Away*, *My Neighbour Totoro*) and Thailand's Apichatpong Weerasethakul (*Tropical Malady*).
 
--   For **North America** (mostly the United States), the humps are wider and less pronounced, showing that productions in the continent have been largely consistent throughout the history of cinema. Indeed, Hollywood has always been [the most dominant force in the cinema industry](https://en.wikipedia.org/wiki/Cinema_of_the_United_States) as well as a pole of attraction for some of the most talented international directors. Alfred Hitchcock, for instance, shot 13 out of his 17 films in the list in the United States; to name the highest ranked: *Vertigo* (#2), *Psycho* (#26), *Rear Window* (#41), and *North by Northwest* (#60).
+-   For **North America** (mostly the United States), the humps are wider and less pronounced, showing that productions in the continent have been largely consistent throughout the history of cinema. Indeed, Hollywood has always been [the most dominant force in the cinema industry](https://en.wikipedia.org/wiki/Cinema_of_the_United_States) as well as a pole of attraction for some of the most talented international directors. Alfred Hitchcock, for instance, shot 13 out of his 17 films in the list in the United States; to name the highest ranked: *Vertigo* (\#2), *Psycho* (\#26), *Rear Window* (\#41), and *North by Northwest* (\#60).
 
-- For **Africa**, **Eastern Europe**, **South America**, and **Oceania**, the humps are less visible, but it is still possible to detect the peaks associated to the years of greatest contribution to the list. For Africa, the peak is in the 2000s; however, this is spurious, since it double counts contributions for Ousmane Sembene's film _Moolaadé_ (Table 6). For Eastern Europe (including Russia) the peaks are in the '30s, '60s, and across the centuries. The first period includes films mostly by Soviet directors (e.g., Dziga Vertov, and the above cited Sergei Eisenstein). The second one—interestingly—movies by filmmakers outside the bloc, especially from Czechoslovakia (e.g., Vera Chytilová, Milos Forman), Poland (e.g., Roman Polanski), Hungary (e.g., Miklós Jancsó), and Ukraine (e.g., Larisa Shepitko, Sergei Bondarchuk). The last one includes several co-production efforts between Western and Eastern European nations—possibly the reason why a larger than average number of Eastern European films were contributed to the list—as well as Theo Angelopoulos' *Ulysses' Gaze* (Table 6), which double counts contributions by four of the latter. For South America, the peaks are in the '60s-'70s and in the '80s. In the first period, additions to the list are mostly from Brazil (e.g., Glauber Rocha, Nelson Pereira dos Santos) and Argentina (e.g., Getino Octavio and Fernando E. Solanas), with a notable effort by Patricio Guzmán (*The Battle of Chile, Pts. 1-3*) co-produced by Chile, Cuba, and Venezuela. In the last one, contributions are almost all by Brazil. Finally, for Oceania, the peaks are in the '70s-'80s and across the centuries. Australian films dominate the first period (thanks to filmmakers like Peter Weir and George Miller), while co-production efforts between Australia and New Zealand prevail in the latter.
+-   For **Africa**, **Eastern Europe**, **South America**, and **Oceania**, the humps are less visible, but it is still possible to detect the peaks associated to the years of greatest contribution to the list. For Africa, the peak is in the 2000s; however, this is spurious, since it double counts contributions for Ousmane Sembene's film *Moolaadé* (Table 6). For Eastern Europe (including Russia) the peaks are in the '30s, '60s, and across the centuries. The first period includes films mostly by Soviet directors (e.g., Dziga Vertov, and the above cited Sergei Eisenstein). The second one—interestingly—movies by filmmakers outside the bloc, especially from Czechoslovakia (e.g., Vera Chytilová, Milos Forman), Poland (e.g., Roman Polanski), Hungary (e.g., Miklós Jancsó), and Ukraine (e.g., Larisa Shepitko, Sergei Bondarchuk). The last one includes several co-production efforts between Western and Eastern European nations—possibly the reason why a larger than average number of Eastern European films were contributed to the list—as well as Theo Angelopoulos' *Ulysses' Gaze* (Table 6), which double counts contributions by four of the latter. For South America, the peaks are in the '60s-'70s and in the '80s. In the first period, additions to the list are mostly from Brazil (e.g., Glauber Rocha, Nelson Pereira dos Santos) and Argentina (e.g., Getino Octavio and Fernando E. Solanas), with a notable effort by Patricio Guzmán (*The Battle of Chile, Pts. 1-3*) co-produced by Chile, Cuba, and Venezuela. In the last one, contributions are almost all by Brazil. Finally, for Oceania, the peaks are in the '70s-'80s and across the centuries. Australian films dominate the first period (thanks to filmmakers like Peter Weir and George Miller), while co-production efforts between Australia and New Zealand prevail in the latter.
 
-The shapes of the conditional distributions tell us something about the number of films produced in a given period (with some caveats related to spurious peaks), but do not say much about the relative quality of such movies. The latter is well described by the _ranking_ dimension. To understand more about the Golden and Silver Ages of world cinema, it could be useful to incorporate such dimension in our timeline.
+The shapes of the conditional distributions tell us something about the number of films produced in a given period (with some caveats related to spurious peaks), but do not say much about the relative quality of such movies. The latter is well described by the *ranking* dimension. To understand more about the Golden and Silver Ages of world cinema, it could be useful to incorporate such dimension in our timeline.
 
 ### **Golden and silver periods of world cinema**
 
@@ -1683,11 +1683,166 @@ Figure 8 is a heatmap of the maximum ranks attained, throughout the decades, by 
 
 It may be useful to make some preliminary comments on the figure. In my opinion, the following features of the plot stand out the most:
 
-- _The continuous series of dark red tiles for France._ France is the only nation to have produced at least one critically acclaimed movie since the birth of cinema, and the maximum ranked movie in each decade has never been in the bottom 1,000. Also—almost uninterruptedly since the 1920s—France has contributed at least one top 100 film to the list every ten years;
+-   *The continuous series of dark red tiles for France.* France is the only nation to have produced at least one critically acclaimed movie since the birth of cinema, and the maximum ranked movie in each decade has never been in the bottom 1,000. Also—almost uninterruptedly since the 1920s—France has contributed at least one top 100 film to the list every ten years;
 
-- _The impressive cluster of maroon tiles (signalling top 10 movies) for the United States._ In the 1920s, and in each decade between the 1940s and the 1970s included, the United States contributed at least one top 10 film to the list. Also, for at least eighty years, they have been co-producing at least one top 100 movie each decade.
+-   *The impressive cluster of maroon tiles (signalling top 10 movies) for the United States.* In the 1920s, and in each decade between the 1940s and the 1970s included, the United States contributed at least one top 10 film to the list. Also, for at least eighty years, they have been co-producing at least one top 100 movie each decade.
 
-Additional comments are in order. One is that the maroon tiles in the plot are nine, instead of ten: this is due to the fact that the United States produced two top 10 movies in the 1950s, John Ford's _The Searchers_ in 1956, and Alfred Hitchcock's _Vertigo_ in 1958 (Table 7). The other is that the heatmap can not only be read by rows, but also by columns: this way, one can find out which decade was the most important for world cinema (possibly the 1960s).
+Additional comments are in order. One is that the maroon tiles in the plot are nine, instead of ten: this is due to the fact that the United States produced two top 10 movies in the 1950s, John Ford's *The Searchers* in 1956, and Alfred Hitchcock's *Vertigo* in 1958 (Table 7). The other is that the heatmap can not only be read by rows, but also by columns: this way, one can find out which decade was the most important for world cinema (possibly the 1960s).
+
+Let us now analyse the Golden and Silver Ages of cinema for a few selected countries in the list.
+
+-   The first one I am interested in is **Japan**.
+
+``` r
+# Filter out movies not co-produced in Japan and among the bottom 1,000
+ggplot(data = subset(greatest, Countries %in% "Japan" &
+                       Rank.Category != "Bottom 1000"),
+       aes(x = Year, y = Pos, color = Rank.Category)) +
+  geom_point() +
+  # Include film titles and ranking
+  ggrepel::geom_text_repel(aes(label = paste(Title, ", ", Pos, sep = "")),
+                           color = "black", size = 2.5, show.legend = FALSE) +
+  scale_x_continuous(breaks = seq(1920, 2010, 5)) +
+  # Reverse y-axis scale, so that highest ranked movies are on top
+  scale_y_reverse(breaks = seq(0, 1000, 100)) +
+  # Use inverted viridis colour scale to signal ranking
+  viridis::scale_color_viridis(discrete = TRUE, direction = -1) +
+  ggtitle("Figure 9: Timeline of Japan's greatest films") +
+  ylab("Rank") +
+  labs(color = "Maximum rank reached",
+       caption = "Data source: theyshootpictures.com") +
+  shared_themes
+```
+
+<img src="./img/figure-09.png" width="816" />
+
+``` r
+subset(greatest, Countries %in% "Japan" & Rank.Category != "Bottom 1000")
+```
+
+    ##     Pos                                 Title             Director Year
+    ## 5     5                           Tokyo Story        Ozu, Yasujiro 1953
+    ## 10   10                         Seven Samurai      Kurosawa, Akira 1954
+    ## 20   20                              Rashomon      Kurosawa, Akira 1950
+    ## 50   50                     Ugetsu monogatari     Mizoguchi, Kenji 1953
+    ## 73   73                           Late Spring        Ozu, Yasujiro 1949
+    ## 93   93                    Sansho the Bailiff     Mizoguchi, Kenji 1954
+    ## 113 113                                 Ikiru      Kurosawa, Akira 1952
+    ## 203 203                         Spirited Away      Miyazaki, Hayao 2001
+    ## 241 241                    Life of Oharu, The     Mizoguchi, Kenji 1952
+    ## 253 253                       Floating Clouds        Naruse, Mikio 1955
+    ## 261 261 Story of the Last Chrysanthemums, The     Mizoguchi, Kenji 1939
+    ## 262 262                   My Neighbour Totoro      Miyazaki, Hayao 1988
+    ## 268 268                       Throne of Blood      Kurosawa, Akira 1957
+    ## 283 283                  Autumn Afternoon, An        Ozu, Yasujiro 1962
+    ## 342 342                    I Was Born, But...        Ozu, Yasujiro 1932
+    ## 359 359                    Woman in the Dunes Teshigahara, Hiroshi 1964
+    ## 383 383                          High and Low      Kurosawa, Akira 1963
+    ## 393 393                               Yojimbo      Kurosawa, Akira 1961
+    ## 416 416                          Early Summer        Ozu, Yasujiro 1951
+    ## 448 448                             Kagemusha      Kurosawa, Akira 1980
+    ## 571 571                               Hana-Bi      Kitano, Takeshi 1997
+    ## 652 652                            After Life    Koreeda, Hirokazu 1998
+    ## 686 686  Emperor's Naked Army Marches On, The          Hara, Kazuo 1987
+    ## 692 692                              Harakiri    Kobayashi, Masaki 1962
+    ## 731 731                          Dodes'ka-den      Kurosawa, Akira 1970
+    ## 757 757                     Vengeance is Mine      Imamura, Shohei 1979
+    ## 806 806                     Princess Mononoke      Miyazaki, Hayao 1997
+    ## 821 821                       Branded to Kill       Suzuki, Seijun 1967
+    ## 822 822                                 Akira     Otomo, Katsuhiro 1988
+    ## 828 828                       Street of Shame     Mizoguchi, Kenji 1956
+    ## 829 829                    End of Summer, The        Ozu, Yasujiro 1961
+    ## 857 857                     Naked Island, The       Shindo, Kaneto 1960
+    ## 876 876                Grave of the Fireflies       Takahata, Isao 1988
+    ## 879 879                         47 Ronin, The     Mizoguchi, Kenji 1941
+    ## 911 911               Ballad of Narayama, The      Imamura, Shohei 1983
+    ## 913 913                              Anatahan von Sternberg, Josef 1953
+    ## 944 944                        Floating Weeds        Ozu, Yasujiro 1959
+    ## 946 946                 Chikamatsu monogatari     Mizoguchi, Kenji 1954
+    ## 959 959                               Kwaidan    Kobayashi, Masaki 1964
+    ## 985 985                             Red Beard      Kurosawa, Akira 1965
+    ##     Countries Length                             Genre Colour
+    ## 5       Japan    134                             Drama     BW
+    ## 10      Japan    200            Drama, Action, History     BW
+    ## 20      Japan     88                      Drama, Crime     BW
+    ## 50      Japan     96                             Drama     BW
+    ## 73      Japan    108            Romance, Drama, Family     BW
+    ## 93      Japan    125                             Drama     BW
+    ## 113     Japan    143                             Drama     BW
+    ## 203     Japan    124      Animated, Adventure, Fantasy    Col
+    ## 241     Japan    146                             Drama     BW
+    ## 253     Japan    123                    Romance, Drama     BW
+    ## 261     Japan    148                    Romance, Drama     BW
+    ## 262     Japan     86         Fantasy, Family, Animated    Col
+    ## 268     Japan    108                        War, Drama     BW
+    ## 283     Japan    115                             Drama    Col
+    ## 342     Japan    100                     Drama, Comedy     BW
+    ## 359     Japan    127                             Drama     BW
+    ## 383     Japan    142            Thriller, Crime, Drama     BW
+    ## 393     Japan    110                     Drama, Action     BW
+    ## 416     Japan    135                             Drama     BW
+    ## 448     Japan    159               War, Drama, History    Col
+    ## 571     Japan    103                      Drama, Crime    Col
+    ## 652     Japan    118                    Drama, Fantasy    Col
+    ## 686     Japan    122       Documentary, War, Political    Col
+    ## 692     Japan    133            Drama, Action, History     BW
+    ## 731     Japan    140                    Fantasy, Drama    Col
+    ## 757     Japan    129            Thriller, Crime, Drama    Col
+    ## 806     Japan    134      Animated, Adventure, Fantasy    Col
+    ## 821     Japan     91              Crime, Action, Drama     BW
+    ## 822     Japan    124 Animated, Science Fiction, Action    Col
+    ## 828     Japan     87                             Drama     BW
+    ## 829     Japan    103                             Drama    Col
+    ## 857     Japan     94                             Drama     BW
+    ## 876     Japan     93              Animated, War, Drama    Col
+    ## 879     Japan    219            History, Action, Drama     BW
+    ## 911     Japan    130                             Drama    Col
+    ## 913     Japan     92                        War, Drama     BW
+    ## 944     Japan    119                             Drama    Col
+    ## 946     Japan    100                    Drama, Romance     BW
+    ## 959     Japan    164                   Horror, Fantasy    Col
+    ## 985     Japan    185                             Drama     BW
+    ##     Co.Production Co.Director Decade    Rank.Category
+    ## 5              No          No  1950s           Top 10
+    ## 10             No          No  1950s           Top 10
+    ## 20             No          No  1950s   From 11 to 100
+    ## 50             No          No  1950s   From 11 to 100
+    ## 73             No          No  1940s   From 11 to 100
+    ## 93             No          No  1950s   From 11 to 100
+    ## 113            No          No  1950s  From 101 to 500
+    ## 203            No          No  2000s  From 101 to 500
+    ## 241            No          No  1950s  From 101 to 500
+    ## 253            No          No  1950s  From 101 to 500
+    ## 261            No          No  1930s  From 101 to 500
+    ## 262            No          No  1980s  From 101 to 500
+    ## 268            No          No  1950s  From 101 to 500
+    ## 283            No          No  1960s  From 101 to 500
+    ## 342            No          No  1930s  From 101 to 500
+    ## 359            No          No  1960s  From 101 to 500
+    ## 383            No          No  1960s  From 101 to 500
+    ## 393            No          No  1960s  From 101 to 500
+    ## 416            No          No  1950s  From 101 to 500
+    ## 448            No          No  1980s  From 101 to 500
+    ## 571            No          No  1990s From 501 to 1000
+    ## 652            No          No  1990s From 501 to 1000
+    ## 686            No          No  1980s From 501 to 1000
+    ## 692            No          No  1960s From 501 to 1000
+    ## 731            No          No  1970s From 501 to 1000
+    ## 757            No          No  1970s From 501 to 1000
+    ## 806            No          No  1990s From 501 to 1000
+    ## 821            No          No  1960s From 501 to 1000
+    ## 822            No          No  1980s From 501 to 1000
+    ## 828            No          No  1950s From 501 to 1000
+    ## 829            No          No  1960s From 501 to 1000
+    ## 857            No          No  1960s From 501 to 1000
+    ## 876            No          No  1980s From 501 to 1000
+    ## 879            No          No  1940s From 501 to 1000
+    ## 911            No          No  1980s From 501 to 1000
+    ## 913            No          No  1950s From 501 to 1000
+    ## 944            No          No  1950s From 501 to 1000
+    ## 946            No          No  1950s From 501 to 1000
+    ## 959            No          No  1960s From 501 to 1000
+    ## 985            No          No  1960s From 501 to 1000
 
 ### **C. Duration**
 
@@ -1705,7 +1860,7 @@ box_plt <- ggplot(data = subset(greatest, !is.na(Length)),
   # Include mean duration per decade
   stat_summary(fun.y = mean, geom = "point", size = 1, shape = 3,
                color = "tomato", show.legend = FALSE) +
-  ggtitle("Figure 9: Boxplot of movie durations by decade") +
+  ggtitle("Figure 10: Boxplot of movie durations by decade") +
   xlab("Decade") +
   ylab("Duration (minutes)") +
   shared_themes
@@ -1723,7 +1878,7 @@ bar_plt <- ggplot(data = greatest, aes(x = Decade)) +
 gridExtra::grid.arrange(box_plt, bar_plt, layout_matrix = cbind(c(1, 1, 1, 2)))
 ```
 
-<img src="./img/figure-09.png" width="816" />
+<img src="./img/figure-10.png" width="816" />
 
 ### **Most frequent co-productions**
 
@@ -1966,13 +2121,13 @@ world_transparent +
                  y = Latitude.x, yend = Latitude.y,
                  alpha = Two.Country.Relationships), color = "#a50026") +
   scale_alpha_manual(values = c(0.05, 0.1, 0.2, 0.5, 1)) +
-  ggtitle(paste("Figure 10: Most frequent two-country co-production",
+  ggtitle(paste("Figure 11: Most frequent two-country co-production",
                 "relationships")) +
   labs(alpha = "Two-country relationships",
        caption = "Data sources: theyshootpictures.com, Google Developers")
 ```
 
-<img src="./img/figure-10.png" width="816" />
+<img src="./img/figure-11.png" width="816" />
 
 #### **Observations**
 
@@ -2003,7 +2158,7 @@ p1 <- ggplot(data = both, aes(x = Year, y = both$n.x / both$n.y)) +
   # Highlight black-and-white-colour trend reversals
   annotate("rect", xmin = c(1953, 1965), xmax = c(1958, 1970),
            ymin = 0, ymax = Inf, alpha = 0.4) +
-  ggtitle("Figure 11: Timeline of colour/black-and-white prevalence") +
+  ggtitle("Figure 12: Timeline of colour/black-and-white prevalence") +
   xlab("Year") +
   ylab("Black-and-white-to-colour ratio") +
   shared_themes
@@ -2023,7 +2178,7 @@ p2 <- ggplot(data = subset(greatest, Colour %in% c("BW", "Col")),
 gridExtra::grid.arrange(p1, p2, ncol = 1, heights = 2:1, widths = 1:1)
 ```
 
-<img src="./img/figure-11.png" width="816" />
+<img src="./img/figure-12.png" width="816" />
 
 #### **Observations**
 
