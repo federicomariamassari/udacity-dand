@@ -1687,6 +1687,8 @@ It may be useful to make some preliminary comments on the figure. In my opinion,
 
 - _The impressive cluster of maroon tiles (signalling top 10 movies) for the United States._ In the 1920s, and in each decade between the 1940s and the 1970s included, the United States contributed at least one top 10 film to the list. Also, for at least eighty years, they have been co-producing at least one top 100 movie each decade.
 
+Additional comments are in order. One is that the maroon tiles in the plot are nine, instead of ten: this is due to the fact that the United States produced two top 10 movies in the 1950s, John Ford's _The Searchers_ in 1956, and Alfred Hitchcock's _Vertigo_ in 1958 (Table 7). The other is that the heatmap can not only be read by rows, but also by columns: this way, one can find out which decade was the most important for world cinema (possibly the 1960s).
+
 ### **C. Duration**
 
 ``` r
