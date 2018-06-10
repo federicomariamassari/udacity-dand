@@ -1683,9 +1683,9 @@ Figure 8 is a heatmap of the maximum ranks attained, throughout the decades, by 
 
 It may be useful to make some preliminary comments on the figure. In my opinion, the following features of the plot stand out the most:
 
-- _The continuous series of dark red tiles for France_. France is the only nation to have produced at least one critically acclaimed movie since the birth of cinema, and the maximum ranked movie in each decade has never been in the bottom 1,000. Also—almost uninterruptedly since the 1920s—France has contributed at least one top 100 film to the list every ten years;
+- _The continuous series of dark red tiles for France._ France is the only nation to have produced at least one critically acclaimed movie since the birth of cinema, and the maximum ranked movie in each decade has never been in the bottom 1,000. Also—almost uninterruptedly since the 1920s—France has contributed at least one top 100 film to the list every ten years;
 
-- 
+- _The impressive cluster of maroon tiles (signalling top 10 movies) for the United States._
 
 ### **C. Duration**
 
