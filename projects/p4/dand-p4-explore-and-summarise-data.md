@@ -1787,7 +1787,7 @@ Additional comments are in order. One is that the maroon tiles in the plot are n
 
 Let us now analyse the Golden and Silver Ages of cinema for a few selected countries in the list.
 
--   The first one I am interested in is **Japan**.
+-   The first one I am interested in is **Japan** (Figure 9). The 1950s are widely considered Japan's Golden Age of cinema, the period in which the three legendary filmmakers Kenji Mizoguchi, Akira Kurosawa, and Yasujirō Ozu, made their masterpieces. This glorious age was anticipated by Ozu's movie *Late Spring* (\#73) in 1949. Kurosawa's Rashōmon (\#20) opened the decade, and was instrumental in bringing Japanese cinema to international renown. It is also the breakthrough film for a cast of extremely talented actors: Toshirō Mifune, Takashi Shimura, Machiko Kyō, Masayuki Mori, and Minoru Chiaki, among the others. All them will later populate the stage of several movies by the previously mentioned directors: to name the most important, Kurosawa's *Ikiru* (\#113), *Seven Samurai* (\#10), and *Throne of Blood* (\#268); Mizoguchi's *The Life of Oharu* (\#241), *Ugetsu* (\#50), and *Sanshō The Bailiff* (\#93); and Ozu's *Early Summer* (\#416) and *Tokyo Story* (\#5).
 
 ``` r
 golden.silver <- function(xmin, xmax) {
