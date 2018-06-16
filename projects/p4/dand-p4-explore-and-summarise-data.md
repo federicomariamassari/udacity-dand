@@ -62,7 +62,7 @@ sapply(modules,
 
 ``` r
 # Import frequently used libraries
-libraries <- c("dplyr", "ggplot2", "kableExtra")
+libraries <- c("dplyr", "ggplot2", "grid", "gridExtra", "kableExtra")
 sapply(libraries, require, character.only = TRUE)
 ```
 
@@ -1647,38 +1647,39 @@ levels(greatest.by_decade$Rank.Category) <-
 
 ``` r
 # List non-native, top 1,000 directors who shot in the countries of interest
-non.native.dir <- list("Germany" = c("Akerman, Chantal", "Andersson, Roy",
-                                     "Bertolucci, Bernardo", "Costa, Pedro",
-                                     "Cronenberg, David", "Demy, Jacques",
-                                     "Dreyer, Carl Theodor", "Fincher, David",
-                                     "Guzmán, Patricio", "Haneke, Michael",
-                                     "Ivens, Joris", "Jarmusch, Jim",
-                                     "Jeunet, Jean-Pierre", "Kim Ki-duk",
-                                     "Kusturica, Emir", "Mungiu, Cristian",
-                                     "Pabst, G.W.", "Rossellini, Roberto",
-                                     "Skolimowski, Jerzy", "Sokurov, Aleksandr",
-                                     "Straub, Jean-Marie & Danièle Huillet",
-                                     "Straub, Jean-Marie", "Tarr, Béla",
-                                     "Visconti, Luchino",
-                                     "von Sternberg, Josef", "von Trier, Lars",
-                                     "Weerasethakul, Apichatpong",
-                                     "Welles, Orson", "Wenders, Wim",
-                                     "Wong Kar-wai", "Zulawski, Andrzej"),
-                       "India" = c("Renoir, Jean"),
-                       "Japan" = c("Bong Joon-ho", "Cissé, Souleymane",
-                                   "Coppola, Sofia", "Resnais, Alain",
-                                   "Salles, Walter", "Sokurov, Aleksandr",
-                                   "von Sternberg, Josef", "Yang, Edward"),
-                       "Sweden" = c("Andersson, Roy", "Christensen, Benjamin",
-                                    "Godard, Jean-Luc", "Kaurismäki, Aki",
-                                    "Tarkovsky, Andrei", "von Trier, Lars",
-                                    "Watkins, Peter"),
-                       "USSR" = c("Kurosawa, Akira"))
+foreign.dir <- list("Germany" = c("Akerman, Chantal", "Andersson, Roy",
+                                  "Bertolucci, Bernardo", "Costa, Pedro",
+                                  "Cronenberg, David", "Demy, Jacques",
+                                  "Dreyer, Carl Theodor", "Fincher, David",
+                                  "Guzmán, Patricio", "Haneke, Michael",
+                                  "Ivens, Joris", "Jarmusch, Jim",
+                                  "Jeunet, Jean-Pierre", "Kim Ki-duk",
+                                  "Kusturica, Emir", "Mungiu, Cristian",
+                                  "Pabst, G.W.", "Rossellini, Roberto",
+                                  "Skolimowski, Jerzy", "Sokurov, Aleksandr",
+                                  "Straub, Jean-Marie & Danièle Huillet",
+                                  "Straub, Jean-Marie", "Tarr, Béla",
+                                  "Visconti, Luchino",
+                                  "von Sternberg, Josef", "von Trier, Lars",
+                                  "Weerasethakul, Apichatpong",
+                                  "Welles, Orson", "Wenders, Wim",
+                                  "Wong Kar-wai", "Zulawski, Andrzej"),
+                    "India" = c("Renoir, Jean"),
+                    "Japan" = c("Bong Joon-ho", "Cissé, Souleymane",
+                                "Coppola, Sofia", "Resnais, Alain",
+                                "Salles, Walter", "Sokurov, Aleksandr",
+                                "von Sternberg, Josef", "Yang, Edward"),
+                    "Sweden" = c("Andersson, Roy", "Christensen, Benjamin",
+                                 "Godard, Jean-Luc", "Kaurismäki, Aki",
+                                 "Tarkovsky, Andrei", "von Trier, Lars",
+                                 "Watkins, Peter"),
+                    "USSR" = c("Kurosawa, Akira"))
 ```
 
 ``` r
-cond.scatter <- function(df, country, foreign.dir.list, exclude.rank.cat,
-                         plot.title = NA, xticks.distance = 5,
+cond.scatter <- function(df, country, foreign.directors.list,
+                         exclude.rank.cat = "Bottom 1000",
+                         plot.title = NA, xticks.distance = 10,
                          disp.ranking = FALSE, disp.legend = FALSE,
                          disp.caption = FALSE) {
   # Generate scatterplot of films conditional on the selected criteria.
@@ -1686,18 +1687,18 @@ cond.scatter <- function(df, country, foreign.dir.list, exclude.rank.cat,
   # Arguments:
   #   df: Data frame.
   #   country: The desired country. Enter as text (e.g., "Japan").
-  #   foreign.dir.list: List of non-native directors who shot at least one
-  #     movie in the selected country. The country and the list item must
+  #   foreign.directors.list: List of non-native directors who shot at least
+  #     one movie in the selected country. The country and the list item must
   #     coincide; that is, the provided country name must be a valid element
   #     of the list.
-  #   exclude.rank.cat: To avoid making the plot visually too heavy, do not
-  #     include ranking categories in the list. Enter as (vector of) text.
   #
   # Keyword arguments:
+  #   exclude.rank.cat: To avoid making the plot visually too heavy, do not
+  #     include ranking categories in the list (default: "Bottom 1000").
   #   plot.title: Title of the plot, as text. If NA, no title is included
   #     (default: NA).
   #   xticks.distance: Distance between adjacent x-axis ticks, in years
-  #     (default: 5).
+  #     (default: 10).
   #   disp.ranking: If TRUE, include ranking in film labels (default: FALSE).
   #   disp.legend: If TRUE, display "geom.point" legend (default: FALSE).
   #   disp.caption: If TRUE, display plot caption.
@@ -1707,7 +1708,7 @@ cond.scatter <- function(df, country, foreign.dir.list, exclude.rank.cat,
   #
   # Filter-out movies by non-native directors and part of the excluded rankings
   base <- ggplot(subset(df, grepl(country, Countries)
-                        & !Director %in% foreign.dir.list[[country]]
+                        & !Director %in% foreign.directors.list[[country]]
                         & !Rank.Category %in% exclude.rank.cat),
                  aes(x = Year, y = Pos, color = Rank.Category)) +
     geom_point(show.legend = disp.legend) +
@@ -1789,25 +1790,52 @@ Let us now analyse the Golden and Silver Ages of cinema for a few selected count
 -   The first one I am interested in is **Japan**.
 
 ``` r
-cond.scatter(greatest, "Japan", non.native.dir, "Bottom 1000",
+golden.silver <- function(xmin, xmax) {
+  # Highlight golden and silver periods of cinema for a particular country.
+  #
+  # Arguments:
+  #   xmin, xmax: Vectors containing, respectively, the minima and the maxima
+  #     x-axis coordinates, in years (e.g., xmin = c(xmin1, xmin2)).
+  #
+  # Returns:
+  #   A layer on top of a ggplot, with two areas highlighted: a gold-coloured
+  #   one (denoting the Golden Age), and a silver-coloured one (Silver Age).
+  #
+  annotate("rect", xmin = xmin, xmax = xmax, ymin = -Inf, ymax = Inf,
+           fill = c("goldenrod", "darkgray"), alpha = 0.3)
+}
+
+# Produce scatterplot for Japanese cinema
+cond.scatter(greatest, "Japan", foreign.dir,
              plot.title = "Figure 9: Timeline of Japan's greatest films",
-             disp.ranking = TRUE, disp.legend = TRUE, disp.caption = TRUE)
+             xticks.distance = 5, disp.ranking = TRUE, disp.legend = TRUE,
+             disp.caption = TRUE) +
+  # Highlight Golden and Silver Ages of Japanese cinema
+  golden.silver(xmin = c(1949, 1960), xmax = c(1960, 1965))
 ```
 
 <img src="./img/figure-09.png" width="816" />
 
-#### **Observations**
-
 ``` r
 # Exclude rank categories from conditional subplots
-exclude <- c("From 501 to 1000", "Bottom 1000")
+s1 <- cond.scatter(greatest, "Germany", foreign.dir, plot.title = "Germany") +
+  golden.silver(xmin = c(1918, 1966), xmax = c(1933, 1979))
 
-s1 <- cond.scatter(greatest, "Germany", non.native.dir, exclude, "Germany", 10)
-s2 <- cond.scatter(greatest, "India", non.native.dir, exclude, "India")
-s3 <- cond.scatter(greatest, "Sweden", non.native.dir, exclude, "Sweden")
-s4 <- cond.scatter(greatest, "USSR", non.native.dir, exclude, "USSR")
+s2 <- cond.scatter(greatest, "India", foreign.dir, plot.title = "India") +
+  golden.silver(xmin = c(1955, NA), xmax = c(1964, NA))
 
-gridExtra::grid.arrange(s1, s2, s3, s4)
+s3 <- cond.scatter(greatest, "Sweden", foreign.dir, plot.title = "Sweden") +
+  golden.silver(xmin = c(NA, 1955), xmax = c(NA, 1985))
+
+s4 <- cond.scatter(greatest, "USSR", foreign.dir, plot.title = "USSR") +
+  golden.silver(xmin = c(1920, 1960), xmax = c(1947, 1980))
+
+# Arrange subplots in one unique figure
+plot.title <- paste("Figure 10: Golden and silver ages of cinema for other",
+                    "selected countries")
+
+grid.arrange(s1, s2, s3, s4, nrow = 2, ncol = 2,
+             top = textGrob(plot.title, gp = gpar(fontsize = 11)))
 ```
 
 <img src="./img/figure-10.png" width="816" />
@@ -1843,7 +1871,7 @@ bar_plt <- ggplot(data = greatest, aes(x = Decade)) +
   shared_themes
 
 # Combine plots
-gridExtra::grid.arrange(box_plt, bar_plt, layout_matrix = cbind(c(1, 1, 1, 2)))
+grid.arrange(box_plt, bar_plt, layout_matrix = cbind(c(1, 1, 1, 2)))
 ```
 
 <img src="./img/figure-11.png" width="816" />
@@ -2143,7 +2171,7 @@ p2 <- ggplot(data = subset(greatest, Colour %in% c("BW", "Col")),
   shared_themes
 
 # Plot p1, p2 in the same figure
-gridExtra::grid.arrange(p1, p2, ncol = 1, heights = 2:1, widths = 1:1)
+grid.arrange(p1, p2, ncol = 1, heights = 2:1, widths = 1:1)
 ```
 
 <img src="./img/figure-13.png" width="816" />
