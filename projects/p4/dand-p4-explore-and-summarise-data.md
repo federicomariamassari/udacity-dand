@@ -52,10 +52,10 @@ See the [related folder](https://github.com/federicomariamassari/udacity-dand/tr
 
 ``` r
 # Run this command while "p4" is the current working directory
-modules <- c("get_xls.py", "scrape_webpage.py", "scrape_wikipedia.py",
-             "scrape_others.py")
-sapply(modules,
-       function(x) system(paste("python3 ./python-modules/", x, sep = "")))
+#modules <- c("get_xls.py", "scrape_webpage.py", "scrape_wikipedia.py",
+#             "scrape_others.py")
+#sapply(modules,
+#       function(x) system(paste("python3 ./python-modules/", x, sep = "")))
 ```
 
 #### **Import datasets into R**
@@ -1099,7 +1099,7 @@ world_base +
                 "of production"))
 ```
 
-<img src="./img/figure-01.png" width="816" />
+<img src="./img/figure-01-1.png" width="816" />
 
 #### **Observations**
 
@@ -1137,7 +1137,7 @@ ggplot(data = greatest.by_country,
   theme(legend.position = "right")
 ```
 
-<img src="./img/figure-02.png" width="816" />
+<img src="./img/figure-02-1.png" width="816" />
 
 #### **Table 1: Contributions by continent statistics**
 
@@ -1210,7 +1210,7 @@ ggplot(data = greatest.by_country,
   scale_alpha(guide = "none")
 ```
 
-<img src="./img/figure-03.png" width="816" />
+<img src="./img/figure-03-1.png" width="816" />
 
 #### **Table 2: Contributions by share of GDP to services statistics**
 
@@ -1347,7 +1347,7 @@ ggplot(data = greatest.by_country,
   scale_alpha(guide = "none")
 ```
 
-<img src="./img/figure-04.png" width="816" />
+<img src="./img/figure-04-1.png" width="816" />
 
 #### **Table 5: Kendall's Tau, no. of contributions and nominal GDP to services**
 
@@ -1397,7 +1397,7 @@ ggplot(data = greatest.by_country,
   theme(legend.position = "none")
 ```
 
-<img src="./img/figure-05.png" width="816" />
+<img src="./img/figure-05-1.png" width="816" />
 
 ``` r
 world_base +
@@ -1412,7 +1412,7 @@ world_base +
                 "by predominant religion"))
 ```
 
-<img src="./img/figure-06.png" width="816" />
+<img src="./img/figure-06-1.png" width="816" />
 
 #### **Observations**
 
@@ -1461,7 +1461,7 @@ ggplot(data = subset(contributions, !is.na(Year)),
                                    hjust = 0, vjust = 1))
 ```
 
-<img src="./img/figure-07.png" width="816" />
+<img src="./img/figure-07-1.png" width="816" />
 
 #### **Table 6: Largest co-productions in the list**
 
@@ -1753,7 +1753,7 @@ ggplot(data = greatest.by_decade, aes(x = Decade, y = Country)) +
   theme(axis.text.x = element_text(angle = -45, hjust = 1.05))
 ```
 
-<img src="./img/figure-08.png" width="816" />
+<img src="./img/figure-08-1.png" width="816" />
 
 **Table 7: Top 10 greatest movies (2018 ranking)**
 
@@ -1783,11 +1783,11 @@ It may be useful to make some preliminary comments on the figure. In my opinion,
 
 -   *The impressive cluster of maroon tiles (signalling top 10 movies) for the United States.* In the 1920s, and in each decade between the 1940s and the 1970s included, the United States contributed at least one top 10 film to the list. Also, for at least eighty years, they have been co-producing at least one top 100 movie each decade.
 
-Additional comments are in order. One is that the maroon tiles in the plot are nine, instead of ten: this is due to the fact that the United States produced two top 10 movies in the 1950s, John Ford's *The Searchers* in 1956, and Alfred Hitchcock's *Vertigo* in 1958 (Table 7). The other is that the heatmap can not only be read by rows, but also by columns: this way, one can find out which decade was the most important for world cinema (possibly the 1960s).
+Additional comments are in order. One is that the maroon tiles in the plot are nine, instead of ten. This is due to the fact that: (I) both the United States and Japan produced two top 10 movies in the 1950s: the United States John Ford's *The Searchers* in 1956 and Alfred Hitchcock's *Vertigo* in 1958, Japan Yasujirō Ozu's Tokyo Story in 1953 and Akira Kurosawa's Seven Samurai in 1954 (Table 7); (II) Stanley Kubrick's *2001: A Space Odyssey*, in 1968, is double-counted since it was a UK-USA co-production. The other is that the heatmap can not only be read by rows, but also by columns: this way, one can find out which decade was the most important for world cinema (possibly the 1960s).
 
 Let us now analyse the Golden and Silver Ages of cinema for a few selected countries in the list.
 
--   The first one I am interested in is **Japan** (Figure 9). The 1950s are widely considered Japan's Golden Age of cinema, the period in which the three legendary filmmakers Kenji Mizoguchi, Akira Kurosawa, and Yasujirō Ozu, made their masterpieces. This glorious age was anticipated by Ozu's movie *Late Spring* (\#73) in 1949. Kurosawa's Rashōmon (\#20) opened the decade, and was instrumental in bringing Japanese cinema to international renown. It is also the breakthrough film for a cast of extremely talented actors: Toshirō Mifune, Takashi Shimura, Machiko Kyō, Masayuki Mori, and Minoru Chiaki, among the others. All them will later populate the stage of several movies by the previously mentioned directors: to name the most important, Kurosawa's *Ikiru* (\#113), *Seven Samurai* (\#10), and *Throne of Blood* (\#268); Mizoguchi's *The Life of Oharu* (\#241), *Ugetsu* (\#50), and *Sanshō The Bailiff* (\#93); and Ozu's *Early Summer* (\#416) and *Tokyo Story* (\#5).
+-   The first one I am interested in is **Japan** (Figure 9). The 1950s are widely considered Japan's Golden Age of cinema, the period in which the three legendary filmmakers Kenji Mizoguchi, Akira Kurosawa, and Yasujirō Ozu, made their masterpieces. This glorious age was anticipated by Ozu's movie *Late Spring* (\#73) in 1949. Kurosawa's Rashōmon (\#20) opened the decade, and was instrumental in bringing Japanese cinema to international renown. It is also the breakthrough film for a cast of extremely talented actors: Toshirō Mifune, Takashi Shimura, Machiko Kyō, Masayuki Mori, and Minoru Chiaki, among the others. All them will later populate the stage of several movies by the previously mentioned directors: to name the most important, Kurosawa's *Ikiru* (\#113), *Seven Samurai* (\#10), and *Throne of Blood* (\#268); Mizoguchi's *The Life of Oharu* (\#241), *Ugetsu* (\#50), and *Sanshō The Bailiff* (\#93); and Ozu's *Early Summer* (\#416) and *Tokyo Story* (\#5). The 1960s are, instead, the Silver Age of Japanese cinema.
 
 ``` r
 golden.silver <- function(xmin, xmax) {
@@ -1814,7 +1814,7 @@ cond.scatter(greatest, "Japan", foreign.dir,
   golden.silver(xmin = c(1949, 1960), xmax = c(1960, 1965))
 ```
 
-<img src="./img/figure-09.png" width="816" />
+<img src="./img/figure-09-1.png" width="816" />
 
 ``` r
 # Exclude rank categories from conditional subplots
@@ -1838,7 +1838,7 @@ grid.arrange(s1, s2, s3, s4, nrow = 2, ncol = 2,
              top = textGrob(plot.title, gp = gpar(fontsize = 11)))
 ```
 
-<img src="./img/figure-10.png" width="816" />
+<img src="./img/figure-10-1.png" width="816" />
 
 ### **C. Duration**
 
@@ -1874,7 +1874,7 @@ bar_plt <- ggplot(data = greatest, aes(x = Decade)) +
 grid.arrange(box_plt, bar_plt, layout_matrix = cbind(c(1, 1, 1, 2)))
 ```
 
-<img src="./img/figure-11.png" width="816" />
+<img src="./img/figure-11-1.png" width="816" />
 
 ### **Most frequent co-productions**
 
@@ -2123,7 +2123,7 @@ world_transparent +
        caption = "Data sources: theyshootpictures.com, Google Developers")
 ```
 
-<img src="./img/figure-12.png" width="816" />
+<img src="./img/figure-12-1.png" width="816" />
 
 #### **Observations**
 
@@ -2174,7 +2174,7 @@ p2 <- ggplot(data = subset(greatest, Colour %in% c("BW", "Col")),
 grid.arrange(p1, p2, ncol = 1, heights = 2:1, widths = 1:1)
 ```
 
-<img src="./img/figure-13.png" width="816" />
+<img src="./img/figure-13-1.png" width="816" />
 
 #### **Observations**
 
