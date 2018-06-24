@@ -1229,7 +1229,7 @@ stats.table(greatest.by_country, Continent, Services)
 
 #### **Observations**
 
-Figure 3 is a scatter plot of country co-productions against the share of GDP to services, a possible proxy for the **desire** of a country to invest in the cinema industry. The size of each dot is proportional to the land size of the corresponding state (i.e., the bigger the nation, the larger the point diameter). The plot could ideally be divided into four quadrants, counter-clockwise, with the first quadrant being the upper right one. I & III could be referred to as the "regular" quadrants, those for which a small (III) or significant (I) percentage of resources to cinema translates to a small or large number of entries to the list of critically acclaimed films. IV could collect countries that are either "inefficient" (i.e., those which have been involved in far fewer co-productions than their large share of GDP to services would imply) or "too small" (i.e., those which lack the critical mass to participate in many co-productions, no matter how much money they invest in services). II, instead, could gather "virtuous" countries (i.e., those which managed to work on several films on a tight budget).
+Figure 3 is a scatter plot of country co-productions against the share of GDP to services, a possible proxy for the **desire** of a country to invest in the cinema industry. The size of each dot is proportional to the land size of the corresponding state (i.e., the bigger the nation, the larger the point diameter). The plot could ideally be divided into four quadrants, counter-clockwise, with the first quadrant being the upper right one. I & III could be referred to as the "regular" quadrants, those for which a small (III) or significant (I) percentage of resources to cinema translates to a small or large number of entries to the list of critically acclaimed films. IV could collect countries that are either "inefficient" (i.e., those which have been involved in far fewer co-productions than their large share of GDP to services would imply) or "too small" (i.e., those which lack the critical mass to participate in many co-productions, no matter how much money they invest in services). II, instead, could gather "virtuous" (i.e., those which managed to work on several films on a tight budget) or "very big" countries.
 
 It is important to stress that the plot gives, at best, an approximate picture of the share of resources historically destined to cinema by each country, for at least two reasons. First, the data on GDP breakdown were recorded in different years, ranging from 2007 (Luxembourg) to 2016 (e.g., Australia). Second, GDP composition may have changed dramatically in over a century. For instance, Western European nations spent more on agriculture and industry in the years immediately following World War II, and more on services since the Sixties.
 
@@ -1428,7 +1428,7 @@ The second most common faith in the list is Irreligion, with ~8% (mainly because
 
 The second dimension I would like to explore is time. Interesting questions could be:
 
--   *Which shapes do the conditional (i.e., by continent) distributions of co-productions through time have?*
+-   *Which shapes do the conditional (i.e., by continent) distributions of co-productions through time have? Are the shapes fully genuine, or is any part biased due to same-continent co-productions?*
 
 -   *Which are the golden and silver periods of cinema, if any, for each of the represented countries in the list?*
 
@@ -1442,7 +1442,7 @@ contributions <- contributions[!is.na(contributions$Year), ] %>%
 
 ggplot(data = subset(contributions, !is.na(Year)),
        aes(x = Year, fill = Continent)) +
-  geom_histogram(binwidth = 5, size = 0.1, show.legend = FALSE) +
+  geom_histogram(binwidth = 5, boundary = 0, size = 0.1, show.legend = FALSE) +
   scale_x_continuous(breaks = seq(1890, 2020, 10)) +
   # Also plot conditional medians
   geom_vline(aes(xintercept = Median.Year, group = Continent),
@@ -1612,7 +1612,7 @@ In general, the conditional distributions appear to be negatively skewed. They h
 
 -   *a long left tail*, showing that fewer contributions to the list were made in the early years of world cinema;
 
--   *the body shifted to the right*, meaning that, on average, most contributions to the list were made since the 1970s. This latter feature is also evident in the conditional median values, which are all higher than 1970 (i.e., for each continent, 50% of the contributions were not included until at least the 1970s).
+-   *the body shifted to the right*, meaning that apparently, on average, most contributions to the list were made since the 1970s. This latter feature is also evident in the conditional median values, which are all higher than 1970 (i.e., for each continent, 50% of the contributions were not included until at least the 1970s).
 
 In addition, the distributions appear to be "humped", or bimodal, with at least one decade in between the two peaks in which contributions were fewer than usual. The humps are particularly visible in the densities of Western Europe and Asia, and less in that of North America (whose distribution more closely resembles a Gaussian or Student's t).
 
