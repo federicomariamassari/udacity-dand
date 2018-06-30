@@ -1463,6 +1463,20 @@ ggplot(data = subset(contributions, !is.na(Year)),
 
 <img src="./img/figure-07.png" width="816" />
 
+``` r
+ggplot(contributions, aes(Year, Pos)) +
+  geom_point(aes(color = Continent), alpha = 0.3, show.legend = TRUE) +
+  scale_x_continuous(breaks = seq(1890, 2020, 10)) +
+  scale_y_reverse() +
+  ggtitle("Figure 8: Concentration of same-continent co-productions") +
+  ylab("Rank") +
+  labs(fill = "Maximum rank reached",
+       caption = "Data source: theyshootpictures.com") +
+  shared_themes
+```
+
+<img src="./img/figure-08.png" width="816" />
+
 #### **Table 6: Largest co-productions in the list**
 
 ``` r
@@ -1618,13 +1632,13 @@ In addition, the distributions appear to be "humped", or bimodal, with at least 
 
 Let us analyse the humps further:
 
--   For **Western Europe**, the humps relate to the periods 1960s-1970s and 1990s-2000s. The first period is the Golden Age of European cinema, and includes genuine contributions from critically acclaimed directors such as: Federico Fellini (*8½*, *La Dolce Vita*), Ingmar Bergman (*Persona*, *The Seventh Seal*), Jean-Luc Godard (*Breathless*, *Contempt*), Luis Buñuel (*Viridiana*, *The Exterminating Angel*), and Stanley Kubrick (*2001: A Space Odyssey*, *Dr. Strangelove or: How I Learned to Stop Worrying and Love the Bomb*). The second period, however, has a spurious peak due to same continent co-productions (the largest cooperative efforts were all made between the '90s and the '00s): an example is Lars von Triers' *Dancer in the Dark* (2000), shot in no less than eleven Western European countries (Table 6). Due to this spurious peak, the median value for Western Europe may well be distorted.
+-   For **Western Europe**, the humps relate to the periods 1960-1980 and 1990-2010. The first period is the Golden Age of European cinema, and includes genuine contributions from critically acclaimed directors such as: Federico Fellini (*8½*, *La Dolce Vita*), Ingmar Bergman (*Persona*, *The Seventh Seal*), Jean-Luc Godard (*Breathless*, *Contempt*), Luis Buñuel (*Viridiana*, *The Exterminating Angel*), and Stanley Kubrick (*2001: A Space Odyssey*, *Dr. Strangelove*). The second period, however, has a spurious peak due to same continent co-productions (the largest cooperative efforts were all made between the '90s and the '00s): an example is Lars von Triers' *Dancer in the Dark* (2000), shot in no less than eleven Western European countries (Table 6). Due to this spurious peak, the median value for Western Europe may well be distorted.
 
--   For **Asia**, the humps correspond to the periods 1950s-1960s and 1980s-2000s. The first period is also regarded as the Golden Age of Asian cinema, when legendary Japanese directors Kenji Mizoguchi (*Ugetsu Monogatari*, *Sansho the Bailiff*, *The Life of Oharu*), Akira Kurosawa (*Seven Samurai*, *Rashomon*, *Ikiru*, *Throne of Blood*, *Yojimbo*), Yasujiro Ozu (*Tokyo Story*, *Late Spring*, *An Autumn Afternoon*), and Indian filmmaker Satyajit Ray (*The Apu Trilogy*, *Charulata*, *The Music Room*) made their masterpieces. The second period includes, among the others, movies by Taiwan's New Wave directors Edward Yang (*A Brighter Summer's Day*, *Yi Yi*) and Hou Hsiao-hsien (*A City of Sadness*), China's Chen Kaige (*Yellow Earth*, *Farewell My Concubine*) and Zhang Yimou (*Raise the Red Lantern*, *Red Sorghum*), Hong Kong's Wong Kar-wai (*In the Mood for Love*, *Chungking Express*), Japan's Hideo Miyazaki (*Spirited Away*, *My Neighbour Totoro*) and Thailand's Apichatpong Weerasethakul (*Tropical Malady*).
+-   For **Asia**, the humps correspond to the periods 1950-1965 and 1985-2005. The first period is also regarded as the Golden Age of Asian cinema, when legendary Japanese directors Kenji Mizoguchi (*Ugetsu Monogatari*, *Sansho the Bailiff*, *The Life of Oharu*), Akira Kurosawa (*Seven Samurai*, *Rashomon*, *Ikiru*, *Throne of Blood*, *Yojimbo*), Yasujiro Ozu (*Tokyo Story*, *Late Spring*, *An Autumn Afternoon*), and Indian filmmaker Satyajit Ray (*The Apu Trilogy*, *Charulata*, *The Music Room*) made their masterpieces. The second period includes, among the others, movies by Taiwan's New Wave directors Edward Yang (*A Brighter Summer's Day*, *Yi Yi*) and Hou Hsiao-hsien (*A City of Sadness*), China's Chen Kaige (*Yellow Earth*, *Farewell My Concubine*) and Zhang Yimou (*Raise the Red Lantern*, *Red Sorghum*), Hong Kong's Wong Kar-wai (*In the Mood for Love*, *Chungking Express*), Japan's Hideo Miyazaki (*Spirited Away*, *My Neighbour Totoro*) and Thailand's Apichatpong Weerasethakul (*Tropical Malady*).
 
--   For **North America** (mostly the United States), the humps are wider and less pronounced, showing that productions in the continent have been largely consistent throughout the history of cinema. Indeed, Hollywood has always been [the most dominant force in the cinema industry](https://en.wikipedia.org/wiki/Cinema_of_the_United_States) as well as a pole of attraction for some of the most talented international directors. Alfred Hitchcock, for instance, shot 13 out of his 17 films in the list in the United States; to name the highest ranked: *Vertigo* (\#2), *Psycho* (\#26), *Rear Window* (\#41), and *North by Northwest* (\#60).
+-   For **North America** (mostly the United States), the humps are wider and less pronounced, showing that productions in the continent have been largely consistent throughout the history of cinema. Indeed, Hollywood has always been [the most dominant force in the cinema industry](https://en.wikipedia.org/wiki/Cinema_of_the_United_States) as well as a pole of attraction for some of the most talented international directors. The British filmmaker Alfred Hitchcock, for instance, shot 13 out of his 17 films in the list in the United States; to name the highest ranked: *Vertigo* (\#2), *Psycho* (\#26), *Rear Window* (\#41), and *North by Northwest* (\#60).
 
--   For **Africa**, **Eastern Europe**, **South America**, and **Oceania**, the humps are less visible, but it is still possible to detect the peaks associated to the years of greatest contribution to the list. For Africa, the peak is in the 2000s; however, this is spurious, since it double counts contributions for Ousmane Sembene's film *Moolaadé* (Table 6). For Eastern Europe (including Russia) the peaks are in the '30s, '60s, and across the centuries. The first period includes films mostly by Soviet directors (e.g., Dziga Vertov, and the above cited Sergei Eisenstein). The second one—interestingly—movies by filmmakers outside the bloc, especially from Czechoslovakia (e.g., Vera Chytilová, Milos Forman), Poland (e.g., Roman Polanski), Hungary (e.g., Miklós Jancsó), and Ukraine (e.g., Larisa Shepitko, Sergei Bondarchuk). The last one includes several co-production efforts between Western and Eastern European nations—possibly the reason why a larger than average number of Eastern European films were contributed to the list—as well as Theo Angelopoulos' *Ulysses' Gaze* (Table 6), which double counts contributions by four of the latter. For South America, the peaks are in the '60s-'70s and in the '80s. In the first period, additions to the list are mostly from Brazil (e.g., Glauber Rocha, Nelson Pereira dos Santos) and Argentina (e.g., Getino Octavio and Fernando E. Solanas), with a notable effort by Patricio Guzmán (*The Battle of Chile, Pts. 1-3*) co-produced by Chile, Cuba, and Venezuela. In the last one, contributions are almost all by Brazil. Finally, for Oceania, the peaks are in the '70s-'80s and across the centuries. Australian films dominate the first period (thanks to filmmakers like Peter Weir and George Miller), while co-production efforts between Australia and New Zealand prevail in the latter.
+-   For **Africa**, **Eastern Europe**, **South America**, and **Oceania**, the humps are less visible, but it is still possible to detect the peaks associated to the years of greatest contribution to the list. For Africa, the peak is in the first half of the 2000s; however, this is spurious, since it double counts contributions for Ousmane Sembene's film *Moolaadé* (Table 6). For Eastern Europe (including Russia) the peaks are in the '30s, '60s, and across the centuries. The first period includes films mostly by Soviet directors (e.g., Dziga Vertov, and the above cited Sergei Eisenstein). The second one—interestingly—movies by filmmakers outside the bloc, especially from Czechoslovakia (e.g., Vera Chytilová, Milos Forman), Poland (e.g., Roman Polanski), Hungary (e.g., Miklós Jancsó), and Ukraine (e.g., Larisa Shepitko, Sergei Bondarchuk). The last one includes several co-production efforts between Western and Eastern European nations—possibly the reason why a larger than average number of Eastern European films were contributed to the list—as well as Theo Angelopoulos' *Ulysses' Gaze* (Table 6), which double counts contributions by four of the latter. For South America, the peaks are in the '60s-'70s and in the '80s. In the first period, additions to the list are mostly from Brazil (e.g., Glauber Rocha, Nelson Pereira dos Santos) and Argentina (e.g., Getino Octavio and Fernando E. Solanas), with a notable effort by Patricio Guzmán (*The Battle of Chile, Pts. 1-3*) co-produced by Chile, Cuba, and Venezuela. In the last one, contributions are almost all by Brazil. Finally, for Oceania, the peaks are in the '70s-'80s and across the centuries. Australian films dominate the first period (thanks to filmmakers like Peter Weir and George Miller), while co-production efforts between Australia and New Zealand prevail in the latter.
 
 The shapes of the conditional distributions tell us something about the number of films produced in a given period (with some caveats related to spurious peaks), but do not say much about the relative quality of such movies. The latter is well described by the *ranking* dimension. To understand more about the Golden and Silver Ages of world cinema, it could be useful to incorporate such dimension in our timeline.
 
@@ -1746,14 +1760,14 @@ ggplot(data = greatest.by_decade, aes(x = Decade, y = Country)) +
   geom_tile(aes(fill = Rank.Category), colour = "black") +
   scale_x_discrete(position = "top") +
   scale_fill_brewer(palette = "Reds", direction = -1) +
-  ggtitle("Figure 8: Heatmap of peak positions by country and decade") +
+  ggtitle("Figure 9: Heatmap of peak positions by country and decade") +
   labs(fill = "Maximum rank reached",
        caption = "Data source: theyshootpictures.com") +
   shared_themes +
   theme(axis.text.x = element_text(angle = -45, hjust = 1.05))
 ```
 
-<img src="./img/figure-08.png" width="816" />
+<img src="./img/figure-09.png" width="816" />
 
 **Table 7: Top 10 greatest movies (2018 ranking)**
 
@@ -1807,14 +1821,14 @@ golden.silver <- function(xmin, xmax) {
 
 # Produce scatterplot for Japanese cinema
 cond.scatter(greatest, "Japan", foreign.dir,
-             plot.title = "Figure 9: Timeline of Japan's greatest films",
+             plot.title = "Figure 10: Timeline of Japan's greatest films",
              xticks.distance = 5, disp.ranking = TRUE, disp.legend = TRUE,
              disp.caption = TRUE) +
   # Highlight Golden and Silver Ages of Japanese cinema
   golden.silver(xmin = c(1949, 1960), xmax = c(1960, 1965))
 ```
 
-<img src="./img/figure-09.png" width="816" />
+<img src="./img/figure-10.png" width="816" />
 
 The first one I am interested in—and which I will discuss in greater detail—is Japan (Figure 9):
 
@@ -1839,14 +1853,14 @@ s4 <- cond.scatter(greatest, "USSR", foreign.dir, plot.title = "USSR") +
   golden.silver(xmin = c(1920, 1960), xmax = c(1947, 1980))
 
 # Arrange subplots in one unique figure
-plot.title <- paste("Figure 10: Golden and silver ages of cinema for other",
+plot.title <- paste("Figure 11: Golden and silver ages of cinema for other",
                     "selected countries")
 
 grid.arrange(s1, s2, s3, s4, nrow = 2, ncol = 2,
              top = textGrob(plot.title, gp = gpar(fontsize = 11)))
 ```
 
-<img src="./img/figure-10.png" width="816" />
+<img src="./img/figure-11.png" width="816" />
 
 #### **Germany**
 
@@ -1866,7 +1880,7 @@ box_plt <- ggplot(data = subset(greatest, !is.na(Length)),
   # Include mean duration per decade
   stat_summary(fun.y = mean, geom = "point", size = 1, shape = 3,
                color = "tomato", show.legend = FALSE) +
-  ggtitle("Figure 11: Boxplot of movie durations by decade") +
+  ggtitle("Figure 12: Boxplot of movie durations by decade") +
   xlab("Decade") +
   ylab("Duration (minutes)") +
   shared_themes
@@ -1884,7 +1898,7 @@ bar_plt <- ggplot(data = greatest, aes(x = Decade)) +
 grid.arrange(box_plt, bar_plt, layout_matrix = cbind(c(1, 1, 1, 2)))
 ```
 
-<img src="./img/figure-11.png" width="816" />
+<img src="./img/figure-12.png" width="816" />
 
 ### **Most frequent co-productions**
 
@@ -2127,13 +2141,13 @@ world_transparent +
                  y = Latitude.x, yend = Latitude.y,
                  alpha = Two.Country.Relationships), color = "#a50026") +
   scale_alpha_manual(values = c(0.05, 0.1, 0.2, 0.5, 1)) +
-  ggtitle(paste("Figure 12: Most frequent two-country co-production",
+  ggtitle(paste("Figure 13: Most frequent two-country co-production",
                 "relationships")) +
   labs(alpha = "Two-country relationships",
        caption = "Data sources: theyshootpictures.com, Google Developers")
 ```
 
-<img src="./img/figure-12.png" width="816" />
+<img src="./img/figure-13.png" width="816" />
 
 #### **Observations**
 
@@ -2164,7 +2178,7 @@ p1 <- ggplot(data = both, aes(x = Year, y = both$n.x / both$n.y)) +
   # Highlight black-and-white-colour trend reversals
   annotate("rect", xmin = c(1953, 1965), xmax = c(1958, 1970),
            ymin = 0, ymax = Inf, alpha = 0.4) +
-  ggtitle("Figure 13: Timeline of colour/black-and-white prevalence") +
+  ggtitle("Figure 14: Timeline of colour/black-and-white prevalence") +
   xlab("Year") +
   ylab("Black-and-white-to-colour ratio") +
   shared_themes
@@ -2184,7 +2198,7 @@ p2 <- ggplot(data = subset(greatest, Colour %in% c("BW", "Col")),
 grid.arrange(p1, p2, ncol = 1, heights = 2:1, widths = 1:1)
 ```
 
-<img src="./img/figure-13.png" width="816" />
+<img src="./img/figure-14.png" width="816" />
 
 #### **Observations**
 
