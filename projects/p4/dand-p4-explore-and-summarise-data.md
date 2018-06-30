@@ -1475,6 +1475,18 @@ ggplot(contributions, aes(Year, Pos)) +
   shared_themes
 ```
 
+#### **Observations**
+
+Figure 7 breaks down the timeline of co-productions by continent. For each subplot, a conditional median value—the year in which half of the entries for the related group were produced—is included as a dashed red line with superimposed text. Also, axes scales are not freed (i.e., they are kept constant across subplots), so that the timelines (x-axis) are uniform, and magnitude (y-axis) is accounted for. Histogram binwidth is equal to 5 years.
+
+In general, the conditional distributions appear to be negatively skewed, with:
+
+- *a long left tail*, showing that fewer contributions to the list were made in the early years of world cinema;
+
+- *the body shifted to the right*, meaning that apparently, on average, most contributions to the list were made since the 1970s. This latter feature is also evident in the conditional median values, which are all higher than 1970. However, are these values genuine or distorted?
+
+In addition, the distributions in Figure 7 appear to be "humped", or bimodal, with at least one decade in between the two peaks in which contributions were fewer than usual. The humps are particularly visible in the densities of Western Europe and Asia, and less in that of North America (whose distribution more closely resembles a Gaussian or Student's t). Again, are these humps genuine or inflated by same-continent co-productions?
+
 <img src="./img/figure-08.png" width="816" />
 
 #### **Table 6: Largest co-productions in the list**
@@ -1616,19 +1628,7 @@ Senegal, Burkina Faso, Morocco, Tunisia, Cameroon, Switzerland, Germany
 </tr>
 </tbody>
 </table>
-Data source: theyshootpictures.com
 
-#### **Observations**
-
-Figure 7 breaks down the timeline of co-productions by continent. For each subplot, a conditional median value—the year in which half of the entries for the related group were produced—is included as a dashed red line with superimposed text. Also, axes scales are not freed (i.e., they are kept constant across subplots), so that the timelines (x-axis) are uniform, and magnitude (y-axis) is accounted for. Histogram binwidth is equal to 5 years.
-
-In general, the conditional distributions appear to be negatively skewed. They have:
-
--   *a long left tail*, showing that fewer contributions to the list were made in the early years of world cinema;
-
--   *the body shifted to the right*, meaning that apparently, on average, most contributions to the list were made since the 1970s. This latter feature is also evident in the conditional median values, which are all higher than 1970 (i.e., for each continent, 50% of the contributions were not included until at least the 1970s).
-
-In addition, the distributions appear to be "humped", or bimodal, with at least one decade in between the two peaks in which contributions were fewer than usual. The humps are particularly visible in the densities of Western Europe and Asia, and less in that of North America (whose distribution more closely resembles a Gaussian or Student's t).
 
 Let us analyse the humps further:
 
