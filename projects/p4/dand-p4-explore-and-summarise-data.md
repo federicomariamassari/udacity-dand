@@ -1629,6 +1629,10 @@ Senegal, Burkina Faso, Morocco, Tunisia, Cameroon, Switzerland, Germany
 </tbody>
 </table>
 
+#### __Observations__
+
+Figure 8 scatter plots single country contributions over time, a total of 2,588 points spread over 2,000 positions (i.e., the film ranks) on the y-axis. The dots are coloured based on the continent each country belongs to. Multiple contributions related to the same movie have identical coordinates, so to detect concentrations a value of *alpha* = 0.2 (transparency) is chosen. This way, single-country productions are sufficiently transparent, while joint efforts help increase colour intensity (five co-producers are enough to make it solid). Also, a dot will be mostly monochrome if same-continent co-productions prevail; otherwise, it will have a mixture of colour tones.
+
 
 Let us analyse the humps further:
 
