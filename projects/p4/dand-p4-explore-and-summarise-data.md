@@ -1463,29 +1463,31 @@ ggplot(data = subset(contributions, !is.na(Year)),
 
 <img src="./img/figure-07.png" width="816" />
 
-``` r
-ggplot(contributions, aes(Year, Pos)) +
-  geom_point(aes(color = Continent), alpha = 0.3, show.legend = TRUE) +
-  scale_x_continuous(breaks = seq(1890, 2020, 10)) +
-  scale_y_reverse() +
-  ggtitle("Figure 8: Concentration of same-continent co-productions") +
-  ylab("Rank") +
-  labs(fill = "Maximum rank reached",
-       caption = "Data source: theyshootpictures.com") +
-  shared_themes
-```
-
 #### **Observations**
 
 Figure 7 breaks down the timeline of co-productions by continent. For each subplot, a conditional median value—the year in which half of the entries for the related group were produced—is included as a dashed red line with superimposed text. Also, axes scales are not freed (i.e., they are kept constant across subplots), so that the timelines (x-axis) are uniform, and magnitude (y-axis) is accounted for. Histogram binwidth is equal to 5 years.
 
 In general, the conditional distributions appear to be negatively skewed, with:
 
-- *a long left tail*, showing that fewer contributions to the list were made in the early years of world cinema;
+-   *a long left tail*, showing that fewer contributions to the list were made in the early years of world cinema;
 
-- *the body shifted to the right*, meaning that apparently, on average, most contributions to the list were made since the 1970s. This latter feature is also evident in the conditional median values, which are all higher than 1970. However, are these values genuine or distorted?
+-   *the body shifted to the right*, meaning that apparently, on average, most contributions to the list were made since the 1970s. This latter feature is also evident in the conditional median values, which are all higher than 1970. However, are these values genuine or distorted?
 
-In addition, the distributions in Figure 7 appear to be "humped", or bimodal, with at least one decade in between the two peaks in which contributions were fewer than usual. The humps are particularly visible in the densities of Western Europe and Asia, and less in that of North America (whose distribution more closely resembles a Gaussian or Student's t). Again, are these humps genuine or inflated by same-continent co-productions?
+In addition, the distributions in Figure 7 appear to be "humped", or bimodal, with at least one decade in between the two peaks in which contributions were fewer than usual. The humps are particularly visible in the densities of Western Europe and Asia, and less in that of North America (whose distribution more closely resembles a Gaussian or Student's t). Again, are these humps genuine, or are they inflated by same-continent co-productions?
+
+``` r
+ggplot(contributions, aes(Year, Pos)) +
+  # Partially jitter x-axis coordinate to characterise co-producers
+  geom_jitter(aes(color = Continent), alpha = 0.2, width = 0.2, height = 0,
+              show.legend = TRUE) +
+  scale_x_continuous(breaks = seq(1890, 2020, 10)) +
+  scale_y_reverse() +
+  ggtitle("Figure 8: Concentration of same-continent co-productions") +
+  ylab("Rank") +
+  labs(fill = "Maximum rank reached",
+       caption = "Data sources: theyshootpictures.com, Wikipedia") +
+  shared_themes
+```
 
 <img src="./img/figure-08.png" width="816" />
 
@@ -1628,11 +1630,15 @@ Senegal, Burkina Faso, Morocco, Tunisia, Cameroon, Switzerland, Germany
 </tr>
 </tbody>
 </table>
+Data source: theyshootpictures.com
 
-#### __Observations__
+#### **Observations**
 
-Figure 8 scatter plots single country contributions over time, a total of 2,588 points spread over 2,000 positions (i.e., the film ranks) on the y-axis. The dots are coloured based on the continent each country belongs to. Multiple contributions related to the same movie have identical coordinates, so to detect concentrations a value of *alpha* = 0.2 (transparency) is chosen. This way, single-country productions are sufficiently transparent, while joint efforts help increase colour intensity (five co-producers are enough to make it solid). Also, a dot will be mostly monochrome if same-continent co-productions prevail; otherwise, it will have a mixture of colour tones.
+Figure 8 scatter plots single country contributions over time, a total of 2,588 points spread over 2,000 positions (i.e., the film ranks) on the y-axis. The dots are coloured based on the continent each country belongs to. Multiple contributions related to the same movie have identical coordinates (partially jittered on the x-axis), so to detect concentrations a value of *alpha* = 0.2 (transparency) is chosen. This way, single-country productions are adequately transparent, whereas joint efforts increase colour intensity (five co-producers are enough to make the colour solid). Moreover, a dot will be mostly monochrome if same-continent co-productions prevail; otherwise, it will have a mixture of colour tones.
 
+It is clear how co-production efforts have intensified in the recent years, and have become quite frequent since the 1990s. Judging by colour tone, purity, and intensity, one can see that Western European partnerships (often on a considerable scale), have nowadays become the norm. By contrast, collaborations among Asian countries, related to the movies in the list, are still quite rare. African co-productions are very scarce, but one point really stands out, for its intensity and purity, as an almost fully African effort. Table 6, which lists the largest contributions in the data frame, tells us it is *Moolaadé*, by Ousmane Sembene.
+
+In light of this additional information, what can we say regarding the shape of the conditional distributions?
 
 Let us analyse the humps further:
 
@@ -1644,7 +1650,7 @@ Let us analyse the humps further:
 
 -   For **Africa**, **Eastern Europe**, **South America**, and **Oceania**, the humps are less visible, but it is still possible to detect the peaks associated to the years of greatest contribution to the list. For Africa, the peak is in the first half of the 2000s; however, this is spurious, since it double counts contributions for Ousmane Sembene's film *Moolaadé* (Table 6). For Eastern Europe (including Russia) the peaks are in the '30s, '60s, and across the centuries. The first period includes films mostly by Soviet directors (e.g., Dziga Vertov, and the above cited Sergei Eisenstein). The second one—interestingly—movies by filmmakers outside the bloc, especially from Czechoslovakia (e.g., Vera Chytilová, Milos Forman), Poland (e.g., Roman Polanski), Hungary (e.g., Miklós Jancsó), and Ukraine (e.g., Larisa Shepitko, Sergei Bondarchuk). The last one includes several co-production efforts between Western and Eastern European nations—possibly the reason why a larger than average number of Eastern European films were contributed to the list—as well as Theo Angelopoulos' *Ulysses' Gaze* (Table 6), which double counts contributions by four of the latter. For South America, the peaks are in the '60s-'70s and in the '80s. In the first period, additions to the list are mostly from Brazil (e.g., Glauber Rocha, Nelson Pereira dos Santos) and Argentina (e.g., Getino Octavio and Fernando E. Solanas), with a notable effort by Patricio Guzmán (*The Battle of Chile, Pts. 1-3*) co-produced by Chile, Cuba, and Venezuela. In the last one, contributions are almost all by Brazil. Finally, for Oceania, the peaks are in the '70s-'80s and across the centuries. Australian films dominate the first period (thanks to filmmakers like Peter Weir and George Miller), while co-production efforts between Australia and New Zealand prevail in the latter.
 
-The shapes of the conditional distributions tell us something about the number of films produced in a given period (with some caveats related to spurious peaks), but do not say much about the relative quality of such movies. The latter is well described by the *ranking* dimension. To understand more about the Golden and Silver Ages of world cinema, it could be useful to incorporate such dimension in our timeline.
+The shapes of the conditional distributions (Figure 7), as well as the scatter plot of concentrations (Figure 8) tell us something about the number of films produced in a given period (with some caveats related to spurious peaks), but do not say much about the relative quality of such movies. The latter is well described by the *ranking* dimension. To understand more about the Golden and Silver Ages of world cinema, it could be useful to incorporate such dimension in our timeline.
 
 ### **Golden and silver periods of world cinema**
 
