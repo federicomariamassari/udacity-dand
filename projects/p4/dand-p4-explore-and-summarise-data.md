@@ -1476,20 +1476,39 @@ In general, the conditional distributions appear to be negatively skewed, with:
 In addition, the distributions in Figure 7 appear to be "humped", or bimodal, with at least one decade in between the two peaks in which contributions were fewer than usual. The humps are particularly visible in the densities of Western Europe and Asia, and less in that of North America (whose distribution more closely resembles a Gaussian or Student's t). Again, are these humps genuine, or are they inflated by same-continent co-productions?
 
 ``` r
-ggplot(contributions, aes(Year, Pos)) +
-  # Partially jitter x-axis coordinate to characterise co-producers
+ggplot(data = contributions, aes(x = Year, y = Pos)) +
+  # Partially jitter x-axis coordinate to detect co-producers' continent
   geom_jitter(aes(color = Continent), alpha = 0.2, width = 0.2, height = 0,
               show.legend = TRUE) +
   scale_x_continuous(breaks = seq(1890, 2020, 10)) +
   scale_y_reverse() +
   ggtitle("Figure 8: Concentration of same-continent co-productions") +
   ylab("Rank") +
-  labs(fill = "Maximum rank reached",
-       caption = "Data sources: theyshootpictures.com, Wikipedia") +
+  labs(caption = "Data sources: theyshootpictures.com, Wikipedia") +
   shared_themes
 ```
 
 <img src="./img/figure-08.png" width="816" />
+
+``` r
+# Include number of film co-producing countries to data frame
+contributions <- contributions %>%
+  group_by(Pos) %>%
+  mutate(No.Countries = n())
+
+# Only select films co-produced by at least two countries
+ggplot(data = subset(contributions, No.Countries > 1),
+       aes(x = Year, y = No.Countries)) +
+  geom_jitter(aes(color = Continent), width = 0.1, height = 0.2) +
+  scale_x_continuous(breaks = seq(1890, 2020, 10)) +
+  scale_y_continuous(breaks = seq(1, 11)) +
+  ggtitle("Figure 9: Timeline and breadth of co-productions") +
+  ylab("Number of co-producers") +
+  labs(caption = "Data sources: theyshootpictures.com, Wikipedia") +
+  shared_themes
+```
+
+<img src="./img/figure-09.png" width="816" />
 
 #### **Table 6: Largest co-productions in the list**
 
@@ -1638,13 +1657,13 @@ Figure 8 scatter plots single country contributions over time, a total of 2,588 
 
 It is clear how co-production efforts have intensified in the recent years, and have become quite frequent since the 1990s. Judging by colour tone, purity, and intensity, one can see that Western European partnerships (often on a considerable scale), have nowadays become the norm. By contrast, collaborations among Asian countries, related to the movies in the list, are still quite rare. African co-productions are very scarce, but one point really stands out, for its intensity and purity, as an almost fully African effort. Table 6, which lists the largest contributions in the data frame, tells us it is *Moolaadé*, by Ousmane Sembene.
 
-In light of this additional information, what can we say regarding the shape of the conditional distributions?
+Figure 9 sheds more light on the intensification of co-productions in recent years.
 
-Let us analyse the humps further:
+In light of this additional information, what can we say regarding the shape of the conditional distributions? Let us analyse the humps further:
 
--   For **Western Europe**, the humps relate to the periods 1960-1980 and 1990-2010. The first period is the Golden Age of European cinema, and includes genuine contributions from critically acclaimed directors such as: Federico Fellini (*8½*, *La Dolce Vita*), Ingmar Bergman (*Persona*, *The Seventh Seal*), Jean-Luc Godard (*Breathless*, *Contempt*), Luis Buñuel (*Viridiana*, *The Exterminating Angel*), and Stanley Kubrick (*2001: A Space Odyssey*, *Dr. Strangelove*). The second period, however, has a spurious peak due to same continent co-productions (the largest cooperative efforts were all made between the '90s and the '00s): an example is Lars von Triers' *Dancer in the Dark* (2000), shot in no less than eleven Western European countries (Table 6). Due to this spurious peak, the median value for Western Europe may well be distorted.
+-   For **Western Europe**, the humps relate to the periods 1960-1980 and 1990-2010. The first period is generally referred to as the Golden Age of European cinema, and includes genuine contributions from critically acclaimed directors such as Federico Fellini, Ingmar Bergman, Jean-Luc Godard, Luis Buñuel, and Stanley Kubrick. The second period, however, has a spurious peak due to same continent co-productions (the largest cooperative efforts were all made between the '90s and the '00s): an example is Lars von Triers' *Dancer in the Dark* (2000), shot in no less than 11 Western European countries (Table 6). Due to this spurious peak, both the shape of the distribution and the median value may well be distorted.
 
--   For **Asia**, the humps correspond to the periods 1950-1965 and 1985-2005. The first period is also regarded as the Golden Age of Asian cinema, when legendary Japanese directors Kenji Mizoguchi (*Ugetsu Monogatari*, *Sansho the Bailiff*, *The Life of Oharu*), Akira Kurosawa (*Seven Samurai*, *Rashomon*, *Ikiru*, *Throne of Blood*, *Yojimbo*), Yasujiro Ozu (*Tokyo Story*, *Late Spring*, *An Autumn Afternoon*), and Indian filmmaker Satyajit Ray (*The Apu Trilogy*, *Charulata*, *The Music Room*) made their masterpieces. The second period includes, among the others, movies by Taiwan's New Wave directors Edward Yang (*A Brighter Summer's Day*, *Yi Yi*) and Hou Hsiao-hsien (*A City of Sadness*), China's Chen Kaige (*Yellow Earth*, *Farewell My Concubine*) and Zhang Yimou (*Raise the Red Lantern*, *Red Sorghum*), Hong Kong's Wong Kar-wai (*In the Mood for Love*, *Chungking Express*), Japan's Hideo Miyazaki (*Spirited Away*, *My Neighbour Totoro*) and Thailand's Apichatpong Weerasethakul (*Tropical Malady*).
+-   For **Asia**, the humps correspond to the periods 1950-1965 and 1985-2005. The first one is regarded as the Golden Age of Asian cinema, when legendary Japanese directors Kenji Mizoguchi, Akira Kurosawa, Yasujiro Ozu, and Indian filmmaker Satyajit Ray made their masterpieces. The second period includes, among the others, movies by Taiwan's New Wave directors Edward Yang (*A Brighter Summer's Day*, *Yi Yi*) and Hou Hsiao-hsien (*A City of Sadness*), China's Chen Kaige (*Yellow Earth*, *Farewell My Concubine*) and Zhang Yimou (*Raise the Red Lantern*, *Red Sorghum*), Hong Kong's Wong Kar-wai (*In the Mood for Love*, *Chungking Express*), Japan's Hideo Miyazaki (*Spirited Away*, *My Neighbour Totoro*) and Thailand's Apichatpong Weerasethakul (*Tropical Malady*).
 
 -   For **North America** (mostly the United States), the humps are wider and less pronounced, showing that productions in the continent have been largely consistent throughout the history of cinema. Indeed, Hollywood has always been [the most dominant force in the cinema industry](https://en.wikipedia.org/wiki/Cinema_of_the_United_States) as well as a pole of attraction for some of the most talented international directors. The British filmmaker Alfred Hitchcock, for instance, shot 13 out of his 17 films in the list in the United States; to name the highest ranked: *Vertigo* (\#2), *Psycho* (\#26), *Rear Window* (\#41), and *North by Northwest* (\#60).
 
@@ -1770,14 +1789,14 @@ ggplot(data = greatest.by_decade, aes(x = Decade, y = Country)) +
   geom_tile(aes(fill = Rank.Category), colour = "black") +
   scale_x_discrete(position = "top") +
   scale_fill_brewer(palette = "Reds", direction = -1) +
-  ggtitle("Figure 9: Heatmap of peak positions by country and decade") +
+  ggtitle("Figure 10: Heatmap of peak positions by country and decade") +
   labs(fill = "Maximum rank reached",
        caption = "Data source: theyshootpictures.com") +
   shared_themes +
   theme(axis.text.x = element_text(angle = -45, hjust = 1.05))
 ```
 
-<img src="./img/figure-09.png" width="816" />
+<img src="./img/figure-10.png" width="816" />
 
 **Table 7: Top 10 greatest movies (2018 ranking)**
 
@@ -1831,14 +1850,14 @@ golden.silver <- function(xmin, xmax) {
 
 # Produce scatterplot for Japanese cinema
 cond.scatter(greatest, "Japan", foreign.dir,
-             plot.title = "Figure 10: Timeline of Japan's greatest films",
+             plot.title = "Figure 11: Timeline of Japan's greatest films",
              xticks.distance = 5, disp.ranking = TRUE, disp.legend = TRUE,
              disp.caption = TRUE) +
   # Highlight Golden and Silver Ages of Japanese cinema
   golden.silver(xmin = c(1949, 1960), xmax = c(1960, 1965))
 ```
 
-<img src="./img/figure-10.png" width="816" />
+<img src="./img/figure-11.png" width="816" />
 
 The first one I am interested in—and which I will discuss in greater detail—is Japan (Figure 9):
 
@@ -1863,14 +1882,14 @@ s4 <- cond.scatter(greatest, "USSR", foreign.dir, plot.title = "USSR") +
   golden.silver(xmin = c(1920, 1960), xmax = c(1947, 1980))
 
 # Arrange subplots in one unique figure
-plot.title <- paste("Figure 11: Golden and silver ages of cinema for other",
+plot.title <- paste("Figure 12: Golden and silver ages of cinema for other",
                     "selected countries")
 
 grid.arrange(s1, s2, s3, s4, nrow = 2, ncol = 2,
              top = textGrob(plot.title, gp = gpar(fontsize = 11)))
 ```
 
-<img src="./img/figure-11.png" width="816" />
+<img src="./img/figure-12.png" width="816" />
 
 #### **Germany**
 
@@ -1890,7 +1909,7 @@ box_plt <- ggplot(data = subset(greatest, !is.na(Length)),
   # Include mean duration per decade
   stat_summary(fun.y = mean, geom = "point", size = 1, shape = 3,
                color = "tomato", show.legend = FALSE) +
-  ggtitle("Figure 12: Boxplot of movie durations by decade") +
+  ggtitle("Figure 13: Boxplot of movie durations by decade") +
   xlab("Decade") +
   ylab("Duration (minutes)") +
   shared_themes
@@ -1908,7 +1927,7 @@ bar_plt <- ggplot(data = greatest, aes(x = Decade)) +
 grid.arrange(box_plt, bar_plt, layout_matrix = cbind(c(1, 1, 1, 2)))
 ```
 
-<img src="./img/figure-12.png" width="816" />
+<img src="./img/figure-13.png" width="816" />
 
 ### **Most frequent co-productions**
 
@@ -2151,13 +2170,13 @@ world_transparent +
                  y = Latitude.x, yend = Latitude.y,
                  alpha = Two.Country.Relationships), color = "#a50026") +
   scale_alpha_manual(values = c(0.05, 0.1, 0.2, 0.5, 1)) +
-  ggtitle(paste("Figure 13: Most frequent two-country co-production",
+  ggtitle(paste("Figure 14: Most frequent two-country co-production",
                 "relationships")) +
   labs(alpha = "Two-country relationships",
        caption = "Data sources: theyshootpictures.com, Google Developers")
 ```
 
-<img src="./img/figure-13.png" width="816" />
+<img src="./img/figure-14.png" width="816" />
 
 #### **Observations**
 
@@ -2188,7 +2207,7 @@ p1 <- ggplot(data = both, aes(x = Year, y = both$n.x / both$n.y)) +
   # Highlight black-and-white-colour trend reversals
   annotate("rect", xmin = c(1953, 1965), xmax = c(1958, 1970),
            ymin = 0, ymax = Inf, alpha = 0.4) +
-  ggtitle("Figure 14: Timeline of colour/black-and-white prevalence") +
+  ggtitle("Figure 15: Timeline of colour/black-and-white prevalence") +
   xlab("Year") +
   ylab("Black-and-white-to-colour ratio") +
   shared_themes
@@ -2208,7 +2227,7 @@ p2 <- ggplot(data = subset(greatest, Colour %in% c("BW", "Col")),
 grid.arrange(p1, p2, ncol = 1, heights = 2:1, widths = 1:1)
 ```
 
-<img src="./img/figure-14.png" width="816" />
+<img src="./img/figure-15.png" width="816" />
 
 #### **Observations**
 
