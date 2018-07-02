@@ -1818,7 +1818,7 @@ greatest[1:10, c("Title", "Director", "Year", "Countries", "Decade")]
 
 #### **Observations**
 
-Figure 8 is a heatmap of the maximum ranks attained, throughout the decades, by each country represented in the list. The redder a particular tile is, the higher the position reached by the associated country in a given decade. Thus, maroon tiles (or clusters of dark red tiles) may help detect the Golden and Silver Ages of cinema, if any, for the desired countries.
+Figure 10 is a heatmap of the maximum ranks attained, throughout the decades, by each country represented in the list. The redder a particular tile is, the higher the position reached by the associated country in a given decade. Thus, maroon tiles (or clusters of dark red tiles) may help detect the Golden and Silver Ages of cinema, if any, for the desired countries.
 
 It may be useful to make some preliminary comments on the figure. In my opinion, the following features of the plot stand out the most:
 
@@ -1828,7 +1828,7 @@ It may be useful to make some preliminary comments on the figure. In my opinion,
 
 Additional comments are in order. One is that the maroon tiles in the plot are nine, instead of ten. This is due to the fact that: (I) both the United States and Japan produced two top 10 movies in the 1950s: the United States John Ford's *The Searchers* in 1956 and Alfred Hitchcock's *Vertigo* in 1958, Japan Yasujirō Ozu's Tokyo Story in 1953 and Akira Kurosawa's Seven Samurai in 1954 (Table 7); (II) Stanley Kubrick's *2001: A Space Odyssey*, in 1968, is double-counted since it was a UK-USA co-production. The other is that the heatmap can not only be read by rows, but also by columns: this way, one can find out which decade was the most important for world cinema (possibly the 1960s).
 
-Let us now analyse the Golden and Silver Ages of cinema for a few selected countries in the list. To do so, inference is made not only from figure 8, but also from 9-10, in the below section.
+Let us now analyse the Golden and Silver Ages of cinema for a few selected countries in the list. To do so, inference is made not only from figure 10, but also from 11-12, in the below section.
 
 #### **Japan**
 
