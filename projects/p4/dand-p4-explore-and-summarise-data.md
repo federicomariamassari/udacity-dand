@@ -30,7 +30,7 @@ To answer questions as they come to mind, in a stream-of-consciousness narrative
 
 -   [Top 250 Directors](http://www.theyshootpictures.com/gf1000_top250directors.htm): this provides information on the most critically acclaimed filmmakers of all-time, including current rankings, the number of movies appearing in "The 1,000 Greatest Films", and that of movies featured in other lists (i.e., "cited"). Particularly important is the directors' rankings, since I am going to manually determine, for each director, the number of films among the top 2,000. I could not find the list in an easily downloadable format, so I had to scrape the data from the webpage (on ethical scraping, see the next paragraph), and store them in a csv file;
 
--   Auxiliary data come from Wikipedia (breakdown of countries into continent, area, code, gdp, gdp sector composition, and religion) and Google Developers (country coordinates).
+-   Auxiliary data come from Wikipedia (breakdown of countries by continent, area, code, gdp, gdp sector composition, and religion) and Google Developers (country coordinates).
 
 ### **Data acquisition process**
 
@@ -212,8 +212,8 @@ greatest <- replace.value(greatest, "Genre", "Road Movie")
 
 ``` r
 # Fix typo from the Excel file
-greatest$Countries <-
-  gsub("Herzergovina", "Herzegovina", greatest$Countries)
+greatest$Countries <- gsub("Herzergovina", "Herzegovina",
+                           greatest$Countries)
 
 # Fix typo in column "Countries": "--" -> "-"
 greatest$Countries <- gsub("--", "-", greatest$Countries)
@@ -535,8 +535,8 @@ replace.from.list <- function(df, cond.column, replace.in, to.replace,
   for (i in 1:length(factor.list)) {
 
     # Add new factor level to data frame
-    levels(df[[replace.in]]) <-
-      c(levels(df[[replace.in]]), names(factor.list[i]))
+    levels(df[[replace.in]]) <- c(levels(df[[replace.in]]),
+                                  names(factor.list[i]))
 
     # Replace factor level if condition is met
     df[df[[cond.column]] %in% factor.list[[i]], ][[replace.in]] <-
@@ -992,7 +992,7 @@ The first dimension I would like to explore is the geographical one. Some intere
 
 The best way to answer these questions is through a choropleth map, a thematic chart in which colour intensity for each country is positively associated to the number of contributions that country made to the list (with black areas reflecting absence of contributions).
 
-### **Choropleth map of countries of production**
+### **I. Choropleth map of countries of production**
 
 #### **Aggregate data for exploration**
 
@@ -1109,11 +1109,11 @@ These findings raise interesting questions.
 
 -   First, how skewed is the distribution of co-productions? That is, how many films did the top contributing nations actually shoot, or help shoot, and what fraction of the total do their efforts account for?
 
--   Second, does any of the following variables help explain why a country has a particular number of entries in the list: the desire to boost the cinema industry (a behaviour proxied by the *share* of nominal GDP to services); the amount of money invested in cinema (as proxied by the *amount* of nominal GDP to services); the size of a country? It appears that the major contributors to the list are among the most developed countries in the world, and these usually devote a larger portion of GDP to the tertiary sector.
+-   Second, does any of the following variables help explain why a country has a particular number of entries in the list: the desire to boost the cinema industry (a behaviour proxied by the *share* of nominal GDP to services); the amount of money invested in cinema (as proxied by the *amount* of nominal GDP to services); or the size of a country? It appears that the major contributors to the list are among the most developed countries in the world, and these usually devote a larger portion of GDP to the tertiary sector.
 
 -   Third, is there any link between a country's predominant religion and the number of movies that country co-produced? For example, several black regions in the map belong to the so-called Muslim world, and Islamic countries, apart from Iran, seem to have historically contributed less to the list than states with a different prevalent religion.
 
-### **Contributions by country**
+### **II. Contributions by country**
 
 ``` r
 custom_ticks <- c(0, 1, 10, 100, 1000)
@@ -1188,7 +1188,7 @@ The distribution of co-productions is, as expected, highly asymmetric. The Unite
 
 Why are the United States and Western Europe so prominent, and why is Africa largely absent from the list? The difference in output could be linked, among the others, to the willingness of a country to bet on the cinema industry on the one hand, and to the amount of resources that country can afford to invest on the other.
 
-### **Contributions by share of GDP to services**
+### **III. Contributions by share of GDP to services**
 
 ``` r
 ggplot(data = greatest.by_country,
@@ -1326,7 +1326,7 @@ kendall.tau(greatest.by_country, x = "Services", y = "n")
 
     ## [1] 0.3767375
 
-### **Contributions by amount of nominal GDP to services**
+### **IV. Contributions by amount of nominal GDP to services**
 
 ``` r
 ggplot(data = greatest.by_country,
@@ -1377,7 +1377,7 @@ On average, South American nations have contributed a lower number of films to t
 
 Hong Kong is confirmed as a virtuous region, while China, with only 32 movies in the list despite almost 5 trillion USD to services, seems to be less efficient than originally thought. However, due to the issues highlighted in the previous section (i.e., change in the composition of GDP throughout the decades, technological progress and increased wealth of a nation), this statistic may be highly unreliable.
 
-### **Contributions by country predominant religion**
+### **V. Contributions by country predominant religion**
 
 ``` r
 ggplot(data = greatest.by_country,
@@ -1432,7 +1432,7 @@ The second dimension I would like to explore is time. Interesting questions coul
 
 -   *Which are the golden and silver periods of cinema, if any, for each of the represented countries in the list?*
 
-### **Timeline of contributions by continent**
+### **VI. Timeline of contributions by continent**
 
 ``` r
 # Add median year by continent
@@ -1442,7 +1442,8 @@ contributions <- contributions[!is.na(contributions$Year), ] %>%
 
 ggplot(data = subset(contributions, !is.na(Year)),
        aes(x = Year, fill = Continent)) +
-  geom_histogram(binwidth = 5, boundary = 0, size = 0.1, show.legend = FALSE) +
+  geom_histogram(binwidth = 5, boundary = 0, colour = "black", size = 0.1,
+                 show.legend = FALSE) +
   scale_x_continuous(breaks = seq(1890, 2020, 10)) +
   # Also plot conditional medians
   geom_vline(aes(xintercept = Median.Year, group = Continent),
@@ -1473,42 +1474,37 @@ In general, the conditional distributions appear to be negatively skewed, with:
 
 -   *the body shifted to the right*, meaning that apparently, on average, most contributions to the list were made since the 1970s. This latter feature is also evident in the conditional median values, which are all higher than 1970. However, are these values genuine or distorted?
 
-In addition, the distributions in Figure 7 appear to be "humped", or bimodal, with at least one decade in between the two peaks in which contributions were fewer than usual. The humps are particularly visible in the densities of Western Europe and Asia, and less in that of North America (whose distribution more closely resembles a Gaussian or Student's t). Again, are these humps genuine, or are they inflated by same-continent co-productions?
+-   *a two-humped (or bimodal) distribution*, with at least one decade in between the two peaks in which contributions were fewer than usual. The humps are particularly visible in the densities of Western Europe and Asia, and less in that of North America (whose distribution more closely resembles a Gaussian or Student's t). Again, are these humps genuine, or are they inflated by same-continent co-productions?
+
+### **VII. Timeline of co-productions**
 
 ``` r
-ggplot(data = contributions, aes(x = Year, y = Pos)) +
-  # Partially jitter x-axis coordinate to detect co-producers' continent
-  geom_jitter(aes(color = Continent), alpha = 0.2, width = 0.2, height = 0,
-              show.legend = TRUE) +
+contributions <- merge(contributions,
+                       # Include number of co-producers per movie
+                       contributions %>% group_by(Pos) %>%
+                         summarise(Co.Producers = n()),
+                       by = "Pos", all = TRUE)
+```
+
+``` r
+ggplot(data = subset(contributions, Co.Production == "Yes"),
+       aes(x = Year, y = Pos)) +
+  geom_point(aes(color = Continent, size = Co.Producers), alpha = 0.3,
+             show.legend = TRUE) +
+  geom_point(aes(size = Co.Producers), colour = "black", shape = 1,
+             stroke = 0.1) +
   scale_x_continuous(breaks = seq(1890, 2020, 10)) +
-  scale_y_reverse() +
-  ggtitle("Figure 8: Concentration of same-continent co-productions") +
+  scale_y_reverse(breaks = seq(0, 2000, 250)) +
+  ggtitle("Figure 8: Timeline of co-productions") +
   ylab("Rank") +
   labs(caption = "Data sources: theyshootpictures.com, Wikipedia") +
-  shared_themes
+  shared_themes +
+  # Override alpha aesthetics and remove size legend
+  guides(colour = guide_legend(override.aes = list(alpha = 1)),
+         size = FALSE)
 ```
 
 <img src="./img/figure-08.png" width="816" />
-
-``` r
-# Include number of film co-producing countries to data frame
-contributions <- contributions %>%
-  group_by(Pos) %>%
-  mutate(No.Countries = n())
-
-# Only select films co-produced by at least two countries
-ggplot(data = subset(contributions, No.Countries > 1),
-       aes(x = Year, y = No.Countries)) +
-  geom_jitter(aes(color = Continent), width = 0.1, height = 0.2) +
-  scale_x_continuous(breaks = seq(1890, 2020, 10)) +
-  scale_y_continuous(breaks = seq(1, 11)) +
-  ggtitle("Figure 9: Timeline and breadth of co-productions") +
-  ylab("Number of co-producers") +
-  labs(caption = "Data sources: theyshootpictures.com, Wikipedia") +
-  shared_themes
-```
-
-<img src="./img/figure-09.png" width="816" />
 
 #### **Table 6: Largest co-productions in the list**
 
@@ -1789,14 +1785,14 @@ ggplot(data = greatest.by_decade, aes(x = Decade, y = Country)) +
   geom_tile(aes(fill = Rank.Category), colour = "black") +
   scale_x_discrete(position = "top") +
   scale_fill_brewer(palette = "Reds", direction = -1) +
-  ggtitle("Figure 10: Heatmap of peak positions by country and decade") +
+  ggtitle("Figure 9: Heatmap of peak positions by country and decade") +
   labs(fill = "Maximum rank reached",
        caption = "Data source: theyshootpictures.com") +
   shared_themes +
   theme(axis.text.x = element_text(angle = -45, hjust = 1.05))
 ```
 
-<img src="./img/figure-10.png" width="816" />
+<img src="./img/figure-09.png" width="816" />
 
 **Table 7: Top 10 greatest movies (2018 ranking)**
 
@@ -1850,14 +1846,14 @@ golden.silver <- function(xmin, xmax) {
 
 # Produce scatterplot for Japanese cinema
 cond.scatter(greatest, "Japan", foreign.dir,
-             plot.title = "Figure 11: Timeline of Japan's greatest films",
+             plot.title = "Figure 10: Timeline of Japan's greatest films",
              xticks.distance = 5, disp.ranking = TRUE, disp.legend = TRUE,
              disp.caption = TRUE) +
   # Highlight Golden and Silver Ages of Japanese cinema
   golden.silver(xmin = c(1949, 1960), xmax = c(1960, 1965))
 ```
 
-<img src="./img/figure-11.png" width="816" />
+<img src="./img/figure-10.png" width="816" />
 
 The first one I am interested in—and which I will discuss in greater detail—is Japan (Figure 9):
 
@@ -1882,14 +1878,14 @@ s4 <- cond.scatter(greatest, "USSR", foreign.dir, plot.title = "USSR") +
   golden.silver(xmin = c(1920, 1960), xmax = c(1947, 1980))
 
 # Arrange subplots in one unique figure
-plot.title <- paste("Figure 12: Golden and silver ages of cinema for other",
+plot.title <- paste("Figure 11: Golden and silver ages of cinema for other",
                     "selected countries")
 
 grid.arrange(s1, s2, s3, s4, nrow = 2, ncol = 2,
              top = textGrob(plot.title, gp = gpar(fontsize = 11)))
 ```
 
-<img src="./img/figure-12.png" width="816" />
+<img src="./img/figure-11.png" width="816" />
 
 #### **Germany**
 
@@ -1909,7 +1905,7 @@ box_plt <- ggplot(data = subset(greatest, !is.na(Length)),
   # Include mean duration per decade
   stat_summary(fun.y = mean, geom = "point", size = 1, shape = 3,
                color = "tomato", show.legend = FALSE) +
-  ggtitle("Figure 13: Boxplot of movie durations by decade") +
+  ggtitle("Figure 12: Boxplot of movie durations by decade") +
   xlab("Decade") +
   ylab("Duration (minutes)") +
   shared_themes
@@ -1927,7 +1923,7 @@ bar_plt <- ggplot(data = greatest, aes(x = Decade)) +
 grid.arrange(box_plt, bar_plt, layout_matrix = cbind(c(1, 1, 1, 2)))
 ```
 
-<img src="./img/figure-13.png" width="816" />
+<img src="./img/figure-12.png" width="816" />
 
 ### **Most frequent co-productions**
 
@@ -2170,13 +2166,13 @@ world_transparent +
                  y = Latitude.x, yend = Latitude.y,
                  alpha = Two.Country.Relationships), color = "#a50026") +
   scale_alpha_manual(values = c(0.05, 0.1, 0.2, 0.5, 1)) +
-  ggtitle(paste("Figure 14: Most frequent two-country co-production",
+  ggtitle(paste("Figure 13: Most frequent two-country co-production",
                 "relationships")) +
   labs(alpha = "Two-country relationships",
        caption = "Data sources: theyshootpictures.com, Google Developers")
 ```
 
-<img src="./img/figure-14.png" width="816" />
+<img src="./img/figure-13.png" width="816" />
 
 #### **Observations**
 
@@ -2207,7 +2203,7 @@ p1 <- ggplot(data = both, aes(x = Year, y = both$n.x / both$n.y)) +
   # Highlight black-and-white-colour trend reversals
   annotate("rect", xmin = c(1953, 1965), xmax = c(1958, 1970),
            ymin = 0, ymax = Inf, alpha = 0.4) +
-  ggtitle("Figure 15: Timeline of colour/black-and-white prevalence") +
+  ggtitle("Figure 14: Timeline of colour/black-and-white prevalence") +
   xlab("Year") +
   ylab("Black-and-white-to-colour ratio") +
   shared_themes
@@ -2227,7 +2223,7 @@ p2 <- ggplot(data = subset(greatest, Colour %in% c("BW", "Col")),
 grid.arrange(p1, p2, ncol = 1, heights = 2:1, widths = 1:1)
 ```
 
-<img src="./img/figure-15.png" width="816" />
+<img src="./img/figure-14.png" width="816" />
 
 #### **Observations**
 
