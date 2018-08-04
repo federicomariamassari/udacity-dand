@@ -1476,6 +1476,8 @@ In general, the conditional distributions appear to be negatively skewed, with:
 
 -   *a two-humped (or bimodal) distribution*, with at least one decade in between the two peaks in which contributions were fewer than usual. The humps are particularly visible in the densities of Western Europe and Asia, and less in that of North America (whose distribution more closely resembles a Gaussian or Student's t). Again, are these humps genuine, or are they inflated by same-continent co-productions?
 
+An analysis of co-productions through time may help shed light on these points.
+
 ### **VII. Timeline of co-productions**
 
 ``` r
@@ -1503,7 +1505,7 @@ subset.unique <- function(df, year_range, region) {
 
 ``` r
 plot.submap <- function(df, title, area) {
-  # Plot a zoomed-in map of Asia and scatter plot country co-productions.
+  # Plot a zoomed-in world area and scatter plot country co-productions.
   #
   # Arguments:
   #   df: data frame. The subset data frame.
@@ -1514,7 +1516,7 @@ plot.submap <- function(df, title, area) {
   #     (default: world_base).
   #
   # Returns:
-  #   A zoomed-in map of Asia with a scatter plot of country co-productions
+  #   A zoomed-in world area with a scatter plot of country co-productions
   #   based on the conditions imposed in the supplied data frame.
   #
   plt <- area +
@@ -1711,8 +1713,8 @@ It is also interesting to see that only two co-productions in the list were made
 #### **Table 7: Earliest co-productions in the list**
 
 ``` r
-# List co-productions made before 1940
-knitr::kable(subset(largest.contributions, Year < 1940),
+# List co-productions made before the end of World War II
+knitr::kable(subset(largest.contributions, Year <= 1945),
              format = "html", row.names = FALSE)
 ```
 
@@ -1773,22 +1775,85 @@ Mexico, USA
 </tr>
 </tbody>
 </table>
-In light of this additional information, what can we say about the humped shape of the conditional distributions?
+Data source: theyshootpictures.com
 
--   For **Western Europe**, the humps relate to the periods 1960-1975 and 1990-2010. The first period is generally referred to as the Golden Age of European cinema, and includes genuine contributions from critically acclaimed directors such as Federico Fellini, Ingmar Bergman, Jean-Luc Godard, Luis Buñuel, and Stanley Kubrick. The second period, however, has a spurious peak due to same continent co-productions (the largest cooperative efforts were all made between the '90s and the '00s): an example is Lars von Triers' *Dancer in the Dark* (2000), shot in no less than 11 Western European countries (Table 6). Due to this spurious peak, both the shape of the distribution and the median value may well be distorted.
+### **VIII. Timeline of contributions by continent (revisited)**
+
+In light of this additional information, what can we say about the humped shape of the conditional distributions, and the associated median values?
+
+-   For **Western Europe**, the humps relate to the periods 1960-1975 and 1990-2010. The first period is generally referred to as the Golden Age of European cinema, and includes genuine contributions from critically acclaimed directors such as Federico Fellini, Ingmar Bergman, Jean-Luc Godard, Luis Buñuel, and Stanley Kubrick. The second period, however, is likely to have a spurious peak due to same continent co-productions, given that the largest cooperative efforts were all made between the '90s and the '00s: an example is Lars von Triers' *Dancer in the Dark* (2000), shot in no less than 11 Western European countries (Table 6). As a consequence, both the shape of the distribution and the median value may well be distorted.
+
+When same-continent co-productions are taken into account, there are 294 contributions in the first period, and 418 in the second one (Table 8):
+
+#### **Table 8: Western European co-productions, unfiltered**
 
 ``` r
-# TODO: - Modify comments to figures 7-8-9
+# Subset by continent and discriminate by period
+periods <- subset(contributions, Continent == "Western Europe") %>%
+  mutate(Period = ifelse(Year %in% seq(1960, 1975), "1960-1975",
+                  ifelse(Year %in% seq(1990, 2010), "1990-2010", NA))) %>%
+  group_by(Period, Continent) %>%
+  summarise("Co-Productions" = n()) %>%
+  na.omit()
 
+knitr::kable(periods, format = "html", row.names = FALSE)
+```
+
+<table>
+<thead>
+<tr>
+<th style="text-align:left;">
+Period
+</th>
+<th style="text-align:left;">
+Continent
+</th>
+<th style="text-align:right;">
+Co-Productions
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+1960-1975
+</td>
+<td style="text-align:left;">
+Western Europe
+</td>
+<td style="text-align:right;">
+294
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+1990-2010
+</td>
+<td style="text-align:left;">
+Western Europe
+</td>
+<td style="text-align:right;">
+418
+</td>
+</tr>
+</tbody>
+</table>
+When duplicates are filtered-out, so that only the first co-producing country for each film is represented, the result is very different, with 230 contributions in the first period (Figure 9.A) and just 223 in the second one, about a half of the previous value (Figure 9.B). It is perhaps curious to see that the number of films per country has remained quite stable over time, except for Italy, which saw movie production decrease more than two thirds in the latter period.
+
+``` r
 western_europe <- world_base +
-  # Zoom the plot on Asia
+  # Zoom the plot on Western Europe
   coord_cartesian(xlim = c(-25, 40), ylim = c(35, 70)) +
   shared_themes
 
-p3 <- plot.submap(subset.unique(contributions, seq(1960, 1975), "Western Europe"),
-                  title = "Figure 9.A: Western European contributions, 1950-1965", western_europe)
-p4 <- plot.submap(subset.unique(contributions, seq(1990, 2010), "Western Europe"),
-                  title = "Figure 9.B: Western European contributions, 1990-2005", western_europe)
+p3 <- plot.submap(subset.unique(contributions, seq(1960, 1975),
+                                "Western Europe"),
+                  title = paste("Figure 9.A: Western European contributions,",
+                                "1950-1965"), western_europe)
+p4 <- plot.submap(subset.unique(contributions, seq(1990, 2010),
+                                "Western Europe"),
+                  title = paste("Figure 9.B: Western European contributions,",
+                                "1990-2005"), western_europe)
 
 gridExtra::grid.arrange(p3, p4, ncol = 2)
 ```
@@ -1802,7 +1867,7 @@ gridExtra::grid.arrange(p3, p4, ncol = 2)
 ``` r
 asia <- world_base +
   # Zoom the plot on Asia
-  coord_cartesian(xlim = c(30, 140), ylim = c(0, 55)) +
+  coord_cartesian(xlim = c(30, 140), ylim = c(-5, 60)) +
   shared_themes
 
 p5 <- plot.submap(subset.unique(contributions, seq(1950, 1965), "Asia"),
