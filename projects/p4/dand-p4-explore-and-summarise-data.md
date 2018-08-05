@@ -1838,7 +1838,7 @@ Western Europe
 </tr>
 </tbody>
 </table>
-When duplicates are filtered-out, so that only the first co-producing country for each film is represented, the result is very different, with 230 contributions in the first period (Figure 9.A) and just 223 in the second one, about a half of the previous value (Figure 9.B). It is perhaps curious to see that the number of films per country has remained quite stable over time, except for Italy, which saw movie production decrease more than two thirds in the latter period.
+When duplicates are filtered out, so that only the first co-producing country for each film is included, the result is very different: there are 230 genuine contributions in the first period (Figure 9.A), but only 223 in the second one—about a half of the previous value (Figure 9.B). It is perhaps also curious to see that the number of films per country has remained quite stable over time, except for Italy, for which movie production decreased more than two thirds in the latter period.
 
 ``` r
 western_europe <- world_base +
@@ -1853,16 +1853,14 @@ p3 <- plot.submap(subset.unique(contributions, seq(1960, 1975),
 p4 <- plot.submap(subset.unique(contributions, seq(1990, 2010),
                                 "Western Europe"),
                   title = paste("Figure 9.B: Western European contributions,",
-                                "1990-2005"), western_europe)
+                                "1990-2010"), western_europe)
 
 gridExtra::grid.arrange(p3, p4, ncol = 2)
 ```
 
 <img src="./img/figure-09A.png" width="816" />
 
--   For **Asia**, the humps correspond to the periods 1950-1965 and 1990-2005. The first one is regarded as the Golden Age of Asian cinema, when legendary Japanese directors Kenji Mizoguchi, Akira Kurosawa, Yasujiro Ozu, and Indian filmmaker Satyajit Ray made their masterpieces. The second period also lists genuine contributions—this time by a more heterogeneous pool of filmmakers (Figure 9).
-
-, including Taiwan's New Wave directors Edward Yang (*A Brighter Summer's Day*, *Yi Yi*) and Hou Hsiao-hsien (*A City of Sadness*), China's Chen Kaige (*Yellow Earth*, *Farewell My Concubine*) and Zhang Yimou (*Raise the Red Lantern*, *Red Sorghum*), Hong Kong's Wong Kar-wai (*In the Mood for Love*, *Chungking Express*), Japan's Hideo Miyazaki (*Spirited Away*, *My Neighbour Totoro*) and Thailand's Apichatpong Weerasethakul (*Tropical Malady*).
+-   For **Asia**, the humps correspond to the periods 1950-1965 and 1990-2005. The first one is regarded as the Golden Age of Asian cinema, when legendary Japanese directors Kenji Mizoguchi, Akira Kurosawa, Yasujiro Ozu, and Indian filmmaker Satyajit Ray made their masterpieces. As a consequence, co-productions from Japan and India make up for ~90% of Asian contributions in the period (Figure 9.C). The second period also lists genuine contributions—this time by a more heterogeneous pool of filmmakers (Figure 9.D). Production from the previously mentioned two countries is now greatly reduced, while the number of additions to the list by Iran (mainly Abbas Kiarostami's works), Taiwan (New Wave directors Edward Yang and Hou Hsiao-hsien), and Hong Kong (Wong Kar-wai) is particularly impressive.
 
 ``` r
 asia <- world_base +
