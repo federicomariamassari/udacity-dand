@@ -1,6 +1,6 @@
 Data Analyst Nanodegree: P4 Explore and Summarise Data
 ================
-**Federico Maria Massari / <federico.massari@bocconialumni.it>**
+**Federico Maria Massari**
 
 **Introduction**
 ----------------
@@ -9,28 +9,30 @@ Data Analyst Nanodegree: P4 Explore and Summarise Data
 
 Each list is a synthesis of thousands of individual polls and ballots, so it is not only pleasant to read, but also "statistically sound". As a consequence, the website represents an invaluable resource for both professionals and beginners alike.
 
-Eytan Bakshy, a scientist at Facebook, suggests that future data scientists find data they are interested in, and play with them, to develop expertise. I have been a fan of TSPDT for years, so this is my chance to visually explore some of its rich datasets. Among the others, I will investigate:
+Eytan Bakshy, a scientist at Facebook, suggests that future data scientists find data they are interested in, and play with them, to develop expertise. I have been a fan of *TSPDT* for years, so this is my chance to visually explore some of its rich datasets. Among the others, I will investigate:
 
--   which countries (co-)produced the greatest movies of all time, whether any particular region stands out in terms of either the number of contributions or film quality and, if so, why;
+-   Reason 1
 
--   which co-production relationships were the most frequent, whether the choice was dictated by historical or economic reasons, and whether geographical or linguistic proximity also played a role;
+-   Reason 2
 
--   
+-   Reason 3
 
 To answer questions as they come to mind, in a stream-of-consciousness narrative style, the main datasets are enriched with content from Wikipedia and Google.
+
+------------------------------------------------------------------------
 
 **Data acquisition**
 --------------------
 
 ### **Datasets**
 
-*They Shoot Pictures* provides a wealth of datasets related to both movies and filmmakers. For this project, I concentrated on the following rankings:
+*They Shoot Pictures* provides a wealth of datasets related to both movies and filmmakers. For this project, I focused on the following:
 
--   [The 1,000 Greatest Films](http://www.theyshootpictures.com/gf1000.htm) and [Films Ranked 1,001-2,000](http://www.theyshootpictures.com/gf1000_films1001-2000.htm) (henceforth, "main"): among the most important lists on the website, these contain information on current rankings, titles, directors, years and countries of production, genres, and whether a particular film was shot in colour or black-and-white. The lists are available as Excel files, so they are definitely easy to acquire. "The 1,000 Greatest Films" also includes rankings for the past two years, but I decided to drop the columns for a few reasons: the second list does not include such columns (the order was disclosed this year for the first time); there is little variability among positions year-over-year, especially at the top; and the samples vary over time (some movies are new entries, some are re-entries, and some dropped out of the lists);
+-   [The 1,000 Greatest Films](http://www.theyshootpictures.com/gf1000.htm) and [Films Ranked 1,001-2,000](http://www.theyshootpictures.com/gf1000_films1001-2000.htm) (henceforth, "main"): among the most important lists on the website, these contain information on current ranking, titles, directors, years and countries of production, genres, and whether a particular film was shot in colour or black-and-white. The lists are available as Excel files, so they are easy to acquire.
 
--   [Top 250 Directors](http://www.theyshootpictures.com/gf1000_top250directors.htm): this provides information on the most critically acclaimed filmmakers of all-time, including current rankings, the number of movies appearing in "The 1,000 Greatest Films", and that of movies featured in other lists (i.e., "cited"). Particularly important is the directors' rankings, since I am going to manually determine, for each director, the number of films among the top 2,000. I could not find the list in an easily downloadable format, so I had to scrape the data from the webpage (on ethical scraping, see the next paragraph), and store them in a csv file;
+-   [Top 250 Directors](http://www.theyshootpictures.com/gf1000_top250directors.htm): this provides information about the most critically acclaimed filmmakers, including current ranking, number of movies appearing in "The 1,000 Greatest Films", and number of movies featured in other lists (i.e., "cited"). Particularly important is the directors' rankings, since I am going to manually determine, for each director, the number of films among the top 2,000. I could not find the list in an easily downloadable format, so I had to scrape the data from the webpage (on ethical scraping, see the next paragraph), and store them in a csv file;
 
--   Auxiliary data come from Wikipedia (breakdown of countries by continent, area, code, gdp, gdp sector composition, and religion) and Google Developers (country coordinates).
+-   Auxiliary data come from Wikipedia (breakdown of countries by continent, area, code, nominal gdp, gdp by sector, and religion) and Google Developers (country coordinates).
 
 ### **Data acquisition process**
 
@@ -42,265 +44,200 @@ The data are acquired using Python libraries [Requests](http://docs.python-reque
     <meta name="robots" content="index, follow">
 ```
 
-Care was also taken to ensure that at least five seconds pass before an additional page is requested (the default time is ten seconds). This added constraint makes the data retrieval process time consuming (it clocks in at about one minute), but it avoids causing server saturation, and is only done once.
+Care was also taken to ensure that at least five seconds pass before an additional page is requested (the default time is ten seconds). This added constraint makes the data retrieval process time consuming (it clocks in at about one minute), but avoids causing server saturation, and is only done once.
 
 See the [related folder](https://github.com/federicomariamassari/udacity-dand/tree/master/projects/p4/python-modules) for information on the Python modules.
 
 ### **Data loading**
 
-#### **Acquire external datasets using Python**
+#### **Use Python to acquire external datasets**
 
 ``` r
-# Run this command while "p4" is the current working directory
-modules <- c("get_xls.py", "scrape_webpage.py", "scrape_wikipedia.py",
-             "scrape_others.py")
-sapply(modules,
-       function(x) system(paste("python3 ./python-modules/", x, sep = "")))
+# Run the following commands with "p4" as current working directory
+modules <- c("get_xls.py", 
+             "scrape_rankings.py", 
+             "scrape_wikipedia.py", 
+             "scrape_auxiliary.py")
+
+#sapply(X = modules, FUN = function(module)
+#         system(paste("python3 ./python-modules/", module, sep = "")))
 ```
 
-#### **Import datasets into R**
+#### **Import the datasets into RStudio**
 
 ``` r
-# Import frequently used libraries
-libraries <- c("dplyr", "ggplot2", "grid", "gridExtra", "kableExtra")
-sapply(libraries, require, character.only = TRUE)
+# Load frequently used libraries
+libraries <- c("dplyr", "ggplot2", "stringr", "magrittr", "viridis")
+
+sapply(X = libraries, FUN = require, character.only = TRUE)
 ```
 
 ``` r
-# Import main files as data frames
-greatest_pt1 <- readxl::read_excel("./data/xls/1000GreatestFilms.xls")
-greatest_pt2 <- readxl::read_excel("./data/xls/Films-Ranked-1001-2000.xls")
+# Store filenames in a list by extension
+filenames <- list("xls" = c("1000GreatestFilms",
+                            "Films-Ranked-1001-2000"),
+                  
+                  "csv" = c("continents", 
+                            "coordinates", 
+                            "country_area", 
+                            "country_codes", 
+                            "gdp_by_sector", 
+                            "nominal_gdp", 
+                            "religions"))
+
+# Import "Greatest Films" datasets as list of data frames
+greatest <- sapply(X = filenames$xls, FUN = function(filename) 
+  readxl::read_excel(paste("./data/xls/", filename, ".xls", sep = "")))
+
+# Rename list items
+names(greatest) <- c("Top.1000", "Bottom.1000")
+
+# Bind list to data frame removing unshared columns
+greatest <- rbind(greatest$Top.1000[, -c(2:3)], greatest$Bottom.1000) %>%
+  arrange(Pos)
+
+# Import "Top 250 Directors" dataset
 directors <- read.csv("./data/csv/top_250_directors.csv")
 
-# Import auxiliary documents as data frames
-variables <- c("continents", "coordinates", "country_area", "country_codes",
-               "religions", "nominal_gdp", "gdp_by_sector")
+# Import auxiliary datasets
+auxiliary <- sapply(X = filenames$csv, FUN = function(filename)
+  assign(filename, read.csv(paste("./data/csv/", filename, ".csv", sep = ""), 
+                            stringsAsFactors = FALSE)))
 
-for (variable in variables) {
-  assign(variable, read.csv(paste("./data/csv/", variable, ".csv", sep = "")))
-}
-
-# Import world map from ggplot2 library
+# Import world map from ggplot2
 world <- filter(map_data("world"), region != "Antarctica")
-
-# Uniform the data frames, append pt2 to pt1
-greatest <- rbind(greatest_pt1[, -c(2:3)], greatest_pt2)
 ```
 
 **Data cleaning**
 -----------------
 
-### **Character-to-factor conversion**
+### **Add factor levels**
+
+The world map dataset from the `maps` package only distinguishes between China and Hong Kong at the sub-regional level. This is an understandable choice, since Hong Kong is not an independent country but a special administrative region of China. However, given the prominence of Hong Kong's film industry, I consider the city as separate from the Mainland:
 
 ``` r
-convert.to.factor <- function(df) {
-  # Convert all "chr" columns of a data frame to "Factor".
-  #
-  # Arguments:
-  #   df: Data frame with columns of type "chr" to convert to "Factor".
-  #
-  # Returns:
-  #   Data frame df with converted column types.
-  #
-  df <- as.data.frame(unclass(df))
-  return(df)
-}
+world %<>%
+  mutate(region = case_when(subregion == "Hong Kong" ~ "Hong Kong",
+                            # Include catch-all statement
+                            TRUE ~ region))
 ```
 
-``` r
-world <- convert.to.factor(world)
-greatest <- convert.to.factor(greatest)
-```
-
-### **Factor level inclusion**
-
-The world map dataset from the `maps` package only distinguishes between China and Hong Kong at the sub-regional level. This is an understandable choice, since Hong Kong is not an independent country but a special administrative region of China. However, given the prominence of its film industry, it is useful to consider the city as separate from the mainland:
+### **Rename data frame columns**
 
 ``` r
-# Distinguish between China and Hong Kong at level "region"
-levels(world$region) <- c(levels(world$region), "Hong Kong")
-index <- as.numeric(rownames(subset(world, subregion == "Hong Kong")))
-world[index, ]$region <- "Hong Kong"
-
-# Add new row related to Hong Kong in auxiliary data frame
-continents <- rbind(continents,
-                    data.frame(Continent = "Asia", Country = "Hong Kong"))
-```
-
-### **Column renaming**
-
-``` r
-world <- rename(world, Country = region)
 greatest <- rename(greatest, Countries = Country)
 directors <- rename(directors, Dir.Rank = Rank)
+world <- rename(world, Country = region)
 ```
 
-### **Missing values imputation**
+### **Impute missing values**
 
-In the main dataset, missing or otherwise difficult to process entries are of two kinds: unknown length, genre, or colour; and a range of values for production year.
+In the main dataset, entries missing or otherwise difficult to process are of two kinds: unknown length, genre, or colour type; and production year as a year range.
 
--   The only film with unknown length is *Eniaios* (\#1544), by Gregory Markopoulos. The full movie lasts about 80 hours, but it has not been screened yet in its entirety. A few new cycles, of the twenty-two in total, have been released to the public every four years since 2004, also thanks to a successful [Kickstarter campaign](https://www.kickstarter.com/projects/1525866264/towards-eniaios-and-the-temenos) in 2012. How long the movie was when it entered various polls is not known, so the value is left blank (the observation is removed when the length dimension is analysed);
+#### **Unknown length, genre, or colour type**
 
--   One movie has unknown genre and one unknown colour specification. These are, respectively, *Reisender Krieger \[TV\]* (\#1947), by Christian Schocher, and *Line Describing a Cone* (\#1422), by Anthony McCall. The former is a *road movie* that focuses on the protagonists' journey, both physical and spiritual, so I list it as such. The latter is an *experimental* film that invites the viewer to interact with light, so it could be seen as having the features of both black-and-white and colour movies;
+-   *Eniaios* (\#1544), by Gregory Markopoulos, is the only film with unknown length. The full movie lasts ~80 hours, but it has never been screened in its entirety. A new cycle, of the twenty-two in total, has been released to the public every four years since 2004, also thanks to a successful [Kickstarter campaign](https://www.kickstarter.com/projects/1525866264/towards-eniaios-and-the-temenos) initiated in 2012. How long the movie was when it entered the various polls it is not known, so I leave the value blank and will omit the entry when analysing the length dimension;
 
--   Three movies have a range of values for production year. These are *Scenes from Under Childhood* (\#1490), by Stan Brakhage, *Little Stabs at Happiness* (\#1599), by Ken Jacobs, and *The Wire \[TV\]* (\#1934), by various directors. In this case, I replaced the range of years with the average, rounding down unless the latter was an integer.
+-   *Reisender Krieger \[TV\]* (\#1947), by Christian Schocher, has unknown genre; *Line Describing a Cone* (\#1422), by Anthony McCall, has unknown colour specification. The former is a *road movie* which focuses on the protagonists' journey, both physical and spiritual, so I list it as such. The latter is an *experimental film* that invites the viewer to interact with light: as such, I give it the features of both a black-and-white and a colour movie, and list it as "Col-BW".
+
+``` r
+greatest %<>%
+  mutate(Genre = replace(Genre, Genre == "---", "Road Movie"),
+         Colour = replace(Colour, Colour == "---", "Col-BW"))
+```
+
+#### **Production year as a year range**
+
+-   *Scenes from Under Childhood* (\#1490), by Stan Brakhage, *Little Stabs at Happiness* (\#1599), by Ken Jacobs, and *The Wire \[TV\]* (\#1934), by various directors, list production year as a range of years. I replace the latter with an average, rounding down unless the average is an integer.
 
 ``` r
 replace.with.mean <- function(df, column, delimiter = "-") {
-  # Replace entry "YYYY-YYYY" with the rounded mean of the single years.
+  # Replace year range with the rounded mean of single years.
   #
   # Arguments:
-  #   df: Data frame.
-  #   column: Data frame column with entries to replace. Enter as text (i.e.,
-  #     "column", since the function evaluates it as df[["column"]]).
+  #   df -- data frame. The data frame with entries to replace.
+  #   column -- character. The column name, as text.
   #
   # Keyword arguments:
-  #   delimiter: The character separating the two years (default: "-").
+  #   delimiter -- character. The character separating the two years 
+  #     (default: "-").
   #
   # Returns:
-  #   A data frame in which entries "YYYY-YYYY" in the supplied column are
-  #   replaced by the average of the single YYYY entries.
-  #
-  # Store all rows in which delimiter appears in a subset
-  df_subset <- df[grepl(delimiter, df[[column]], fixed = TRUE), ]
-
-  # Separately store corresponding row indices
-  indices <- as.numeric(rownames(df_subset))
-
-  # Replace entry with conditional mean value
-  for (i in 1:length(indices)) {
-    string <- stringr::str_split_fixed(df_subset[[column]][i], delimiter, Inf)
+  #   df -- data frame. The supplied data frame, with year ranges "YYYY-YYYY"
+  #     replaced by the average of the single years.
+  
+  # Extract the indices of cells containing a year range
+  idx <- which(grepl(x = df[[column]], pattern = delimiter, fixed = TRUE))
+  
+  average.range <- function(string, pattern = delimiter) {
+    # Compute and round the average of a year range "YYYY-YYYY".
+    
+    string <- str_split_fixed(string, pattern, Inf)
     string <- round(mean(as.numeric(string)), 0)
-    df[[column]][indices[i]] <- as.factor(string)
+    
+    return(string)
   }
-  return(df)
-}
-
-replace.value <- function(df, column, replacement, to_replace = "---") {
-  # Replace data frame entry "---" with user-defined value.
-  #
-  # Arguments:
-  #   df: Data frame.
-  #   column: Data frame column with entries to replace. Enter as text (i.e.,
-  #     "column", since the function evaluates it as df[["column"]]).
-  #   replacement: The desired replacement value, as text.
-  #
-  # Keyword arguments:
-  #   to_replace: The character to replace (default: "---").
-  #
-  # Returns:
-  #   A data frame in which entries "---" in the supplied column are replaced
-  #   by a custom value supplied by the user.
-  #
-  df[[column]][grepl(to_replace, df[[column]], fixed = TRUE)] <- replacement
+  
+  # Replace year ranges with rounded average values
+  to_replace <- df[[column]][idx]
+  replacement <- sapply(X = idx, FUN = function(i) average.range(to_replace))
+  
+  df[[column]][idx] <- replacement
+  
   return(df)
 }
 ```
 
 ``` r
-# Split each "YYYY-YYYY" in column "Year", replace it with the rounded mean of
-# the two values, then convert the output to numeric
-greatest <- replace.with.mean(greatest, "Year")
-greatest$Year <- as.numeric(as.character(greatest$Year))
-
-# Replace "---" in columns "Colour" and "Genre" with suitable values
-greatest <- replace.value(greatest, "Colour", "Col-BW")
-greatest <- replace.value(greatest, "Genre", "Road Movie")
+# Replace year ranges and convert to numeric
+greatest %<>% 
+  replace.with.mean(., "Year") %>%
+  mutate(Year = as.numeric(Year))
 ```
 
-### **Typo correction and delimiter replacement**
+### **Correct typos and replace delimiters**
 
 ``` r
-# Fix typo from the Excel file
-greatest$Countries <- gsub("Herzergovina", "Herzegovina",
-                           greatest$Countries)
-
-# Fix typo in column "Countries": "--" -> "-"
-greatest$Countries <- gsub("--", "-", greatest$Countries)
-
-# Replace delimiters with clearer ones
-for (column in c("Countries", "Genre")) {
-  greatest[[column]] <- gsub("-", ", ", greatest[[column]])
-}
-greatest$Director <- gsub("/", "; ", greatest$Director)
+greatest %<>%
+  # Fix typos from the Excel files
+  mutate(Countries = gsub("Herzergovina", "Herzegovina", Countries),
+         Countries = gsub("--", "-", Countries)) %>%
+  # Replace delimiters with clearer ones
+  mutate(Countries = gsub("-", ", ", Countries),
+         Director = gsub("/", "; ", Director)) %>%
+  # Avoid splitting "Avant-Garde"
+  mutate(Genre = gsub("Avant-Garde", "Avant Garde", Genre),
+         Genre = gsub("-", ", ", Genre))
 ```
 
-### **Other type conversions**
+### **Add new variables**
+
+Five variables are added to the data frame: "Co-Production" and "Co-Director" (Boolean) signal whether a certain movie was co-produced by different countries or shot by various directors; "Decade" and "Rank Category" provide a higher level of aggregation with respect to "Year" and "Position"; "Co-Producers" counts the number of co-producers for each movie.
 
 ``` r
-# Convert "gdp_by_sector" factor columns to numeric using lambda function
-cols <- c("Agriculture", "Industry", "Services")
-gdp_by_sector[, cols] = apply(gdp_by_sector[, cols], 2,
-                              function(x) as.numeric(as.character(x)))
+decades <- c("1890s", "1900s", "1910s", "1920s", "1930s", "1940s", "1950s", 
+             "1960s", "1970s", "1980s", "1990s", "2000s", "2010s")
+
+ranking <- c("Top 10", "From 11 to 100", "From 101 to 500", "From 501 to 1000",
+             "Bottom 1000")
+
+year_breaks <- seq(1890, 2020, 10)
+rank_breaks <- c(0, 10, 100, 500, 1000, 2000)
+
+greatest %<>%
+  # Add boolean variables
+  mutate(Co.Production = grepl(pattern = ",", x = Countries),
+         Co.Director = grepl(pattern = ";", x = Director)) %>%
+  # Add categorical variables
+  mutate(Decade = cut(Year, breaks = year_breaks, dig.lab = 5, 
+                      right = FALSE, labels = decades),
+         Rank.Category = cut(Pos, breaks = rank_breaks, labels = ranking)) %>%
+  # Count co-producers, account for self
+  mutate(Co.Producers = 1 + str_count(Countries, pattern = ","))
 ```
 
-### **Variables creation**
-
-Four variables are added to the data frame: "Co-Production" and "Co-Director" (Boolean) signal whether a certain movie was co-produced by different countries or shot by various directors; "Decade" and "Rank Category" provide a higher level of aggregation with respect to "Year" and "Position".
-
-``` r
-add.bool.column <- function(df, cond.column, new.column, delimiter,
-                            if_TRUE = "Yes", if_FALSE = "No") {
-  # Add Boolean column to data frame.
-  #
-  # Arguments:
-  #   df: Data frame.
-  #   cond.column: The data frame column upon which to build the Boolean
-  #     column. If entry i in cond.column contains a specific delimiter,
-  #     new.column[i] is set to if_TRUE; else, it is set to if_FALSE.
-  #     Enter cond.column as text (i.e., "cond.column").
-  #   new.column: The new column name, as text.
-  #   delimiter: Delimiter to search in cond.column, as text.
-  #   
-  # Keyword arguments:
-  #   if_TRUE: The conditional affirmative value of new.column entries, as text
-  #     (default: "Yes").
-  #   if_FALSE: The conditional negative value of new.column entries, as text
-  #     (default: "No").
-  #
-  # Returns:
-  #   The data frame, augmented by a Boolean column according to the specified
-  #   conditions.
-  #
-  # Initialise data frame column
-  df[[new.column]] <- NA
-
-  for (i in 1:nrow(df)) {
-    ifelse(grepl(delimiter, df[[cond.column]][i], fixed = TRUE),
-           df[[new.column]][i] <- if_TRUE,
-           df[[new.column]][i] <- if_FALSE)  
-  }
-  return(df)
-}
-```
-
-``` r
-# Add column "Co.Production"
-greatest <- add.bool.column(df = greatest, cond.column = "Countries",
-                            new.column = "Co.Production", delimiter = ", ")
-
-# Add column "Co.Director"
-greatest <- add.bool.column(df = greatest, cond.column = "Director",
-                            new.column = "Co.Director", delimiter = "; ")
-
-# Add column "Decade"
-greatest$Decade <- cut(greatest$Year, breaks = seq(1890, 2020, 10),
-                       dig.lab = 5, right = FALSE)
-
-levels(greatest$Decade) <- c("1890s", "1900s", "1910s", "1920s", "1930s",
-                             "1940s", "1950s", "1960s", "1970s", "1980s",
-                             "1990s", "2000s", "2010s")
-
-# Add column "Rank.Category"
-greatest$Rank.Category <- cut(greatest$Pos,
-                              breaks = c(0, 10, 100, 500, 1000, 2000))
-
-levels(greatest$Rank.Category) <- c("Top 10", "From 11 to 100",
-                                    "From 101 to 500", "From 501 to 1000",
-                                    "Bottom 1000")
-```
-
-### **Data tidying**
+**Data tidying**
+----------------
 
 Hadley Wickham (Wickham, 2014) defines as "tidy" any dataset with the following three characteristics: every row is an observation, every column a variable, and every table a type of observational unit. The main dataset falls short of the second requirement, since "Countries" and "Genre" both contain multiple variables. For example:
 
@@ -343,6 +280,9 @@ Decade
 <th style="text-align:left;">
 Rank.Category
 </th>
+<th style="text-align:right;">
+Co.Producers
+</th>
 </tr>
 </thead>
 <tbody>
@@ -372,10 +312,10 @@ Romance, Drama
 Col
 </td>
 <td style="text-align:left;">
-Yes
+TRUE
 </td>
 <td style="text-align:left;">
-No
+FALSE
 </td>
 <td style="text-align:left;">
 2000s
@@ -383,399 +323,168 @@ No
 <td style="text-align:left;">
 From 11 to 100
 </td>
+<td style="text-align:right;">
+2
+</td>
 </tr>
 </tbody>
 </table>
-To tidy the dataset three steps are needed:
+A tidy dataset requires three steps:
 
--   splitting the content of the target columns by delimiter, to obtain "colvars" (i.e., individual variables stored in multiple columns);
+-   splitting the content of the target columns by delimiter to obtain "colvars" (i.e., individual variables stored in multiple columns);
 
--   "melting" the colvars (i.e., turning them into rows of a single column), using a primary key to uniquely relate the output to the corresponding observations;
+-   "melting" the colvars (i.e., turning them into rows of a single column) using a primary key to uniquely relate the output to the corresponding observations;
 
 -   "left joining" (i.e., merging two datasets, conforming the size of the second one to that of the first one) the molten data on content from the original dataset.
 
-Revealing the contributions of individual countries is an important goal of the project, so I am going to tidy the dataset with respect to "Countries" first.
-
-#### **Split by and melt column variables**
+In my view, "Countries" is richer with information than "Genre", and revealing the contribution of individual nations to the list of greatest movies is an important goal of the project. Tidying the dataset with respect to the former variable will grow the number of observations to 2,591. This is the total used for the exploratory analysis.
 
 ``` r
-split.strings <- function(df, column, delimiter = ", ") {
-  # Split data frame column entries by delimiter and vectorise the output.
-  #
-  # Arguments:
-  #   df: Data frame.
-  #   column: Data frame column with entries to split. Enter as text (i.e.,
-  #     "column", since the function evaluates it as df[["column"]]).
-  #
-  # Keyword arguments:
-  #   delimiter: The character separating the individual items (default: ", ").
-  #
-  # Returns:
-  #   A single column of type "chr", where each row represents a single element
-  #   resulting from splitting each entry of the original data frame column by
-  #   the provided delimiter, and where blank spaces are not removed.
-  #
-  output <- stringr::str_split_fixed(df[[column]], delimiter, Inf)
-
-  # Do not remove blanks yet
-  output <- unlist((as.list(output)))
-  return(output)
-}
-
-rename.factor <- function(df, column, old_name, new_name) {
-  # Rename a single factor level in a data frame column.
-  #
-  # Arguments:
-  #   df: Data frame.
-  #   column: Data frame column with factor level to rename. Enter as text
-  #     (i.e., "column", since the function evaluates it as df[["column"]]).
-  #   old_name: The factor level to replace.
-  #   new_name: The new name of the factor level.
-  #
-  # Returns:
-  #   A data frame with a replaced factor level in the supplied column.
-  #
-  df[[column]][df[[column]] == old_name] <- new_name
-  return(df)
-}
-
-rename.all.factors <- function(df, column, old_names, new_names) {
-  # Rename all factor levels in a data frame column.
-  #
-  # Arguments:
-  #   df: Data frame
-  #   column: Data frame column with factor levels to rename. Enter as text
-  #     (i.e., "column", since the function evaluates it as df[["column"]]).
-  #   old_names: List of factor levels to replace.
-  #   new_names: List of new names for the factor levels.
-  #
-  # Returns:
-  #   A data frame with the replaced factor levels in the supplied column.
-  #
-  for (i in 1:length(old_names)) {
-    df <- rename.factor(df, column, old_names[i], new_names[i])
-  }
-  return(df)  
-}
-
-update.factor.columns <- function(df, old_names, new_names) {
-  # Rename factor levels in all the columns of a data frame.
-  #
-  # Arguments:
-  #   df: Data frame.
-  #   old_names: Array of factor levels to replace.
-  #   new_names: Array of new factor levels.
-  #
-  # Returns:
-  #   A data frame with the replaced factor levels in all columns.
-  #
-  for (column in names(df)) {
-
-    # Add new factor levels to data frame column
-    levels(df[[column]]) <- c(levels(df[[column]]), new_names)
-
-    # Rename factor levels for each column
-    df <- rename.all.factors(df, column, old_names, new_names)
-  }
-  return(df)
-}
-
-extract.countries <- function(df, column, old_names, new_names) {
-  # Extract countries from data frame column with delimiter-separated levels.
-  #
-  # Arguments:
-  #   df: Data frame.
-  #   column: Data frame column with factor levels to split. Enter as text
-  #     (i.e., "column", since the function evaluates it as df[["column"]]).
-  #   old_names: Array of factor levels to replace.
-  #   new_names: Array of new factor levels.
-  #
-  # Returns:
-  #   A (n*m, 1)-dimensional data frame, in which "n" is the length of the
-  #   supplied column, and "m" the largest number of split factor levels in
-  #   a row. Blank spaces are not removed (see function: "split.strings");
-  #   additionally, all factor levels are uniformed to those of the "world"
-  #   dataset.
-  #
-  # Split column by delimiter and convert to data frame
-  Country <- split.strings(df, column)
-  df_out <- data.frame(Country, stringsAsFactors = TRUE)
-
-  # Add new factor levels to data frame
-  levels(df_out$Country) <- c(levels(df_out$Country), new_names)
-
-  # Update country names, sort factor levels alphabetically
-  df_out <- rename.all.factors(df_out, "Country", old_names, new_names)
-  df_out$Country <- as.factor(as.character(df_out$Country))
-
-  return(df_out)
-}
+# Tidy the main dataset with respect to "Countries"
+greatest %<>%
+  mutate(Country = str_split(Countries, pattern = ", ", n = Inf)) %>%
+  tidyr::unnest(Country)
 ```
 
-#### **Update country factor levels**
+### **Update country levels**
 
-Because the main dataset spans over a century of world cinema, some of its entries refer to countries that no longer exists (i.e., Czechoslovakia, USSR, West Germany, and Yugoslavia). In mapping these countries to modern nations, I accredited to Czech (not Slovak) Republic movies produced in Czechoslovakia, to Serbia those shot in Yugoslavia, and to Armenia, Belarus, Georgia, Russia, and Ukraine those produced in the USSR. The decision was based on filmmakers' nationality.
+Because the main dataset spans over a century of world cinema, some of its entries refer to countries that no longer exists (i.e., Czechoslovakia, USSR, West Germany, and Yugoslavia). In mapping these countries to modern nations, I credited to Czech Republic movies produced in Czechoslovakia, to Serbia those shot in Yugoslavia, and to Armenia, Belarus, Georgia, Russia, and Ukraine, based on filmmakers' nationality, those produced in the USSR.
 
 ``` r
-replace.from.list <- function(df, cond.column, replace.in, to.replace,
-                              factor.list) {
-  # Replace factor level if a condition is met.
-  #
-  # Arguments:
-  #   df: Data frame.
-  #   cond.column: Name of the column with the condition to test.
-  #   replace.in: Name of the column in which to replace the factor level.
-  #   to.replace: The factor level to replace.
-  #   factor.list: A list of the key-value form, with key being the level to
-  #     replace, and value the particular condition to test.
-  #
-  # Returns:
-  #   The data frame, with new factor levels replacing the old ones in rows
-  #   in which a particular condition is met.
-  for (i in 1:length(factor.list)) {
+country_names <- c("Czechia" = "Czech Republic",
+                   "Czechoslovakia" = "Czech Republic",
+                   "West Germany" = "Germany",
+                   "Republic of Ireland" = "Ireland",
+                   "Republic of Macedonia" = "Macedonia",
+                   "Kingdom of the Netherlands" = "Netherlands",
+                   "Arab Palestinian areas" = "Palestine",
+                   "Palestinian Territories" = "Palestine",
+                   "State of Palestine" = "Palestine",
+                   "West Bank and Gaza" = "Palestine", 
+                   "USSR" = "Russia",
+                   "Yugoslavia" = "Serbia",
+                   "Korea, South" = "South Korea",
+                   "United Kingdom" = "UK",
+                   "United States" = "USA")
 
-    # Add new factor level to data frame
-    levels(df[[replace.in]]) <- c(levels(df[[replace.in]]),
-                                  names(factor.list[i]))
-
-    # Replace factor level if condition is met
-    df[df[[cond.column]] %in% factor.list[[i]], ][[replace.in]] <-
-      gsub(to.replace, names(factor.list[i]),
-           df[df[[cond.column]] %in% factor.list[[i]], ][[replace.in]])
-  }
-  return(df)
-}
+greatest %<>%
+  mutate(Country = str_replace_all(Country, country_names))
 ```
 
 ``` r
-# Replace "USSR" with the matched director's nation
-nations <- list("Armenia" = c("Parajanov, Sergei", "Peleshian, Artavazd"),
+ex_USSR <- list("Armenia" = c("Parajanov, Sergei", 
+                              "Peleshian, Artavazd"),
                 "Belarus" = c("Kheifits, Iosif"),
-                "Georgia" = c("Kalatozov, Mikhail", "Khutsiev, Marlen"),
-                "Ukraine" = c("Bondarchuk, Sergei", "Chukhraj, Grigori",
-                              "Donskoi, Mark", "Dovzhenko, Alexander",
-                              "Kozintsev, Grigori", "Muratova, Kira",
+                "Georgia" = c("Kalatozov, Mikhail", 
+                              "Khutsiev, Marlen"),
+                "Ukraine" = c("Bondarchuk, Sergei", 
+                              "Chukhraj, Grigori", 
+                              "Donskoi, Mark", 
+                              "Dovzhenko, Alexander", 
+                              "Kozintsev, Grigori", 
+                              "Muratova, Kira", 
                               "Shepitko, Larisa"))
 
-greatest <- replace.from.list(df = greatest, cond.column = "Director",
-                              replace.in = "Countries", to.replace = "USSR",
-                              factor.list = nations)
+greatest %<>%
+  mutate(Country = case_when(Director %in% ex_USSR$Armenia ~ "Armenia",
+                             Director %in% ex_USSR$Belarus ~ "Belarus",
+                             Director %in% ex_USSR$Georgia ~ "Georgia",
+                             Director %in% ex_USSR$Ukraine ~ "Ukraine",
+                             # Include catch-all statement
+                             TRUE ~ Country))
 ```
 
 ``` r
-# Uniform country levels with those of world map
-old_names <- c("Arab Palestinian areas", "Czechia", "Czechoslovakia",
-               "Kingdom of the Netherlands", "Korea, South",
-               "Palestinian Territories", "Republic of Ireland",
-               "Republic of Macedonia", "State of Palestine", "United Kingdom",
-               "United States", "USSR", "West Bank and Gaza", "West Germany",
-               "Yugoslavia")
-
-new_names <- c("Palestine", "Czech Republic", "Czech Republic", "Netherlands",
-               "South Korea", "Palestine", "Ireland", "Macedonia", "Palestine",
-               "UK", "USA", "Russia", "Palestine", "Germany", "Serbia")
-
-# Single out all countries of production (including co-production ones) and
-# store into "contributions", which becomes the main dataset for exploration
-contributions <- extract.countries(greatest, "Countries", old_names, new_names)
-```
-
-#### **Left join molten data on the original dataset**
-
-``` r
-append.columns <- function(df, to_append, shared_col, old_names, new_names) {
-  # Append data frame columns to a different data frame.
+update.countries <- function(df, column, replacement = country_names) {
+  # Update country names based on supplied mappings.
   #
   # Arguments:
-  #   df: The data frame to augment.
-  #   to_append: The data frame whose columns are to append to df.
-  #   shared_col: Column shared by the two data frames. Enter as text,
-  #     (i.e., "column", since the function evaluates it as df[["column"]]).
-  #   old_names: List of factor levels to replace.
-  #   new_names: List of new names for the factor levels.
+  #   df -- data frame. The data frame with entries to replace.
+  #   column -- character. The column name, as text.
+  #
+  # Keyword arguments:
+  #   replacement -- character. Vector of mappings (default: country_names).
   #
   # Returns:
-  #   Data frame df, augmented with the columns of a second data frame.
-  #
-  # Add factor levels and rename
-  levels(to_append[[shared_col]]) <- c(levels(to_append[[shared_col]]),
-                                       new_names)
-
-  to_append <- rename.all.factors(to_append, shared_col, old_names,
-                                  new_names)
-
-  # Append columns to data frame
-  df <- plyr::join(x = df, y = to_append, by = shared_col)
-
+  #   df -- data frame. The updated data frame.
+  
+  df[[column]] <- str_replace_all(df[[column]], replacement)
+  
   return(df)
 }
+
+# Uniform country names in all auxiliary datasets
+auxiliary <- sapply(X = names(auxiliary), FUN = function(x) 
+  update.countries(df = auxiliary[[x]], column = "Country"))
 ```
 
 ``` r
-# Determine the number of array repetitions
-nreps <- nrow(contributions) / nrow(greatest)
+# Merge auxiliary datasets (outer join)
+merged <- plyr::join_all(auxiliary, by = "Country", type = "full")
 
-# Uniform column "Pos" to the length of "contributions". "Pos" will work as a
-# primary key in order to migrate content from "greatest"
-added_column <- do.call("rbind", replicate(nreps, greatest["Pos"],
-                                           simplify = FALSE))
+# Left join auxiliary dataset to main one
+greatest %<>%
+  left_join(x = ., y = merged, by = "Country") %>%
+  # Drop unnecessary columns
+  select(.data = ., -c(Christian:Jewish))
+```
 
-# Column bind, then shrink, the two datasets
-contributions <- subset(cbind(contributions, added_column), !Country == "")
+### **Additional data processing**
 
-# Swap columns
-contributions <- contributions[, c("Pos", "Country")]
+I also include each country's amount of nominal GDP to services, distinguish between Western (historically wealthier) and Eastern Europe, and sort religions according to their [prevalence worldwide](https://en.wikipedia.org/wiki/Religions_by_country#World).
+
+``` r
+greatest %<>%
+  mutate(GDP.to.Services = Nominal.GDP * Services/100)
 ```
 
 ``` r
-# Append columns to data frame. This is an elegant, albeit space inefficient,
-# way to append multiple data frame columns to "contributions"
-df.list <- list(country_codes, continents, coordinates, country_area,
-                religions[, 1:2], nominal_gdp, gdp_by_sector)
+europe <- list("Western" = c("Austria", "Belgium", "Denmark",
+                             "Finland", "France", "Germany", 
+                             "Greece", "Iceland", "Ireland", 
+                             "Italy", "Luxembourg", "Netherlands",
+                             "Norway", "Portugal", "Spain",
+                             "Sweden", "Switzerland", "UK"),
+               
+               "Eastern" = c("Albania", "Belarus", 
+                             "Bosnia and Herzegovina", "Bulgaria",
+                             "Czech Republic", "Hungary",
+                             "Macedonia", "Poland", "Romania",
+                             "Russia", "Serbia", "Ukraine"))
 
-for (df in df.list) {
-  contributions <- append.columns(contributions, df, "Country", old_names,
-                                  new_names)
-}
-
-# Migrate content of data frame "greatest" to "contributions"
-contributions <- merge(contributions, greatest, by = "Pos")
-```
-
-#### **Additional data processing**
-
-I also distinguished between Western European countries (historically wealthier) and Eastern European ones, and sorted religions according to their prevalence worldwide.
-
-``` r
-add.continent.region <- function(df, column, test.column, continent, group,
-                                 if_group) {
-  # Break down continent into regions based on a condition.
-  #
-  # Arguments:
-  #   df: Data frame.
-  #   column: Name of the column in which to replace the factor level.
-  #   test.column: Name of the column with the condition to test.
-  #   continent: The continent name. Replace with the new factor level if
-  #     tested condition is True.
-  #   group: Group of countries belonging to a particular region.
-  #   if_group: The name of the continent region.
-  #
-  # Returns:
-  #   The data frame, with new factor levels replacing the old ones in rows
-  #   in which a particular condition is met.
-  #
-  levels(df[[column]]) <- c(levels(df[[column]]), if_group)
-
-  df[[column]][which(df[[test.column]] %in% group)] <- if_group
-
-return(df)
-}
-
-reorder.factor.levels <- function(df, column, ordered.levels) {
-  # Custom reorder factor levels.
-  #
-  # Arguments:
-  #  df: Data frame.
-  #  column: The data frame column containing the factor levels to reorder.
-  #  ordered.levels: An array of reordered factor levels.
-  #
-  # Returns:
-  #  The data frame, with reordered factor levels in the specified column.
-  #
-  df[[column]] <- factor(df[[column]], levels = ordered.levels)
-
-  return(df)
-}
+greatest %<>%
+  mutate(Continent = case_when(Country %in% europe$Western ~ "Western Europe",
+                               Country %in% europe$Eastern ~ "Eastern Europe",
+                               # Include catch-all statement
+                               TRUE ~ Continent))
 ```
 
 ``` r
-# Break down Europe into Western and Eastern regions
-eu.regions <- list("Western Europe" = c("Austria", "Belgium", "Denmark",
-                                        "Finland", "France", "Germany",
-                                        "Greece", "Iceland", "Ireland",
-                                        "Italy", "Luxembourg", "Netherlands",
-                                        "Norway", "Portugal", "Spain",
-                                        "Sweden", "Switzerland", "UK"),
-                   "Eastern Europe" = c("Albania", "Belarus",
-                                        "Bosnia and Herzegovina",
-                                        "Czech Republic", "Hungary",
-                                        "Macedonia", "Poland", "Romania",
-                                        "Russia", "Serbia", "Ukraine"))
-
-for (i in 1:length(eu.regions)) {
-  contributions <- add.continent.region(df = contributions,
-                                        column = "Continent",
-                                        test.column = "Country",
-                                        continent = "Europe",
-                                        group = eu.regions[[i]],
-                                        if_group = names(eu.regions[i]))
-}
-
-# Reorder factor levels
 continent_levels <- c("Africa", "Asia", "Western Europe", "Eastern Europe",
                       "North America", "South America", "Oceania")
 
-contributions <- reorder.factor.levels(contributions, "Continent",
-                                       continent_levels)
-```
-
-``` r
-# Reorder factor levels based on prevalent world religions
 religion_levels <- c("Christian", "Islam", "Irreligion", "Hindu", "Buddhist",
                      "Folk religion", "Jewish")
 
-contributions <- reorder.factor.levels(contributions, "Main.Religion",
-                                       religion_levels)
+greatest %<>%
+  # Convert character columns to factor
+  mutate_if(.predicate = is.character, .funs = as.factor) %>%
+  # Drop unused levels
+  droplevels(.$Continent, exclude = "Europe") %>%
+  # Reorder factor levels
+  mutate(., Continent = factor(.$Continent, levels = continent_levels)) %>%
+  mutate(., Main.Religion = factor(.$Main.Religion, levels = religion_levels))
 ```
 
-#### **Tidied data frame**
+### **Tidied data frame**
 
-The result of tidying with respect to "Countries" is the following:
+The result of tidying with respect to "Countries" and updating the factor levels is the following:
 
 <table>
 <thead>
 <tr>
 <th style="text-align:right;">
 Pos
-</th>
-<th style="text-align:left;">
-Country
-</th>
-<th style="text-align:left;">
-Code
-</th>
-<th style="text-align:left;">
-Continent
-</th>
-<th style="text-align:right;">
-Latitude
-</th>
-<th style="text-align:right;">
-Longitude
-</th>
-<th style="text-align:right;">
-Total.Area
-</th>
-<th style="text-align:right;">
-Land
-</th>
-<th style="text-align:right;">
-Water
-</th>
-<th style="text-align:left;">
-Main.Religion
-</th>
-<th style="text-align:right;">
-Nominal.GDP
-</th>
-<th style="text-align:right;">
-Agriculture
-</th>
-<th style="text-align:right;">
-Industry
-</th>
-<th style="text-align:right;">
-Services
 </th>
 <th style="text-align:left;">
 Title
@@ -810,51 +519,57 @@ Decade
 <th style="text-align:left;">
 Rank.Category
 </th>
+<th style="text-align:right;">
+Co.Producers
+</th>
+<th style="text-align:left;">
+Country
+</th>
+<th style="text-align:left;">
+Continent
+</th>
+<th style="text-align:right;">
+Latitude
+</th>
+<th style="text-align:right;">
+Longitude
+</th>
+<th style="text-align:right;">
+Total.Area
+</th>
+<th style="text-align:right;">
+Land
+</th>
+<th style="text-align:right;">
+Water
+</th>
+<th style="text-align:left;">
+Code
+</th>
+<th style="text-align:right;">
+Agriculture
+</th>
+<th style="text-align:right;">
+Industry
+</th>
+<th style="text-align:right;">
+Services
+</th>
+<th style="text-align:right;">
+Nominal.GDP
+</th>
+<th style="text-align:left;">
+Main.Religion
+</th>
+<th style="text-align:right;">
+GDP.to.Services
+</th>
 </tr>
 </thead>
 <tbody>
 <tr>
 <td style="text-align:right;">
 45
-</td>
-<td style="text-align:left;">
-France
-</td>
-<td style="text-align:left;">
-FR
-</td>
-<td style="text-align:left;">
-Western Europe
-</td>
-<td style="text-align:right;">
-46.22764
-</td>
-<td style="text-align:right;">
-2.213749
-</td>
-<td style="text-align:right;">
-640679
-</td>
-<td style="text-align:right;">
-640427
-</td>
-<td style="text-align:right;">
-3374
-</td>
-<td style="text-align:left;">
-Christian
-</td>
-<td style="text-align:right;">
-2465453
-</td>
-<td style="text-align:right;">
-1.8
-</td>
-<td style="text-align:right;">
-18.8
-</td>
-<td style="text-align:right;">
-79.4
 </td>
 <td style="text-align:left;">
 In the Mood for Love
@@ -878,10 +593,10 @@ Romance, Drama
 Col
 </td>
 <td style="text-align:left;">
-Yes
+TRUE
 </td>
 <td style="text-align:left;">
-No
+FALSE
 </td>
 <td style="text-align:left;">
 2000s
@@ -889,16 +604,11 @@ No
 <td style="text-align:left;">
 From 11 to 100
 </td>
-</tr>
-<tr>
 <td style="text-align:right;">
-45
+2
 </td>
 <td style="text-align:left;">
 Hong Kong
-</td>
-<td style="text-align:left;">
-HK
 </td>
 <td style="text-align:left;">
 Asia
@@ -919,10 +629,7 @@ Asia
 1649
 </td>
 <td style="text-align:left;">
-Irreligion
-</td>
-<td style="text-align:right;">
-274027
+HK
 </td>
 <td style="text-align:right;">
 0.1
@@ -932,6 +639,20 @@ Irreligion
 </td>
 <td style="text-align:right;">
 93.2
+</td>
+<td style="text-align:right;">
+274027
+</td>
+<td style="text-align:left;">
+Irreligion
+</td>
+<td style="text-align:right;">
+255393.2
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+45
 </td>
 <td style="text-align:left;">
 In the Mood for Love
@@ -955,10 +676,10 @@ Romance, Drama
 Col
 </td>
 <td style="text-align:left;">
-Yes
+TRUE
 </td>
 <td style="text-align:left;">
-No
+FALSE
 </td>
 <td style="text-align:left;">
 2000s
@@ -966,107 +687,95 @@ No
 <td style="text-align:left;">
 From 11 to 100
 </td>
+<td style="text-align:right;">
+2
+</td>
+<td style="text-align:left;">
+France
+</td>
+<td style="text-align:left;">
+Western Europe
+</td>
+<td style="text-align:right;">
+46.22764
+</td>
+<td style="text-align:right;">
+2.213749
+</td>
+<td style="text-align:right;">
+640679
+</td>
+<td style="text-align:right;">
+640427
+</td>
+<td style="text-align:right;">
+3374
+</td>
+<td style="text-align:left;">
+FR
+</td>
+<td style="text-align:right;">
+1.8
+</td>
+<td style="text-align:right;">
+18.8
+</td>
+<td style="text-align:right;">
+79.4
+</td>
+<td style="text-align:right;">
+2465453
+</td>
+<td style="text-align:left;">
+Christian
+</td>
+<td style="text-align:right;">
+1957569.7
+</td>
 </tr>
 </tbody>
 </table>
-This dataset is used for most of the exploratory analysis.
-
-#### **Clean up Global Environment**
+Clean up global environment before proceeding with the analysis:
 
 ``` r
-# Remove all but necessary variables and functions
-required <- c(lsf.str(), "greatest", "contributions", "directors", "world",
-              "old_names", "new_names")
+# Remove all but the necessary variables
+required <- c(lsf.str(), "greatest", "directors", "world",
+              "decades", "ranking", "rank_breaks", "year_breaks")
 rm(list = setdiff(ls(), required))
 ```
+
+------------------------------------------------------------------------
 
 **Data exploration**
 --------------------
 
 ### **A. Geography of the greatest films**
 
-The first dimension I would like to explore is the geographical one. Some interesting questions could be:
+The first dimension I would like to explore is the geographical one:
 
 -   *Where were the greatest movies produced?*
 -   *Are contributions evenly distributed, or is any particular area of the world under- or overrepresented?*
 
-The best way to answer these questions is through a choropleth map, a thematic chart in which colour intensity for each country is positively associated to the number of contributions that country made to the list (with black areas reflecting absence of contributions).
-
 ### **I. Choropleth map of countries of production**
 
-#### **Aggregate data for exploration**
+The best way to answer these questions is through a choropleth map, a thematic chart in which colour intensity for each country is positively associated to the number of contributions that country made to the list (with black areas reflecting absence of contributions).
 
 ``` r
-aggregate.df <- function(df, column) {
-  # Group data frame by column variable and count values.
-  #
-  # Arguments:
-  #   df: Data frame.
-  #   column: Data frame column to summarise. Enter as a normal variable, not
-  #     as text (i.e., column instead of "column").
-  #
-  # Returns:
-  #   A summary data frame counting the occurrences of factor levels in the
-  #   supplied column.
-  #
-  # Create quosure to use dplyr in function environment
-  column <- enquo(column)
+# Select columns to keep excluding the one used to group_by
+keep_cols <- c("Continent", "Longitude", "Latitude", "Land", 
+               "GDP.to.Services", "Main.Religion")
 
-  # Unquote (evaluate immediately) quosure expression
-  df_out <- df %>%
-    group_by(!!column) %>%
-    summarise(n = n())
+# Summarise country contributions and add to world map
+greatest.by_country <- greatest %>%
+  group_by(.dots = c("Country", keep_cols)) %>%
+  summarise(n = n()) %>%
+  mutate(Bin = cut(x = n, breaks = c(-Inf, 1,  10, 50, 100, +Inf),
+                   labels = c("Single", "From 2 to 10", "From 11 to 50", 
+                              "From 51 to 100", "More than 100")))
 
-  return(df_out)
-}
-
-cut.density <- function(df, to_cut, new_column, breaks, labels) {
-  # Cut a continuous density into discrete bins.
-  #
-  # Arguments:
-  #  df: Data frame.
-  #  to_cut: Name of the column with the continuous density to cut.
-  #  new_column: Name of the output column containing the discrete bins.
-  #  breaks: Array of breaks, with limits (-Inf; +Inf).
-  #  labels: Array of bin labels.
-  #
-  # Returns:
-  #  The data frame, augmented by column "new_column", breaking a continuous
-  #  density into discrete bins.
-  #
-  df[[new_column]] <- cut(df[[to_cut]], breaks = breaks)
-  levels(df[[new_column]]) <- labels
-
-  return(df)
-}
+world %<>%
+  left_join(x = ., y = greatest.by_country, by = "Country")
 ```
-
-``` r
-# Aggregate data
-greatest.by_country <- aggregate.df(contributions, Country)
-
-# Group and label factor levels for convenient representation
-greatest.by_country <- cut.density(greatest.by_country, "n", "bin",
-                                   breaks = c(-Inf, 1,  10, 50, 100, +Inf),
-                                   labels = c("Single", "From 2 to 10",
-                                              "From 11 to 50",
-                                              "From 51 to 100",
-                                              "More than 100"))
-
-# Append selected columns to the dataset
-greatest.by_country <- merge(greatest.by_country,
-                             unique(contributions[, c(2:14)]),
-                             by = "Country")
-
-# Append column on actual amount of country GDP to services
-greatest.by_country$GDP.to.Services <- greatest.by_country$Nominal.GDP *
-  greatest.by_country$Services / 100
-
-# Append selected columns to data frame "world"
-world <- plyr::join(world, greatest.by_country[, c(1:3, 11)], by = "Country")
-```
-
-#### **Generate choropleth map**
 
 ``` r
 # Define attributes shared by plots, to override if necessary
@@ -1078,9 +787,7 @@ shared_themes <- theme(plot.title = element_text(size = 11),
                        legend.title = element_text(size = 10),
                        legend.text = element_text(size = 8),
                        legend.position = "bottom")
-```
 
-``` r
 # Generate world map and define common features
 world_base <- ggplot() +
   geom_polygon(data = world, aes(x = long, y = lat, group = group)) +
@@ -1090,8 +797,8 @@ world_base <- ggplot() +
 
 # Make choropleth map
 world_base +
-  geom_polygon(data = subset(world, !is.na(bin)),
-             aes(x = long, y = lat, group = group, fill = bin)) +
+  geom_polygon(data = subset(world, !is.na(Bin)),
+             aes(x = long, y = lat, group = group, fill = Bin)) +
   scale_fill_brewer(palette = "Reds") +
   labs(fill = "Contributions to list",
        caption = "Data source: theyshootpictures.com") +
@@ -1099,32 +806,27 @@ world_base +
                 "of production"))
 ```
 
-<img src="./img/figure-01.png" width="816" />
+<img src="./img/figure-01-1.png" width="816" />
 
 #### **Observations**
 
-The distribution of co-productions appears to be heavily skewed, with very few countries contributing most entries to the list. These countries (France, Germany, Italy, Japan, the United Kingdom, and the United States) either produced or helped produce more than 100 films each. The USSR (not shown) was the only territory committing between 51 and 100 movies to the list, but total contributions are now split among former bloc members. Of the latter, Russia is the most prolific, with 11-50 films made. The least represented continent, in terms of both countries shown and number of co-productions, is certainly Africa. In particular, with the exception of Cameroon, no state in the Central, Eastern, or Southern region of Africa appears in the list. Other prominent black areas are in the Middle East (Syria, Iraq, and the Arabian Peninsula), Central and East Asia (the *-stan* nations, Mongolia), South-East Asia (Malaysia and Indonesia, among the others), and Latin America.
+The distribution of co-productions appears to be heavily skewed, with very few countries contributing most entries in the list. Each of these countries (France, Germany, Italy, Japan, the United Kingdom, and the United States) was involved in at least 100 productions. The USSR (not shown) was the only territory committing between 51 and 100 movies to the list, but total contributions are now split among former bloc members. Of the latter, Russia was the most prolific, with 11-50 films made. Africa is the least represented continent, in terms of both countries shown and number of co-productions: with the exception of Cameroon, no state in the Central, Eastern, or Southern region of Africa appears in the list. Other prominent black areas are in the Middle East (Syria, Iraq, the Arabian Peninsula), Central and East Asia (the *-stan* nations, Mongolia), South-East Asia, and Latin America.
 
-These findings raise interesting questions.
+### **II. Number of contributions by country**
 
--   First, how skewed is the distribution of co-productions? That is, how many films did the top contributing nations actually shoot, or help shoot, and what fraction of the total do their efforts account for?
-
--   Second, does any of the following variables help explain why a country has a particular number of entries in the list: the desire to boost the cinema industry (a behaviour proxied by the *share* of nominal GDP to services); the amount of money invested in cinema (as proxied by the *amount* of nominal GDP to services); or the size of a country? It appears that the major contributors to the list are among the most developed countries in the world, and these usually devote a larger portion of GDP to the tertiary sector.
-
--   Third, is there any link between a country's predominant religion and the number of movies that country co-produced? For example, several black regions in the map belong to the so-called Muslim world, and Islamic countries, apart from Iran, seem to have historically contributed less to the list than states with a different prevalent religion.
-
-### **II. Contributions by country**
+How skewed is the distribution of co-productions? That is, how many films did each country contribute?
 
 ``` r
-custom_ticks <- c(0, 1, 10, 100, 1000)
+log10_ticks <- c(0, 1, 10, 100, 1000)
 
 ggplot(data = greatest.by_country,
        aes(x = log2(n), y = reorder(Country, n), color = Continent)) +
   geom_point(size = 2) +
   geom_segment(aes(x = 0, xend = log2(n), y = Country, yend = Country),
-               size = 0.5) +
+               size = 0.5, linetype = 3) +
   geom_text(aes(label = n), size = 2, nudge_x = 0.35, check_overlap = TRUE) +
-  scale_x_continuous(breaks = log2(custom_ticks), labels = custom_ticks,
+  scale_x_continuous(breaks = log2(log10_ticks), 
+                     labels = log10_ticks,
                      sec.axis = dup_axis(name = NULL)) +
   ggtitle(paste("Figure 2: Contributions to the list of greatest movies by",
                 "country of production")) +
@@ -1137,37 +839,55 @@ ggplot(data = greatest.by_country,
   theme(legend.position = "right")
 ```
 
-<img src="./img/figure-02.png" width="816" />
+<img src="./img/figure-02-1.png" width="816" />
 
-#### **Table 1: Contributions by continent statistics**
+#### **Observations**
+
+The distribution of co-productions is highly asymmetric, as expected. The United States and France are by far the largest contributors, with respectively a half and a fifth of the movies in the list. A few reasons could be the prominent role the United States played in post-war reconstruction, on the one hand, and the prestige of France as cinema's place of birth, on the other. On average, Western Europe has been the most prolific region, with a median of 16.5 movies co-produced per country (Table 1) and six spots among the top ten: after France, UK, Italy, and Germany contributed ~8% films each, Spain and Sweden ~2%. Africa, instead, has been the least fecund continent, with very small statistics and concentration in the bottom area of the plot.
 
 ``` r
+pretty.print <- function(df, decimals = 4) {
+  # Prettify dplyr's printed output.
+  #
+  # Arguments:
+  #   df -- data frame. The summarised data frame to print.
+  #
+  # Keyword arguments:
+  #   decimals -- numeric. Round output to selected decimal (default: 4).
+  #
+  # Returns:
+  #   Prettified print of the supplied data frame.
+  
+  df %>% 
+    mutate_if(.predicate = is.numeric, .funs = round, decimals) %>%
+    as.data.frame()
+}
+
 stats.table <- function(df, group, column) {
   # Summarise data using measures of central tendency and dispersion.
   #
   # Arguments:
-  #  df: Data frame.
-  #  group: The data frame column used to divide data into groups. Enter as a
-  #   variable (i.e., without quotes).
-  #  column: The data frame column to summarise.
+  #   df -- data frame.
+  #   group -- variable. Column to group_by, as variable (no quotes).
+  #   column -- variable. The data frame column to summarise.
   #
   # Returns:
-  #  A summary data frame with group means, medians, and standard deviations,
-  #  rounded to the second decimal.
-  #
+  #   Printed summary of the supplied data frame.
+
   group <- enquo(group)
   column <- enquo(column)
-
-  tab <- df %>%
+  
+  df %>%
     group_by(!!group) %>%
     summarise(mean = mean(!!column),
               median = median(!!column),
-              sd = sd(!!column))
-
-  # Round summary statistics to the second decimal
-  cbind(tab[, 1], round(tab[, 2:4], 2))
+              sd = sd(!!column)) %>%
+    # Round numeric values to the second decimal
+    pretty.print(decimals = 2)
 }
 ```
+
+#### **Table 1: Summary of contributions by continent**
 
 ``` r
 stats.table(greatest.by_country, Continent, n)
@@ -1175,169 +895,28 @@ stats.table(greatest.by_country, Continent, n)
 
     ##        Continent   mean median     sd
     ## 1         Africa   2.56    2.0   1.81
-    ## 2           Asia  18.31    4.0  27.74
+    ## 2           Asia  18.38    4.0  27.71
     ## 3 Western Europe  63.39   16.5 105.20
-    ## 4 Eastern Europe   9.45    5.0  12.05
-    ## 5  North America 192.20   16.0 400.27
+    ## 4 Eastern Europe   8.92    5.0  11.74
+    ## 5  North America 192.00   16.0 400.39
     ## 6  South America   7.80    4.0   8.67
     ## 7        Oceania  13.50   13.5   7.78
 
-#### **Observations**
+### **III. Contributions by amount of nominal GDP to services**
 
-The distribution of co-productions is, as expected, highly asymmetric. The United States and France are by far the largest contributors: the former made, or helped make, almost half or all the movies in the list, the latter about a fifth. Some of the reasons of their prevalence could be, on one hand, the significant role the United States played in post-war reconstruction, on the other, the prestige of France as the place of birth of cinema. Both visually and in terms of median values (which are generally robust to outliers), Western European countries have been the most prolific ones, with an average of 16.5 movies co-produced per country and six places among the top ten in the list (Table 1). UK, Italy, and Germany contributed around 8% films each, while Spain and Sweden around 2% each. A higher level of aggregation (i.e., by continent) is, unfortunately, not possible, since the procedure would double-count contributions by same-continent nations that worked on the same movies, and would therefore return distorted statistics. African countries, instead, have been the least fecund, as shown by both their concentration in the bottom area of the plot and their small values for median and standard deviation. The latter show that the distribution of co-productions for Africa is tight around a very small average statistic.
-
-Why are the United States and Western Europe so prominent, and why is Africa largely absent from the list? The difference in output could be linked, among the others, to the willingness of a country to bet on the cinema industry on the one hand, and to the amount of resources that country can afford to invest on the other.
-
-### **III. Contributions by share of GDP to services**
-
-``` r
-ggplot(data = greatest.by_country,
-       aes(x = Services, y = log2(n), color = Continent)) +
-  geom_point(aes(size = Land, alpha = 0.2)) +
-  # Use ggrepel to avoid label overlapping
-  ggrepel::geom_text_repel(aes(label = Country), size = 2.5,
-                           show.legend = FALSE) +
-  geom_smooth(method = "lm", se = FALSE, size = 0.5, color = "royalblue") +
-  scale_x_continuous(breaks = seq(0, 100, 5)) +
-  scale_y_continuous(breaks = log2(custom_ticks), labels = custom_ticks) +
-  ggtitle(paste("Figure 3: Relationship between movies produced and share",
-                "of GDP to services")) +
-  xlab("Resources to the service sector (% GDP)") +
-  ylab("Number of contributions, log2 scale") +
-  labs(caption = "Data sources: theyshootpictures.com, Wikipedia") +
-  shared_themes +
-  scale_size(guide = "none") +
-  scale_alpha(guide = "none")
-```
-
-<img src="./img/figure-03.png" width="816" />
-
-#### **Table 2: Contributions by share of GDP to services statistics**
-
-``` r
-stats.table(greatest.by_country, Continent, Services)
-```
-
-    ##        Continent  mean median    sd
-    ## 1         Africa 48.83  48.20  6.86
-    ## 2           Asia 60.64  57.30 14.04
-    ## 3 Western Europe 73.03  72.20  6.05
-    ## 4 Eastern Europe 60.85  63.00  6.56
-    ## 5  North America 69.36  71.00  8.71
-    ## 6  South America 58.88  58.40  5.32
-    ## 7        Oceania 69.45  69.45  1.77
-
-#### **Observations**
-
-Figure 3 is a scatter plot of country co-productions against the share of GDP to services, a possible proxy for the **desire** of a country to invest in the cinema industry. The size of each dot is proportional to the land size of the corresponding state (i.e., the bigger the nation, the larger the point diameter). The plot could ideally be divided into four quadrants, counter-clockwise, with the first quadrant being the upper right one. I & III could be referred to as the "regular" quadrants, those for which a small (III) or significant (I) percentage of resources to cinema translates to a small or large number of entries to the list of critically acclaimed films. IV could collect countries that are either "inefficient" (i.e., those which have been involved in far fewer co-productions than their large share of GDP to services would imply) or "too small" (i.e., those which lack the critical mass to participate in many co-productions, no matter how much money they invest in services). II, instead, could gather "virtuous" (i.e., those which managed to work on several films on a tight budget) or "very big" countries.
-
-It is important to stress that the plot gives, at best, an approximate picture of the share of resources historically destined to cinema by each country, for at least two reasons. First, the data on GDP breakdown were recorded in different years, ranging from 2007 (Luxembourg) to 2016 (e.g., Australia). Second, GDP composition may have changed dramatically in over a century. For instance, Western European nations spent more on agriculture and industry in the years immediately following World War II, and more on services since the Sixties.
-
-In addition, two assumptions were made. One is that countries tend to invest more resources in the tertiary sector when they develop; the other is that, when the share of GDP to services increases, so does the one to cinema, in proportion.
-
-Number of contributions and share of GDP to services seem to be positively correlated, as shown by the positive slope of the regression line. This means that, on average, the more a country has invested in cinema over the years, the more films it has contributed to the list. The line has equation y = -3.14 + 0.097x (Table 3), but the meaningful part is actually the sign of the slope: while the magnitude, together with the associated p-value of the t-test, can be heavily influenced by the particular transformation used (in this case, log2 on y), the sign is invariant, as long as the transformation is monotonically increasing (i.e., square root, logarithm). To measure the association between the two variables one can rely on *Kendall's tau* (Table 4), which is robust to transformations. Kendall's tau is positive and quite significant (~38%), and confirms the previous findings.
-
-As expected, African countries locate in the third quadrant, an area in which a small share of GDP to services corresponds to few contributions to the list (Africa has the smallest median share among all continents, see Table 2). Eastern European countries, slightly more virtuous than the African ones, also place in quadrant III. Apart from Norway, for which investment in the tertiary sector appears to be less notable, Western European countries all place in quadrants I & IV. This means that, while the economies in this group commit a similar (and large) share of GDP to services, individual outcomes vary widely. Indeed, dispersion of contributions for Western Europe is very high (standard deviation: 105, see Table 1), and the statistic might be influenced by a mix of factors. One of them could be *geographic size* (e.g., Luxembourg vs Germany), though the association may not be so clear-cut: for example, the United States and Canada have similar country size but very different number of co-productions. Another one could be *economic size* (i.e., the amount of nominal GDP to services, in dollars), a dimension analysed in Figure 4.
-
-Russia is the only "virtuous" country in quadrant II: despite the relatively small fraction of GDP to services, Russia managed to contribute a large number of high-quality films to the list. One of the reasons could be the high caliber of its filmmakers, like *Sergei Eisenstein* (Battleship Potëmkin, Ivan the Terrible parts I & II, October, Alexander Nevsky) and *Andrei Tarkovsky* (Andrei Rublëv, Mirror, Stalker, Solaris, Ivan's Childhood).
-
-China and Hong Kong are an interesting pair. The two have historically destined very different portions of GDP to services (and to cinema), they are extremely different in size, however they contributed almost the same number of movies to the list. Some good reasons may be that, despite its size, Hong Kong has one of the most developed cinema industries in the world, it is a popular co-production partner, and prides itself on acclaimed filmmakers such as *Wong Kar-wai* (Chungking Express, In The Mood for Love).
-
-#### **Table 3: Linear regression, no. of contributions and share of GDP to services**
-
-``` r
-linear.regression <- function(df, x, y, transform.x = NA, transform.y = NA) {
-  # Calculate linear regression y ~ x and provide summary statistics.
-  #
-  # Arguments:
-  #   df: Data frame.
-  #   x: The independent, or explanatory, variable. Enter as the name of a
-  #     data frame column, as text (i.e., "x" instead of x).
-  #   y: The dependent, or explained variable (see x for input).
-  #
-  # Keyword arguments:
-  #   transform.x, transform.y: Optional transformations for x and y. Enter as
-  #     text, which is then evaluated by the function (default: NA).
-  #
-  # Returns:
-  #   A summary of the linear regression.
-  #
-  if (!is.na(transform.x)) {
-    x <- eval(parse(text = transform.x))(df[[x]])
-  } else {
-    x <- df[[x]]
-  }
-  if (!is.na(transform.y)) {
-    y <- eval(parse(text = transform.y))(df[[y]])
-  } else {
-    y <- df[[y]]
-  }
-  fit <- lm(y ~ x)
-  output <- summary(fit)
-  return(output)
-}
-```
-
-``` r
-linear.regression(greatest.by_country, "Services", "n", transform.y = "log2")
-```
-
-    ##
-    ## Call:
-    ## lm(formula = y ~ x)
-    ##
-    ## Residuals:
-    ##    Min     1Q Median     3Q    Max
-    ## -4.218 -1.205 -0.060  1.107  5.230
-    ##
-    ## Coefficients:
-    ##             Estimate Std. Error t value Pr(>|t|)    
-    ## (Intercept) -3.13774    1.37737  -2.278   0.0261 *  
-    ## x            0.09716    0.02142   4.536 2.58e-05 ***
-    ## ---
-    ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
-    ##
-    ## Residual standard error: 2.025 on 64 degrees of freedom
-    ## Multiple R-squared:  0.2433, Adjusted R-squared:  0.2314
-    ## F-statistic: 20.57 on 1 and 64 DF,  p-value: 2.581e-05
-
-#### **Table 4: Kendall's Tau, no. of contributions and share of GDP to services**
-
-``` r
-kendall.tau <- function(df, x, y) {
-  # Compute Kendall's Tau, a correlation measure robust to transformations.
-  #
-  # Arguments:
-  #   df: Data frame.
-  #   x: The independent, or explanatory, variable. Enter as text (i.e., "x"
-  #    instead of x).
-  #   y: The dependent, or explained variable (see x for input).
-  #
-  # Returns:
-  #  Kendall's Tau for the two variables above.
-  #
-  cor(df[[x]], df[[y]], method = "kendall")
-}
-```
-
-``` r
-kendall.tau(greatest.by_country, x = "Services", y = "n")
-```
-
-    ## [1] 0.3767375
-
-### **IV. Contributions by amount of nominal GDP to services**
+Why are the United States and Western Europe so prominent, and why is Africa largely absent from the list? The difference in output could be linked, among the others, to the amount of resources a country can afford to invest in cinema.
 
 ``` r
 ggplot(data = greatest.by_country,
        aes(x = log10(GDP.to.Services), y = log2(n), color = Continent)) +
+  # Use "Land" instead of "Total Area" to determine country size
   geom_point(aes(size = Land, alpha = 0.2)) +
   ggrepel::geom_text_repel(aes(label = Country), size = 2.5,
                            show.legend = FALSE) +
   geom_smooth(method = "lm", se = TRUE, size = 0.5, color = "royalblue") +
   scale_x_continuous(breaks = seq(0, 8, 1), labels = 10 ** seq(0, 8, 1)) +
-  scale_y_continuous(breaks = log2(custom_ticks), labels = custom_ticks) +
-  ggtitle(paste("Figure 4: Relationship between movies produced and amount of",
+  scale_y_continuous(breaks = log2(log10_ticks), labels = log10_ticks) +
+  ggtitle(paste("Figure 3: Relationship between movies produced and amount of",
                 "nominal GDP to services (USD millions)")) +
   xlab("Nominal GDP to services (USD millions), log10 scale") +
   ylab("Number of contributions, log2 scale") +
@@ -1347,47 +926,60 @@ ggplot(data = greatest.by_country,
   scale_alpha(guide = "none")
 ```
 
-<img src="./img/figure-04.png" width="816" />
-
-#### **Table 5: Kendall's Tau, no. of contributions and nominal GDP to services**
-
-``` r
-kendall.tau(greatest.by_country, "GDP.to.Services", "n")
-```
-
-    ## [1] 0.6504686
+<img src="./img/figure-03-1.png" width="816" />
 
 #### **Observations**
 
-Figure 4 is a plot of country co-productions against the amount of nominal GDP to services, a possible proxy for the **ability** of a country to invest in the cinema industry. The problems highlighted in the previous figure, as well as the assumptions made, also apply to this one.
+Figure 3 is a scatter plot of co-productions versus amount of nominal GDP to services, a possible proxy for the ability of a country to invest in cinema. The size of each dot is proportional to the land size of the corresponding state (i.e., the bigger the nation, the larger the point diameter). The plot gives, at best, an approximate picture for two reasons. First, the data on GDP breakdown were recorded in different years, ranging from 2007 (Luxembourg) to 2016 (e.g., Australia). Second, GDP composition may have changed dramatically over a century: for example, Western Europe spent more on agriculture and industry in the years immediately following World War II, and more on services since the Sixties. Also, two assumptions were made: that countries tend to invest more resources in the tertiary sector as they develop, and that the share of GDP to cinema is a constant proportion of that to services.
 
-The plot could ideally be divided into three sections:
+One can divide the plot into three sections: the shaded region matching the 95% confidence bands of the regression line, an area where actual and predicted values for the points generally agree; the region above the upper band, where virtuous countries (contributing more films to the list than their GDP to services would suggest) lie; and that below the lower band, where inefficient countries (participating in a smaller number of co-productions than their investment in services would imply) are located.
 
--   The *shaded region* corresponding to the 95% confidence bands of the regression line—an area in which the number of co-productions for a country generally match the value predicted, given the amount of nominal GDP to services of that country;
+*Kendall's tau*, a measure of association robust to transformations, suggests a positive and strong relationship between the amount of GDP to services and the number of co-productions (~65%, Table 2). This looks intuitive: as a country develops and its wealth increases, that country should invest more on cinema, on average. Excellent examples are the United States, Japan, and the top contributors in Western Europe (with France, placing farthest from the upper confidence band, being the best performer).
 
--   The region *above the upper band*, in which virtuous countries—the ones contributing more films to the list than their nominal GDP to services would suggest—lie;
-
--   The region *below the lower band*, where inefficient countries—those which participated in a smaller number of co-productions than their investment in the tertiary sector would suggest—are located.
-
-Amount of nominal GDP to services and number of co-productions appear to be positively and strongly associated, as the value for Kendall's tau implies (~65%, see Table 5). Accounting for magnitude reveals some interesting insights. To begin with, the poorest African countries now appear to be the most virtuous ones (above all Senegal, with ~10,000 USD million GDP to services and 7 contributed films) while the wealthiest nations (e.g., Algeria, Egypt) are the most inefficient ones.
-
-The top contributing Western European countries are also the most virtuous ones; among them, France (with a nominal GDP to services of ~2 trillion USD and a whooping 413 co-productions) is the best performing, placing farthest from the upper confidence band. Moreover, the top 10 contributing countries (as in Figure 2) are all generally efficient.
-
-On average, South American nations have contributed a lower number of films to the list than their nominal investment in the tertiary sector would suggest. In this group, Colombia has been by far the least efficient, with a single contribution in spite of approximately ~200 billion USD to services. Colombia is also the most distant country from the lower confidence band.
-
-Hong Kong is confirmed as a virtuous region, while China, with only 32 movies in the list despite almost 5 trillion USD to services, seems to be less efficient than originally thought. However, due to the issues highlighted in the previous section (i.e., change in the composition of GDP throughout the decades, technological progress and increased wealth of a nation), this statistic may be highly unreliable.
-
-### **V. Contributions by country predominant religion**
+#### **Table 2: Kendall's Tau, GDP to services and number of contributions**
 
 ``` r
-ggplot(data = greatest.by_country,
+greatest.by_country %>%
+  plyr::summarise(., Tau = cor(GDP.to.Services, n, method = "kendall")) %>%
+  pretty.print()
+```
+
+    ##      Tau
+    ## 1 0.6451
+
+Deviations from this pattern exist, however. Most prominent is the case of Africa: the poorer countries in the region appear to be the more virtuous ones (above all Senegal, with ~$10,000 million GDP to services and 7 contributed films), while the wealthier nations (e.g., Algeria, Egypt) seem to be the more inefficient ones. A breakdown of Kendall's tau by region gives similar insight: although still positive, the figure for Africa is the weakest one (~13%, Table 3). South America has generally contributed fewer movies to the list than the average GDP to services would suggest; in this region, Colombia is the least virtuous, with a single co-production in spite of ~$200 billion to the tertiary sector.
+
+#### **Table 3: Kendall's Tau, breakdown by region**
+
+``` r
+greatest.by_country %>%
+  group_by(Continent) %>%
+  summarise(., Tau = cor(GDP.to.Services, n, method = "kendall")) %>%
+  pretty.print()
+```
+
+    ##        Continent    Tau
+    ## 1         Africa 0.1260
+    ## 2           Asia 0.5858
+    ## 3 Western Europe 0.7698
+    ## 4 Eastern Europe 0.6992
+    ## 5  North America 1.0000
+    ## 6  South America 0.4000
+    ## 7        Oceania 1.0000
+
+### **IV. Contributions by country predominant religion**
+
+Is there any link between a country's predominant religion and the number of movies that country co-produced? Several black regions in the map are Islamic nations which, apart from Iran, have historically contributed less to the list than states with a different prevalent religion.
+
+``` r
+ggplot(data = greatest.by_country, 
        aes(x = Main.Religion, y = n / sum(n), fill = Main.Religion)) +
   geom_bar(stat = "identity") +
   # Add percentages on top of the bars
-  geom_text(aes(label = paste(round(..y.. * 100, 2), "%")),
+  geom_text(aes(label = paste(round(..y.. * 100, 2), "%")), 
             fun.y = "sum", stat = "summary", size = 3, vjust = -0.5) +
   scale_y_continuous(breaks = seq(0, 1, 0.1)) +
-  ggtitle(paste("Figure 5: Breakdown of co-productions by countries'",
+  ggtitle(paste("Figure 4: Breakdown of co-productions by countries'",
                 "predominant religion")) +
   xlab("Religion") +
   ylab("Relative frequency") +
@@ -1397,188 +989,146 @@ ggplot(data = greatest.by_country,
   theme(legend.position = "none")
 ```
 
-<img src="./img/figure-05.png" width="816" />
+<img src="./img/figure-04-1.png" width="816" />
 
 ``` r
 world_base +
   geom_polygon(data = subset(world, !is.na(Main.Religion)),
                aes(x = long, y = lat, group = group, fill = Main.Religion)) +
-  geom_point(data = greatest.by_country,
+  geom_point(data = greatest.by_country, 
              aes(x = Longitude, y = Latitude, size = n, alpha = 0.2),
              show.legend = FALSE) +
-  labs(size = "Contributions", fill = "Main religion",
-       caption = "Data sources: theyshootpictures.com, Wikipedia") +
-  ggtitle(paste("Figure 6: Choropleth map of contributing countries",
+  labs(size = "Contributions", fill = "Main religion", 
+       caption = paste("Data sources: theyshootpictures.com", "Wikipedia", 
+                       "Google Developers", sep = ", ")) +
+  ggtitle(paste("Figure 5: Choropleth map of contributing countries",
                 "by predominant religion"))
 ```
 
-<img src="./img/figure-06.png" width="816" />
+<img src="./img/figure-05-1.png" width="816" />
 
 #### **Observations**
 
-Figure 5 breaks down individual contributions into their associated countries’ predominant religions, and gives the relative frequency for each group. The unit of measure in this chart is contributions, not films (i.e., the total number is 2,588 single efforts, which resulted in 2,000 movies). The religions are sorted descendingly, according to [worldwide diffusion](https://en.wikipedia.org/wiki/Religions_by_country#World).
+Almost 90% of individual contributions belong to nations whose prevailing faith (which may or may not be the official one) is Christian. These include the United States and Western Europe, which alone make up for ~80% of total co-productions. This trait is evidenced by the size and concentration of black bubbles in the regions. The second most common faith in the list is Irreligion, with ~8% of contributions (mainly due to Japan, Hong Kong, and China), while Islam places third, with only ~2% (mostly due to Iran).
 
-Figure 6 is a choropleth map of contributing countries by predominant faith, and shows the distribution of religions around the globe for the particular areas of interest. The dots on top of the map locate each represented country, and their size is proportional to the number of contributions that country made to the list.
+### **B. Timeline of contributions**
 
-Approximately 87.5% of individual contributions belong to nations whose prevailing faith (which may or may not be the official one) is Christian. These nations include, among the others, the United States and Western Europe, which alone make up for ~80% of total contributions.
+The second dimension I would like to explore is time:
 
-The second most common faith in the list is Irreligion, with ~8% (mainly because of Japan, Hong Kong, and China), while Islam places third, with only ~2%. Apart from Iran, the countries in which Islam is prevalent have historically contributed a scant number of movies to the list (e.g., North African nations, compare Figures 1 and 6).
+-   *What are the shapes of the conditional (i.e., by region) distributions of co-productions through time?*
+-   *Which are the golden and silver periods of cinema for a few selected countries in the list?*
 
-### **B. Timeline of contributions to the list**
-
-The second dimension I would like to explore is time. Interesting questions could be:
-
--   *Which shapes do the conditional (i.e., by continent) distributions of co-productions through time have? Are the shapes fully genuine, or is any part biased due to same-continent co-productions?*
-
--   *Which are the golden and silver periods of cinema, if any, for each of the represented countries in the list?*
-
-### **VI. Timeline of contributions by continent**
+### **V. Timeline of contributions by region**
 
 ``` r
-# Add median year by continent
-contributions <- subset(contributions, !is.na(Year)) %>%
+greatest %<>%
+  subset(., !is.na(Year)) %>%
   group_by(Continent) %>%
-  mutate(Median.Year = median(Year))
+  # Add conditional medians column
+  mutate(Median.Year = ceiling(median(Year))) %>%
+  # Ungroup for future manipulations
+  ungroup()
 
-# Plot the conditional distributions
-cond.distributions <- function(df, plot_title) {
-
+conditional.histograms <- function(df) {
+  # Generate conditional histograms of co-productions by region.
+  #
+  # Arguments:
+  #   df -- data frame.
+  #
+  # Returns:
+  #   Printed plot of conditional histograms with superimposed medians.
+  
   ggplot(data = df, aes(x = Year, fill = Continent)) +
-  geom_histogram(binwidth = 5, boundary = 0, colour = "black", size = 0.1,
-                 show.legend = FALSE) +
-  scale_x_continuous(breaks = seq(1890, 2020, 10)) +
-  # Also plot conditional medians
-  geom_vline(aes(xintercept = Median.Year, group = Continent),
-             linetype = "dashed", size = 0.3, color = "tomato") +
-  # Add conditional median values on top of vlines
-  geom_text(aes(x = Median.Year, y = 125, label = Median.Year,
-                group = Continent), size = 3) +
-  facet_wrap(~Continent) +
-  ggtitle(plot_title) +
-  xlab("Year") +
-  ylab("Number of contributions") +
-  labs(caption = "Data sources: theyshootpictures.com, Wikipedia") +
-  shared_themes +
-  # Override "shared_themes" x tick labels font size and orientation
-  theme(axis.text.x = element_text(size = 6, angle = -45,
-                                   hjust = 0, vjust = 1))
+    geom_histogram(binwidth = 5, boundary = 0, colour = "black", 
+                   size = 0.1, show.legend = FALSE) +
+    scale_x_continuous(breaks = year_breaks) +
+    # Add conditional medians as vertical line to subplots
+    geom_vline(aes(xintercept = Median.Year, group = Continent),
+               linetype = "dashed", size = 0.3, color = "tomato") +
+    # Superimpose conditional median labels on the vertical lines
+    geom_text(aes(x = Median.Year, y = 125, group = Continent,
+                  label = Median.Year), size = 3) +
+    facet_wrap(~Continent) +
+    ylab("Number of contributions") +
+    labs(caption = "Data sources: theyshootpictures.com, Wikipedia") +
+    shared_themes +
+    # Override x tick labels font size and orientation
+    theme(axis.text.x = element_text(size = 6, angle = -45, 
+                                     hjust = 0, vjust = 1))
 }
 
-cond.distributions(subset(contributions, !is.na(Year)),
-                   "Figure 7: Timeline of contributions by continent")
+greatest %>%
+  conditional.histograms() +
+  ggtitle("Figure 6: Timeline of contributions by region")
 ```
 
-<img src="./img/figure-07.png" width="816" />
+<img src="./img/figure-06-1.png" width="816" />
 
 #### **Observations**
 
-Figure 7 breaks down the timeline of co-productions by continent. For each subplot, a conditional median value—the year in which half of the entries for the related group were produced—is included as a dashed red line with superimposed text. Also, axes scales are not freed (i.e., they are kept constant across subplots), so that the timelines (x-axis) are uniform, and magnitude (y-axis) is accounted for. Histogram binwidth is equal to 5 years.
+Figure 6 breaks down the timeline of co-productions by region. Each subplot includes a conditional median as a dashed red line with superimposed value. Axes scales are kept constant across subplots, to have uniform timelines (x-axis) and to account for magnitude (y-axis). Histogram binwidth is equal to 5 years. Same region co-productions are included: if more countries in the same region contributed to the same movie, all their efforts are added to the distribution.
 
-In general, the conditional distributions appear to be negatively skewed, with:
+The conditional distributions are negatively skewed, with thicker tails compared to the Gaussian density (Table 4). They have a long left tail and the body shifted to the right, telling that fewer contributions were made in the early years of world cinema and more since the 70s, a feature apparent in the conditional median values. Most histograms are also bimodal, with at least one decade between the two peaks showing decreased contributions.
 
--   *a long left tail*, showing that fewer contributions to the list were made in the early years of world cinema;
-
--   *the body shifted to the right*, meaning that apparently, on average, most contributions to the list were made since the 1970s. This latter feature is also evident in the conditional median values, which are all higher than 1970. However, are these values genuine or distorted?
-
--   *a two-humped (or bimodal) distribution*, with at least one decade in between the two peaks in which contributions were fewer than usual. The humps are particularly visible in the densities of Western Europe and Asia, and less in that of North America (whose distribution more closely resembles a Gaussian or Student's t). Again, are these humps genuine, or are they inflated by same-continent co-productions?
-
-An analysis of co-productions through time may help shed light on these points.
-
-### **VII. Timeline of co-productions**
+#### **Table 4: Higher moments of the conditional distributions**
 
 ``` r
-subset.unique <- function(df, year_range, region) {
-  # Subset data frame, remove duplicates, and summarise.
-  #
-  # Arguments:
-  #   df: data frame. The data frame to subset.
-  #   year_range: numeric. A range of years, as sequence.
-  #   region: character. A country or continent.
-  #
-  # Returns:
-  #   A data frame subset by year and continent and summarised.
-  #
-  subset_df <- subset(df, Year %in% year_range & Continent == region)
-
-  # For co-productions, only consider the leading co-producer
-  subset_df <- subset_df[!duplicated(subset_df$Pos), ] %>%
-    group_by(Country, Latitude, Longitude) %>%
-    summarise(n = n())
-
-  return(subset_df)
-}
+greatest %>%
+  group_by(Continent) %>%
+  summarise(Skewness = moments::skewness(Year),
+            # Calculate Pearson's excess kurtosis
+            Excess.Kurtosis = moments::kurtosis(Year)) %>%
+  pretty.print()
 ```
 
-``` r
-plot.submap <- function(df, title, area) {
-  # Plot a zoomed-in world area and scatter plot country co-productions.
-  #
-  # Arguments:
-  #   df: data frame. The subset data frame.
-  #   title: character. The title of the subplot.   
-  #
-  # Keyword arguments:
-  #   map: ggplot2 "geom_polygon" object. The whole world map
-  #     (default: world_base).
-  #
-  # Returns:
-  #   A zoomed-in world area with a scatter plot of country co-productions
-  #   based on the conditions imposed in the supplied data frame.
-  #
-  plt <- area +
-    geom_point(data = df, aes(x = Longitude, y = Latitude, size = n),
-             color = "orange") +    
-    ggrepel::geom_label_repel(data = df,
-                              aes(x = Longitude, y = Latitude,
-                                  label = paste(Country, ", ", n, sep = "")),
-                              size = 2.5, nudge_y = 1, show.legend = FALSE) +
-    ggtitle(title) +
-    guides(size = FALSE)
+    ##        Continent Skewness Excess.Kurtosis
+    ## 1         Africa  -0.4297          1.7888
+    ## 2           Asia  -0.5663          2.1850
+    ## 3 Western Europe  -0.5981          2.7863
+    ## 4 Eastern Europe  -0.4844          2.2728
+    ## 5  North America  -0.3143          2.1763
+    ## 6  South America  -0.1912          2.8719
+    ## 7        Oceania  -0.2217          1.8341
 
-  return(plt)
-}
-```
+### **VI. Timeline and magnitude of co-productions**
+
+Which part of the shapes reflects genuine additions to the list, and which is inflated by same region co-productions?
 
 ``` r
-contributions <- merge(contributions,
-                       # Include number of co-producers per movie
-                       contributions %>% group_by(Pos) %>%
-                         summarise(Co.Producers = n()),
-                       by = "Pos", all = TRUE)
-```
-
-``` r
-ggplot(data = subset(contributions, Co.Production == "Yes"),
+ggplot(data = subset(greatest, Co.Production == TRUE), 
        aes(x = Year, y = Pos)) +
-  geom_point(aes(color = Continent, size = Co.Producers), alpha = 1/3,
-             show.legend = TRUE) +
-  geom_point(aes(size = Co.Producers), colour = "black", shape = 1,
-             stroke = 0.1) +
-  scale_x_continuous(breaks = seq(1890, 2020, 10)) +
+  geom_jitter(aes(color = Continent, size = Co.Producers), stroke = 0.5,
+              width = 0.75, height = 0.75, alpha = 0.5, show.legend = TRUE) +
+  scale_x_continuous(breaks = year_breaks) +
   scale_y_reverse(breaks = seq(0, 2000, 250)) +
-  ggtitle("Figure 8: Timeline and magnitude of co-productions") +
+  ggtitle("Figure 7: Timeline and magnitude of co-productions") +
   ylab("Rank") +
   labs(caption = "Data sources: theyshootpictures.com, Wikipedia") +
   shared_themes +
   # Override alpha aesthetics and remove size legend
-  guides(colour = guide_legend(override.aes = list(alpha = 1)),
-         size = FALSE)
+  guides(colour = guide_legend(override.aes = list(alpha = 1)), size = FALSE)
 ```
 
-<img src="./img/figure-08.png" width="816" />
+<img src="./img/figure-07-1.png" width="816" />
 
-#### **Table 6: Largest co-productions in the list**
+#### **Observations**
+
+Figure 7 scatter plots co-productions over time, jointly accounting for region of production (the colour of the bubbles), ranking (the position on the y-axis), and magnitude of the collaboration (the size of the bubbles). Only films with two or more contributing countries are included.
+
+Co-production efforts have intensified and grown in scale, especially since the 90s. Particularly striking are partnerships among European countries, often considerable in size (Table 5). Collaborations among Asian or African countries are quite rare in the list but a few points stand out, such as *Raise the Red Lantern*, by Zhang Yimou (\#403, 1991) or *Moolaadé*, by Ousmane Sembene (\#1169, 2004). It is also interesting to see that only two co-productions were made before the end of World War II, and both in 1932: *Vampyr*, by Carl Theodor Dreyer, and *¡Que viva México!*, by Sergei Eisenstein (Table 6).
+
+#### **Table 5: Largest co-productions in the list**
 
 ``` r
-# Select largest co-productions
-largest.contributions <- subset(contributions, Co.Producers > 1) %>%
+greatest.by_coproduction <- subset(greatest, Co.Production == TRUE) %>%
   group_by(Pos, Title, Year, Countries) %>%
   summarise(n = n()) %>%
-  # Sort descendingly by "n" then "Year"
+  # Sort descendingly by number, then year
   arrange(desc(n), desc(Year))
 
-# Print the largest six
-knitr::kable(largest.contributions[1:6, ], format = "html", row.names = FALSE)
+head(greatest.by_coproduction) %>%
+  # Generate printer-friendly output
+  knitr::kable(format = "html", row.names = FALSE)
 ```
 
 <table>
@@ -1708,20 +1258,12 @@ Senegal, Burkina Faso, Morocco, Tunisia, Cameroon, Switzerland, Germany
 </table>
 Data source: theyshootpictures.com
 
-#### **Observations**
-
-Figure 8 scatter plots co-productions over time, jointly accounting for three dimensions: *ranking* (i.e., the position on the y-axis), *continents of production* (i.e., the colour of the bubbles—each single contribution is slightly transparent, so the overall hue of the point depends on the participating countries), and *magnitude* of the collaboration (i.e., the size of the bubbles). Only movies with two or more contributing countries are considered.
-
-It is clear how co-production efforts have intensified, and have grown in scale, since the 1990s. Partnerships among Western European countries—often of considerable size—seem to have nowadays become the norm. By contrast, collaborations among Asian nations, based on the movies in the list, are still quite rare. African co-productions are very scarce, but one point really stands out, for its size and purity, as an almost fully African effort. Table 6, which lists the largest contributions in the data frame, tells us it is *Moolaadé*, by Ousmane Sembene.
-
-It is also interesting to see that only two co-productions in the list were made before the end of World War II, and both in 1932: these are *Vampyr*, by Carl Theodor Dreyer, and *¡Que viva México!*, by Sergei Eisenstein (Table 7).
-
-#### **Table 7: Earliest co-productions in the list**
+#### **Table 6: Earliest co-productions in the list**
 
 ``` r
-# List co-productions made before the end of World War II
-knitr::kable(subset(largest.contributions, Year <= 1945),
-             format = "html", row.names = FALSE)
+# Print co-productions made before the end of World War II
+subset(greatest.by_coproduction, Year <= 1945) %>%
+  knitr::kable(format = "html", row.names = FALSE)
 ```
 
 <table>
@@ -1783,363 +1325,93 @@ Mexico, USA
 </table>
 Data source: theyshootpictures.com
 
-### **VIII. Timeline of contributions by continent (revisited)**
+### **VII. Timeline of unique contributions by region**
 
-In light of this additional information, what can we say about the humped shape of the conditional distributions, and the associated median values?
-
--   For **Western Europe**, the humps relate to the periods 1960-1975 and 1990-2010. The first period is generally referred to as the Golden Age of European cinema, and includes genuine contributions from critically acclaimed directors such as Federico Fellini, Ingmar Bergman, Jean-Luc Godard, Luis Buñuel, and Stanley Kubrick. The second period, however, is likely to have a spurious peak due to same continent co-productions, given that the largest cooperative efforts were all made between the '90s and the '00s: an example is Lars von Triers' *Dancer in the Dark* (2000), shot in no less than 11 Western European countries (Table 6). As a consequence, both the shape of the distribution and the median value may well be distorted.
-
-When same-continent co-productions are taken into account, there are 294 contributions in the first period, and 418 in the second one (Table 8):
-
-#### **Table 8: Western European co-productions, unfiltered**
+As the largest co-productions were made in the last three decades, filtering out the duplicates should make some peaks in the right hand side (RHS) of the conditional histograms less pronounced. Is this the case?
 
 ``` r
-# Subset by continent and discriminate by period
-periods <- subset(contributions, Continent == "Western Europe") %>%
-  mutate(Period = ifelse(Year %in% seq(1960, 1975), "1960-1975",
-                  ifelse(Year %in% seq(1990, 2010), "1990-2010", NA))) %>%
-  group_by(Period, Continent) %>%
-  summarise("Co-Productions" = n()) %>%
-  na.omit()
-
-knitr::kable(periods, format = "html", row.names = FALSE)
-```
-
-<table>
-<thead>
-<tr>
-<th style="text-align:left;">
-Period
-</th>
-<th style="text-align:left;">
-Continent
-</th>
-<th style="text-align:right;">
-Co-Productions
-</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align:left;">
-1960-1975
-</td>
-<td style="text-align:left;">
-Western Europe
-</td>
-<td style="text-align:right;">
-294
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-1990-2010
-</td>
-<td style="text-align:left;">
-Western Europe
-</td>
-<td style="text-align:right;">
-418
-</td>
-</tr>
-</tbody>
-</table>
-When duplicates are filtered out, so that only the first co-producing country for each film is included, the result is very different: there are 230 genuine contributions in the first period (Figure 9.A), but only 223 in the second one—about a half of the previous value (Figure 9.B). It is perhaps also curious to see that the number of films per country has remained quite stable over time, except for Italy, for which movie production decreased more than two thirds in the latter period.
-
-``` r
-western_europe <- world_base +
-  # Zoom the plot on Western Europe
-  coord_cartesian(xlim = c(-25, 40), ylim = c(35, 70)) +
-  shared_themes
-
-p3 <- plot.submap(subset.unique(contributions, seq(1960, 1975),
-                                "Western Europe"),
-                  title = paste("Figure 9.A: Western European contributions,",
-                                "1950-1965"), western_europe)
-p4 <- plot.submap(subset.unique(contributions, seq(1990, 2010),
-                                "Western Europe"),
-                  title = paste("Figure 9.B: Western European contributions,",
-                                "1990-2010"), western_europe)
-
-gridExtra::grid.arrange(p3, p4, ncol = 2)
-```
-
-<img src="./img/figure-09A.png" width="816" />
-
--   For **Asia**, the humps correspond to the periods 1950-1965 and 1990-2005. The first one is regarded as the Golden Age of Asian cinema, when legendary Japanese directors Kenji Mizoguchi, Akira Kurosawa, Yasujiro Ozu, and Indian filmmaker Satyajit Ray made their masterpieces. As a consequence, co-productions from Japan and India make up for ~90% of Asian contributions in the period (Figure 9.C). The second period also lists genuine contributions—this time by a more heterogeneous pool of filmmakers (Figure 9.D). Production from the previously mentioned two countries is now greatly reduced, while the number of additions to the list by Iran (mainly Abbas Kiarostami's works), Taiwan (New Wave directors Edward Yang and Hou Hsiao-hsien), and Hong Kong (Wong Kar-wai) is particularly impressive.
-
-``` r
-asia <- world_base +
-  # Zoom the plot on Asia
-  coord_cartesian(xlim = c(30, 140), ylim = c(-5, 60)) +
-  shared_themes
-
-p5 <- plot.submap(subset.unique(contributions, seq(1950, 1965), "Asia"),
-                  title = "Figure 9.C: Asian contributions, 1950-1965", asia)
-p6 <- plot.submap(subset.unique(contributions, seq(1990, 2005), "Asia"),
-                  title = "Figure 9.D: Asian contributions, 1990-2005", asia)
-
-gridExtra::grid.arrange(p5, p6, ncol = 2)
-```
-
-<img src="./img/figure-09B.png" width="816" />
-
--   For **North America** (mostly the United States), the humps are wider and less pronounced, showing that productions in the continent have been largely consistent throughout the history of cinema. Indeed, Hollywood has always been [the most dominant force in the cinema industry](https://en.wikipedia.org/wiki/Cinema_of_the_United_States) as well as a pole of attraction for some of the most talented international directors. The British filmmaker Alfred Hitchcock, for instance, shot 13 out of his 17 films in the list in the United States; to name the highest ranked: *Vertigo* (\#2), *Psycho* (\#26), *Rear Window* (\#41), and *North by Northwest* (\#60).
-
--   For **Africa**, **Eastern Europe**, **South America**, and **Oceania**, the humps are less visible, but it is still possible to detect the peaks associated to the years of greatest contribution to the list. For Africa, the peak is in the first half of the 2000s; however, this is spurious, since it double counts contributions for Ousmane Sembene's film *Moolaadé* (Table 6). For Eastern Europe (including Russia) the peaks are in the '30s, '60s, and across the centuries. The first period includes films mostly by Soviet directors (e.g., Dziga Vertov, and the above cited Sergei Eisenstein). The second one, interestingly, movies by filmmakers outside the bloc, especially from Czechoslovakia, Poland, Ukraine, and Hungary. The last one includes several co-production efforts between Western and Eastern European nations (possibly the reason why a larger than average number of Eastern European films were contributed to the list) as well as Theo Angelopoulos' *Ulysses' Gaze* (Table 6), which double counts contributions by four of the latter. For South America, the peaks are in the '60s-'70s and in the '80s. In the first period, additions to the list are mostly from Brazil and Argentina, with a notable effort by Patricio Guzmán (*The Battle of Chile, Pts. 1-3*) co-produced by Chile, Cuba, and Venezuela. In the last one, contributions are almost all by Brazil. Finally, for Oceania, the peaks are in the '70s-'80s and across the centuries. Australian films dominate the first period, while co-production efforts between Australia and New Zealand prevail in the latter.
-
-Filtering out duplicates gives rise to different shapes for the conditional distributions of co-productions (Figure 10):
-
-``` r
-# Add filtered median year by continent
-filtered_out <- subset(contributions, !duplicated(Pos)) %>%
+# Filter out duplicates in the conditional histograms
+unique <- subset(greatest, !duplicated(Pos)) %>%
   group_by(Continent) %>%
-  mutate(Median.Year = median(Year))
+  # Include updated conditional medians
+  mutate(Median.Year = ceiling(median(Year)))
 
-# Plot filtered conditional distributions
-cond.distributions(filtered_out,
-                   paste("Figure 10: Timeline of filtered contributions",
-                         "by continent"))
+unique %>%
+  conditional.histograms() +
+  ggtitle("Figure 8: Timeline of unique contributions by region")
 ```
 
-<img src="./img/figure-10.png" width="816" />
+<img src="./img/figure-08-1.png" width="816" />
 
 #### **Observations**
 
-<To be written.>
+Figure 8 uses as source a filtered dataset that only includes the main producer for each movie (the country listed first in column "Countries"). This dataset has 2,000 observations.
 
-The shapes of the conditional distributions (Figure 7), as well as the scatter plot of concentrations (Figure 8) tell us something about the number of films produced in a given period (with some caveats related to spurious peaks), but do not say much about the relative quality of such movies. The latter is well described by the *ranking* dimension. To understand more about the Golden and Silver Ages of world cinema, it could be useful to incorporate such dimension in our timeline.
+The histogram for Western Europe now more closely resembles a Gaussian or Student's t distribution, and shows that the region made most contributions to the list between the 60s and the mid 70s. The histogram for Asia is still bimodal, but with a less pronounced peak in the RHS. The distribution for North America (mostly the United States) is nearly identical, and tells that the countries in this region were either the sole or the main producers for several films in the list. This fact is underlined by the conditional median, which has the smallest decrease among all values.
 
-### **Golden and silver periods of world cinema**
+### **VIII. Golden and silver ages of world cinema**
+
+A joint analysis of three dimensions (i.e., country, decade, and ranking) may help shed light on the golden and silver ages of world cinema.
 
 ``` r
 # Aggregate data by country and decade, then summarise
-greatest.by_decade <- contributions %>%
-  group_by(.dots = c("Country", "Decade")) %>%
-  summarise(Max.Rank = min(Pos))
+greatest.by_decade <- greatest %>%
+  group_by(Country, Decade) %>%
+  summarise(Max.Rank = min(Pos)) %>%
+  mutate(Rank.Cat = cut(x = Max.Rank, breaks = rank_breaks, labels = ranking))
 
-# Add column "Rank.Category" to data frame
-greatest.by_decade$Rank.Category <-
-  cut(greatest.by_decade$Max.Rank, breaks = c(0, 10, 100, 500, 1000, 2000))
-
-levels(greatest.by_decade$Rank.Category) <-
-  c("Top 10", "From 11 to 100", "From 101 to 500", "From 501 to 1000",
-    "Bottom 1000")
-```
-
-``` r
-# List non-native, top 1,000 directors who shot in the countries of interest
-foreign.dir <- list("Germany" = c("Akerman, Chantal", "Andersson, Roy",
-                                  "Bertolucci, Bernardo", "Costa, Pedro",
-                                  "Cronenberg, David", "Demy, Jacques",
-                                  "Dreyer, Carl Theodor", "Fincher, David",
-                                  "Guzmán, Patricio", "Haneke, Michael",
-                                  "Ivens, Joris", "Jarmusch, Jim",
-                                  "Jeunet, Jean-Pierre", "Kim Ki-duk",
-                                  "Kusturica, Emir", "Mungiu, Cristian",
-                                  "Pabst, G.W.", "Rossellini, Roberto",
-                                  "Skolimowski, Jerzy", "Sokurov, Aleksandr",
-                                  "Straub, Jean-Marie & Danièle Huillet",
-                                  "Straub, Jean-Marie", "Tarr, Béla",
-                                  "Visconti, Luchino",
-                                  "von Sternberg, Josef", "von Trier, Lars",
-                                  "Weerasethakul, Apichatpong",
-                                  "Welles, Orson", "Wenders, Wim",
-                                  "Wong Kar-wai", "Zulawski, Andrzej"),
-                    "India" = c("Renoir, Jean"),
-                    "Japan" = c("Bong Joon-ho", "Cissé, Souleymane",
-                                "Coppola, Sofia", "Resnais, Alain",
-                                "Salles, Walter", "Sokurov, Aleksandr",
-                                "von Sternberg, Josef", "Yang, Edward"),
-                    "Sweden" = c("Andersson, Roy", "Christensen, Benjamin",
-                                 "Godard, Jean-Luc", "Kaurismäki, Aki",
-                                 "Tarkovsky, Andrei", "von Trier, Lars",
-                                 "Watkins, Peter"),
-                    "USSR" = c("Kurosawa, Akira"))
-```
-
-``` r
-cond.scatter <- function(df, country, foreign.directors.list,
-                         exclude.rank.cat = "Bottom 1000",
-                         plot.title = NA, xticks.distance = 10,
-                         disp.ranking = FALSE, disp.legend = FALSE,
-                         disp.caption = FALSE) {
-  # Generate scatterplot of films conditional on the selected criteria.
-  #
-  # Arguments:
-  #   df: Data frame.
-  #   country: The desired country. Enter as text (e.g., "Japan").
-  #   foreign.directors.list: List of non-native directors who shot at least
-  #     one movie in the selected country. The country and the list item must
-  #     coincide; that is, the provided country name must be a valid element
-  #     of the list.
-  #
-  # Keyword arguments:
-  #   exclude.rank.cat: To avoid making the plot visually too heavy, do not
-  #     include ranking categories in the list (default: "Bottom 1000").
-  #   plot.title: Title of the plot, as text. If NA, no title is included
-  #     (default: NA).
-  #   xticks.distance: Distance between adjacent x-axis ticks, in years
-  #     (default: 10).
-  #   disp.ranking: If TRUE, include ranking in film labels (default: FALSE).
-  #   disp.legend: If TRUE, display "geom.point" legend (default: FALSE).
-  #   disp.caption: If TRUE, display plot caption.
-  #
-  # Returns:
-  #   A ggplot "geom_point" object conditional on the specified criteria.
-  #
-  # Filter-out movies by non-native directors and part of the excluded rankings
-  base <- ggplot(subset(df, grepl(country, Countries)
-                        & !Director %in% foreign.directors.list[[country]]
-                        & !Rank.Category %in% exclude.rank.cat),
-                 aes(x = Year, y = Pos, color = Rank.Category)) +
-    geom_point(show.legend = disp.legend) +
-    scale_x_continuous(breaks = seq(1920, 2010, xticks.distance)) +
-    # Reverse y-axis scale, so that highest ranked movies are on top
-    scale_y_reverse(breaks = seq(0, 1000, 100)) +
-    # Use inverted viridis colour scale to signal rank categories
-    viridis::scale_color_viridis(discrete = TRUE, direction = -1) +
-    ylab("Rank") +
-    labs(color = "Maximum rank reached") +
-    shared_themes
-
-  # Add film titles as well as rankings, if desired
-  add.ranking <- if (disp.ranking == TRUE) {
-    ggrepel::geom_text_repel(aes(label = paste(Title, ", ", Pos, sep = "")),
-                             color = "black", size = 2.5, show.legend = FALSE)
-  } else {
-    ggrepel::geom_text_repel(aes(label = Title), color = "black", size = 2.5,
-                             show.legend = FALSE)
-  }
-  # Add plot title unless the variable is NA
-  add.title <- if (!is.na(plot.title)) {
-    ggtitle(plot.title)
-  }
-  # Choose whether to display plot caption
-  add.caption <- if (disp.caption == TRUE) {
-    labs(caption = "Data source: theyshootpictures.com")
-  }
-  return(base + add.ranking + add.title + add.caption)
-}
-```
-
-``` r
 ggplot(data = greatest.by_decade, aes(x = Decade, y = Country)) +
-  geom_tile(aes(fill = Rank.Category), colour = "black") +
+  geom_tile(aes(fill = Rank.Cat), colour = "black") +
   scale_x_discrete(position = "top") +
   scale_fill_brewer(palette = "Reds", direction = -1) +
-  ggtitle("Figure 11: Heatmap of peak positions by country and decade") +
-  labs(fill = "Maximum rank reached",
+  ggtitle("Figure 9: Heatmap of peak positions by country and decade") +
+  labs(fill = "Maximum rank reached", 
        caption = "Data source: theyshootpictures.com") +
   shared_themes +
   theme(axis.text.x = element_text(angle = -45, hjust = 1.05))
 ```
 
-<img src="./img/figure-11.png" width="816" />
+<img src="./img/figure-09-1.png" width="816" />
+
+#### **Observations**
+
+Figure 9 is a heatmap of the maximum ranks attained over the decades by each country in the list. The redder a particular tile, the higher the position reached by the associated country. All individual contributions are included.
+
+In my view, the most visible clusters in the graph relate to France and the United States. France is the only nation to have co-produced at least one critically acclaimed movie since the birth of cinema, and for over a century the maximum rank in each decade has never been below 500. The United States have committed at least one top 100 movie each decade since the 20s, and most of these movies are in the top 10.
 
 **Table 7: Top 10 greatest movies (2018 ranking)**
 
 ``` r
-greatest[1:10, c("Title", "Director", "Year", "Countries", "Decade")]
+head(greatest, n = 10) %>%
+  select(Title, Director, Year, Countries, Decade) %>%
+  pretty.print()
 ```
 
     ##                     Title              Director Year Countries Decade
     ## 1            Citizen Kane         Welles, Orson 1941       USA  1940s
     ## 2                 Vertigo     Hitchcock, Alfred 1958       USA  1950s
     ## 3   2001: A Space Odyssey      Kubrick, Stanley 1968   UK, USA  1960s
-    ## 4  Rules of the Game, The          Renoir, Jean 1939    France  1930s
-    ## 5             Tokyo Story         Ozu, Yasujiro 1953     Japan  1950s
-    ## 6          Godfather, The Coppola, Francis Ford 1972       USA  1970s
-    ## 7                      8½     Fellini, Federico 1963     Italy  1960s
-    ## 8                 Sunrise          Murnau, F.W. 1927       USA  1920s
-    ## 9          Searchers, The            Ford, John 1956       USA  1950s
-    ## 10          Seven Samurai       Kurosawa, Akira 1954     Japan  1950s
+    ## 4   2001: A Space Odyssey      Kubrick, Stanley 1968   UK, USA  1960s
+    ## 5  Rules of the Game, The          Renoir, Jean 1939    France  1930s
+    ## 6             Tokyo Story         Ozu, Yasujiro 1953     Japan  1950s
+    ## 7          Godfather, The Coppola, Francis Ford 1972       USA  1970s
+    ## 8                      8½     Fellini, Federico 1963     Italy  1960s
+    ## 9                 Sunrise          Murnau, F.W. 1927       USA  1920s
+    ## 10         Searchers, The            Ford, John 1956       USA  1950s
 
-#### **Observations**
-
-Figure 10 is a heatmap of the maximum ranks attained, throughout the decades, by each country represented in the list. The redder a particular tile is, the higher the position reached by the associated country in a given decade. Thus, maroon tiles (or clusters of dark red tiles) may help detect the Golden and Silver Ages of cinema, if any, for the desired countries.
-
-It may be useful to make some preliminary comments on the figure. In my opinion, the following features of the plot stand out the most:
-
--   *The continuous series of dark red tiles for France.* France is the only nation to have produced at least one critically acclaimed movie since the birth of cinema, and the maximum ranked movie in each decade has never been in the bottom 1,000. Also—almost uninterruptedly since the 1920s—France has contributed at least one top 100 film to the list every ten years;
-
--   *The impressive cluster of maroon tiles (signalling top 10 movies) for the United States.* In the 1920s, and in each decade between the 1940s and the 1970s included, the United States contributed at least one top 10 film to the list. Also, for at least eighty years, they have been co-producing at least one top 100 movie each decade.
-
-Additional comments are in order. One is that the maroon tiles in the plot are nine, instead of ten. This is due to the fact that: (I) both the United States and Japan produced two top 10 movies in the 1950s: the United States John Ford's *The Searchers* in 1956 and Alfred Hitchcock's *Vertigo* in 1958, Japan Yasujirō Ozu's Tokyo Story in 1953 and Akira Kurosawa's Seven Samurai in 1954 (Table 7); (II) Stanley Kubrick's *2001: A Space Odyssey*, in 1968, is double-counted since it was a UK-USA co-production. The other is that the heatmap can not only be read by rows, but also by columns: this way, one can find out which decade was the most important for world cinema (possibly the 1960s).
-
-Let us now analyse the Golden and Silver Ages of cinema for a few selected countries in the list. To do so, inference is made not only from figure 10, but also from 11-12, in the below section.
+### **IX. Selected timelines of the greatest movies**
 
 #### **Japan**
-
-``` r
-golden.silver <- function(xmin, xmax) {
-  # Highlight golden and silver periods of cinema for a particular country.
-  #
-  # Arguments:
-  #   xmin, xmax: Vectors containing, respectively, the minima and the maxima
-  #     x-axis coordinates, in years (e.g., xmin = c(xmin1, xmin2)).
-  #
-  # Returns:
-  #   A layer on top of a ggplot, with two areas highlighted: a gold-coloured
-  #   one (denoting the Golden Age), and a silver-coloured one (Silver Age).
-  #
-  annotate("rect", xmin = xmin, xmax = xmax, ymin = -Inf, ymax = Inf,
-           fill = c("goldenrod", "darkgray"), alpha = 0.3)
-}
-
-# Produce scatterplot for Japanese cinema
-cond.scatter(greatest, "Japan", foreign.dir,
-             plot.title = "Figure 12: Timeline of Japan's greatest films",
-             xticks.distance = 5, disp.ranking = TRUE, disp.legend = TRUE,
-             disp.caption = TRUE) +
-  # Highlight Golden and Silver Ages of Japanese cinema
-  golden.silver(xmin = c(1949, 1960), xmax = c(1960, 1965))
-```
-
-<img src="./img/figure-12.png" width="816" />
-
-The first one I am interested in—and which I will discuss in greater detail—is Japan (Figure 9):
-
--   The 1950s are widely considered Japan's **Golden Age** of cinema, the period in which the three legendary filmmakers Kenji Mizoguchi, Akira Kurosawa, and Yasujirō Ozu, made their masterpieces. This glorious age was anticipated by Ozu's movie [*Late Spring*](https://www.criterion.com/films/298-late-spring) (\#73) in 1949, the story of *«a widowed father who feels compelled to marry off his beloved only daughter in her late-twenties»* (The Criterion Collection). Kurosawa's [Rashōmon](https://www.criterion.com/films/307-rashomon) (\#20), the legendary film in which *«four people give different accounts of a man's murder and the rape of his wife»*, opened the decade, and was instrumental in bringing Japanese cinema to international renown. It is also the breakthrough movie for a cast of extremely talented and versatile actors: Toshirō Mifune, Takashi Shimura, Machiko Kyō, Masayuki Mori, and Minoru Chiaki, among the others. All of them will later populate the stage of several movies by the previously mentioned directors: to name the most important ones, Kurosawa's [*Ikiru*](https://www.criterion.com/films/353-ikiru) (\#113), the story of *«an aging bureaucrat with stomach cancer who is impelled to find meaning in his final days»*, [*Seven Samurai*](https://www.criterion.com/films/165-seven-samurai) (\#10), the legendary tale of *«a sixteenth-century village whose desperate inhabitants hire the eponymous warriors to protect them from invading bandits»*, and [*Throne of Blood*](https://www.criterion.com/films/735-throne-of-blood) (\#268), *«a visceral Macbeth adaptation set in a ghostly, fog-enshrouded landscape in feudal Japan»*; Mizoguchi's [*The Life of Oharu*](https://www.criterion.com/films/27705-the-life-of-oharu) (\#241), *«the portrait of an inexorable fall from grace of an imperial lady-in-waiting who gradually descends to street prostitution»*, [*Ugetsu*](https://www.criterion.com/films/369-ugetsu) (\#50), *«an exquisite ghost story about two villagers whose pursuit of fame and fortune leads them far astray from their loyal wives»*, and [*Sanshō The Bailiff*](https://www.criterion.com/films/823-sansho-the-bailiff) (\#93), the tale of *«the wife and children of an idealistic governor cast into exile, left to fend for themselves and eventually wrenched apart by vicious slave traders»*; and Ozu's [*Early Summer*](https://www.criterion.com/films/875-early-summer) (\#416), *«a nuanced examination of life's changes across three generations»*, and *Tokyo Story* (\#5), the masterpiece which *«follows an ageing couple’s journey to visit their grown children in bustling postwar Tokyo»*.
-
--   The early 1960s could be considered the **Silver Age** of Japanese cinema. Some of the most important pictures of this era are Kurosawa's [*Yojimbo*](https://www.criterion.com/films/597-yojimbo) (\#393), the tale of *«a wily masterless samurai who, to rid a terror-stricken village of corruption, turns a range war between two evil clans to his own advantage»*, and [*High and Low*](https://www.criterion.com/films/543-high-and-low) (\#383), the story of *«a wealthy industrialist whose family becomes the target of a cold-blooded kidnapper»*, as well as Ozu's [*An Autumn Afternoon*](https://www.criterion.com/films/784-an-autumn-afternoon) (\#283), the director's final masterpiece and the story of *«a widower who accepts and encourages the marriage of his daughter and her departure from their home»*. The Sixties, however, also mark the entrance onto stage of two critically acclaimed filmmakers, Hiroshi Teshigahara and Masaki Kobayashi, and one iconic actor, Tatsuya Nakadai. Teshigahara's [*Woman in The Dunes*](https://www.criterion.com/films/826-woman-in-the-dunes) (\#359), based on a novel by Kobo Abe, and supervised by the writer himself, is the story of *«an amateur entomologist who is persuaded to spend the night with a young widow in her hut at the bottom of a sand dune»*; Kobayashi's [*Harakiri*](https://www.criterion.com/films/743-harakiri) (\#692), is the story of *«an unemployed samurai who comes to a manor asking to commit ritual suicide following the collapse of his clan, and whose integrity is fatally misunderstood by the lord and his guardsmen»*, and [*Kwaidan*](https://www.criterion.com/films/629-kwaidan) (\#959) a *«stylised quartet of haunting ghost stories adapted from writer Lafcadio Hearn’s collections of Japanese folklore»*. Tatsuya Nakadai plays a supporting role to the great Mifune in Kurosawa's *High and Low*, and the lead role in Kobayashi's movies. He will later star in Kurosawa's late masterpieces [*Kagemusha*](https://www.criterion.com/films/948-kagemusha) (\#448), the tale of *«a peasant thief called upon to impersonate a dead warlord, and then haunted by the warlord’s spirit as well as by his own ambitions»* and [*Ran*](https://www.criterion.com/films/754-ran) (\#190), the *«reimagination of Shakespeare's King Lear as a singular historical epic set in sixteenth-century Japan»*.
-
-#### **Other timelines: Germany, India, Sweden, USSR**
-
-``` r
-# Exclude rank categories from conditional subplots
-s1 <- cond.scatter(greatest, "Germany", foreign.dir, plot.title = "Germany") +
-  golden.silver(xmin = c(1918, 1966), xmax = c(1933, 1984))
-
-s2 <- cond.scatter(greatest, "India", foreign.dir, plot.title = "India") +
-  golden.silver(xmin = c(1955, NA), xmax = c(1964, NA))
-
-s3 <- cond.scatter(greatest, "Sweden", foreign.dir, plot.title = "Sweden") +
-  golden.silver(xmin = c(NA, 1955), xmax = c(NA, 1985))
-
-s4 <- cond.scatter(greatest, "USSR", foreign.dir, plot.title = "USSR") +
-  golden.silver(xmin = c(1920, 1960), xmax = c(1947, 1980))
-
-# Arrange subplots in one unique figure
-plot.title <- paste("Figure 13: Golden and silver ages of cinema for other",
-                    "selected countries")
-
-grid.arrange(s1, s2, s3, s4, nrow = 2, ncol = 2,
-             top = textGrob(plot.title, gp = gpar(fontsize = 11)))
-```
-
-<img src="./img/figure-13.png" width="816" />
-
-#### **Germany**
 
 ### **C. Duration**
 
 ``` r
 # Generate boxplot of movie durations by decade
-box_plt <- ggplot(data = subset(greatest, !is.na(Length)),
+box_plt <- ggplot(data = subset(unique, !is.na(Length)),
                   aes(x = Decade, y = Length)) +
   geom_boxplot(size = 0.3, outlier.shape = NA) +
-  geom_jitter(width = 0.2, color = "royalblue", alpha = 0.25) +
+  geom_jitter(aes(color = Continent), width = 0.2, alpha = 0.25, 
+              show.legend = FALSE) +
   scale_x_discrete(position = "top") +
   scale_y_continuous(breaks = seq(0, 240, 10),
                      sec.axis = dup_axis(name = NULL)) +
@@ -2148,13 +1420,14 @@ box_plt <- ggplot(data = subset(greatest, !is.na(Length)),
   # Include mean duration per decade
   stat_summary(fun.y = mean, geom = "point", size = 1, shape = 3,
                color = "tomato", show.legend = FALSE) +
-  ggtitle("Figure 14: Boxplot of movie durations by decade") +
+  ggtitle("Figure 10: Boxplot of movie durations by decade") +
   xlab("Decade") +
   ylab("Duration (minutes)") +
-  shared_themes
+  shared_themes +
+  guides(colour = guide_legend(override.aes = list(alpha = 1)), size = FALSE)
 
 # Generate barplot of movies by decade
-bar_plt <- ggplot(data = greatest, aes(x = Decade)) +
+bar_plt <- ggplot(data = unique, aes(x = Decade)) +
   geom_bar() +
   scale_y_continuous(sec.axis = dup_axis(name = NULL)) +
   labs(caption = "Data source: theyshootpictures.com") +
@@ -2163,314 +1436,7 @@ bar_plt <- ggplot(data = greatest, aes(x = Decade)) +
   shared_themes
 
 # Combine plots
-grid.arrange(box_plt, bar_plt, layout_matrix = cbind(c(1, 1, 1, 2)))
+gridExtra::grid.arrange(box_plt, bar_plt, layout_matrix = cbind(c(1, 1, 1, 2)))
 ```
 
-<img src="./img/figure-14.png" width="816" />
-
-### **Most frequent co-productions**
-
-#### **Define auxiliary functions**
-
-``` r
-rbind.factor.comb <- function(df, column, delimiter = ", ") {
-  # Extract all factor combinations out of each row of a data frame column
-  # and rbind the output of each iteration [1].
-  #
-  # Arguments:
-  #   df: Data frame.
-  #   column: The data frame column containing, for each row, factor level
-  #     combinations, separated by a delimiter. Enter as text (i.e., "column").
-  #
-  # Keyword arguments:
-  #   delimiter: The character separating factor levels (default: ", ").
-  #
-  # Returns:
-  #   A new data frame with all possible combinations among pairs of factors.
-  #
-  # References:
-  #   [1] https://stackoverflow.com/questions/29402528/append-data-frames-
-  #       together-in-a-for-loop/29419402
-  #
-  # Create empty list, to which to add after each loop
-  df_out <- list()
-
-  for (i in 1:length(df[[column]])) {
-    # Make an expanded grid of all combinations of factors in each row
-    expanded_row <- expand.grid(
-      stringr::str_split_fixed(df[[column]][i], delimiter, Inf),
-      stringr::str_split_fixed(df[[column]][i], delimiter, Inf))
-
-    # Add the output of each loop to the list
-    df_out[[i]] <- expanded_row
-  }
-  # Row bind the list elements
-  df_out <- data.table::rbindlist(df_out)
-  return(df_out)
-}
-
-cbind.coordinates <- function(df, coord.df, columns.x, column.y) {
-  # Append coordinate pairs to each column of the provided data frame.
-  #
-  # Arguments:
-  #   df: The data frame to which to append the coordinate pairs.
-  #   coord.df: The data frame containing the coordinate pairs. Must share
-  #     a column with df.
-  #   columns.x: Each of the columns of df to which to append the coordinates.
-  #     Enter as a vector of column names (e.g., c("col.1", "col.2")).
-  #   column.y: Unique column of coord.df whose factor levels are shared by the
-  #     columns of df. Enter as column name (i.e., "column.y").
-  #
-  # Returns:
-  #   The original data frame, (column-) augmented by coordinate pairs for each
-  #   of its columns. The output is optimised for ggplot2 "geom_curve", which
-  #   requires both (x, y) and (xend, yend).
-  #
-  for (column in columns.x) {
-    df <- merge(df, coord.df, by.x = column, by.y = column.y, all.x = TRUE)
-  }
-  return(df)
-}
-
-remove.duplicates <- function(df, column, na.rm = TRUE) {
-  # Remove duplicate rows in a data frame based on a column.
-  #
-  # Arguments:
-  #   df: Data frame.
-  #   column: The data frame column based on which duplicate rows are removed.
-  #     Enter as text (i.e., "column" instead of column).
-  #
-  # Keyword arguments:
-  #   na.rm: Choose whether to remove (TRUE) or to keep (FALSE) one NA value in
-  #     the provided data frame column (default: TRUE).
-  #
-  # Returns:
-  #   A shrunken data frame which only keeps unique values in the supplied
-  #   column.
-  #
-  df_out <- df[!duplicated(df[[column]]), ]
-
-  if (na.rm == TRUE) {
-    # Clear away duplicates from the data frame
-    df_out <- subset(df_out, !is.na(eval(parse(text = column))))
-  }
-  return(df_out)
-}
-
-count.movie.coproducers <- function(df, column, delimiter = ", ") {
-  # Count the number of co-producing countries for each column entry.
-  #
-  # Arguments:
-  #   df: Data frame.
-  #   column: Data frame column with the individual countries, separated by a
-  #     delimiter, to split. Enter column as text (i.e., "column").
-  #
-  # Keyword arguments:
-  #   delimiter: The character separating the co-producers (default: ", ").
-  #
-  # Returns:
-  #   A vector containing the number of co-producing countries for each film
-  #   in the data frame column.
-  n.times <- vector(mode = "integer", length = length(df[[column]]))
-
-  for (i in 1:length(df[[column]])) {
-    n.times[i] <- ncol(stringr::str_split_fixed(df[[column]][i], ", ", Inf))
-  }
-  return(n.times)
-}
-
-expand.to.comb <- function(df, column, times) {
-  # Expand a data frame column to the size of "rbind.factor.comb" output.
-  #
-  # Arguments:
-  #  df: Data frame.
-  #  column: The data frame column to expand. Enter as text (i.e., "column").
-  #  times: A vector of integers representing the number of times each single
-  #    column entry should be expanded.
-  #
-  # Returns:
-  #   A data frame column with entries expanded according to vector "times",
-  #   to conform to the size of "rbind.factor.comb" output.
-  #
-  col.name <- rep.int(df[[column]], times)
-  df_out <- data.frame(col.name)
-  return(df_out)
-}
-```
-
-#### **Count co-production relationships**
-
-``` r
-# Single out and sum co-productions
-co_productions <- subset(contributions, Co.Production == "Yes")
-
-greatest.by_connection <- co_productions %>%
-  group_by(Countries) %>%
-  summarise(n = n(),
-            # Summary variable to detect two-way co-productions
-            Mean.Latitude.All = mean(Latitude))
-
-# Sum two-way co-productions detected in the previous data frame
-auxiliary.df <- greatest.by_connection %>%
-  group_by(Mean.Latitude.All) %>%
-  summarise(Sum.Co.Productions = sum(n))
-
-# Merge the two data frames, dropping unnecessary columns
-greatest.by_connection <- merge(subset(greatest.by_connection, select = -n),
-                                auxiliary.df, by = "Mean.Latitude.All")
-
-# Generate all possible combinations of two-country co-productions
-combinations <- rbind.factor.comb(co_productions, "Countries", ", ")
-
-# Update column names and factor levels
-combinations <- rename(combinations, Country.x = Var1, Country.y = Var2)
-combinations <- update.factor.columns(combinations, old_names, new_names)
-
-# Keep track of the times each entry was expanded
-n.times <- count.movie.coproducers(co_productions, "Countries")
-
-# Expand column "Countries" to the length of "combinations".
-# The column will work as primary key, to join different data frames
-shared_col <- expand.to.comb(co_productions, "Countries", n.times**2)
-shared_col <- rename(shared_col, Countries = col.name)
-
-# Column bind "Countries" to "combinations"
-combinations <- cbind(combinations, shared_col)
-
-# Append coordinate pairs to Country.x and Country.y
-unique_coord <- greatest.by_country[, c("Country", "Latitude", "Longitude")]
-
-combinations <- cbind.coordinates(combinations, unique_coord,
-                                  columns.x = c("Country.x", "Country.y"),
-                                  column.y = "Country")
-
-combinations <- merge(combinations, greatest.by_connection,
-                      by = "Countries", all.x = TRUE)
-
-# Shrink data frame and remove duplicate elements
-combinations <- unique(combinations)
-combinations <- combinations[apply(combinations[, c("Country.x", "Country.y")],
-                                   1, function(x) length(unique(x)) > 1), ]
-
-# Include "Mean.Latitude" as one of the two columns used to identify unique
-# co-production relationships (the other being "Mean.Latitude.All")
-combinations$Mean.Latitude <-
-  0.5 * (combinations$Latitude.x + combinations$Latitude.y)
-
-# Single out unique co-productions
-combinations <- combinations[!duplicated(
-  combinations[, c("Mean.Latitude", "Mean.Latitude.All")]), ]
-
-# Sum all two-country co-productions
-greatest.by_coproduction <- combinations %>%
-  group_by(.dots = c("Country.x", "Country.y")) %>%
-  summarise(Total.Co.Productions = sum(Sum.Co.Productions))
-
-# Append coordinates to optimise output for "geom_curve"
-greatest.by_coproduction <- cbind.coordinates(
-  greatest.by_coproduction, unique_coord,
-  columns.x = c("Country.x", "Country.y"), column.y = "Country")
-
-# Add factor levels for neater visualisation
-greatest.by_coproduction$Two.Country.Relationships <-
-  cut(greatest.by_coproduction$Total.Co.Productions,
-      breaks = c(0, 10, 20, 50, 100, Inf))
-
-levels(greatest.by_coproduction$Two.Country.Relationships) <-
-  c("Up to 10", "From 11 to 20", "From 21 to 50", "From 51 to 100",
-    "More than 100")
-```
-
-#### **Clean up Global Environment**
-
-``` r
-# Remove all but necessary variables and functions
-required <- c(lsf.str(), "contributions", "directors", "world", "old_names",
-              "new_names", "greatest.by_country", "greatest.by_decade",
-              "greatest.by_coproduction", "shared_themes", "world_base",
-              "greatest")
-rm(list = setdiff(ls(), required))
-```
-
-``` r
-# Define transparent world map for network plot
-world_transparent <- ggplot() +
-  geom_polygon(data = world, aes(x = long, y = lat, group = group),
-               color = "#b2b2b2", size = 0.3, fill = NA) +
-  shared_themes +
-  # Use map theme from the "ggthemes" package
-  ggthemes::theme_map()
-
-world_transparent +
-  geom_point(data = contributions, aes(x = Longitude, y = Latitude),
-             color = "orange", size = 1.2) +
-  geom_curve(data = greatest.by_coproduction,
-             aes(x = Longitude.x, xend = Longitude.y,
-                 y = Latitude.x, yend = Latitude.y,
-                 alpha = Two.Country.Relationships), color = "#a50026") +
-  scale_alpha_manual(values = c(0.05, 0.1, 0.2, 0.5, 1)) +
-  ggtitle(paste("Figure 15: Most frequent two-country co-production",
-                "relationships")) +
-  labs(alpha = "Two-country relationships",
-       caption = "Data sources: theyshootpictures.com, Google Developers")
-```
-
-<img src="./img/figure-15.png" width="816" />
-
-#### **Observations**
-
-### **Colour and black-and-white**
-
-``` r
-# Group films by colour and year
-greatest.by_colour <- greatest %>%
-  group_by(.dots = c("Colour", "Year")) %>%
-  summarise(n = n())
-```
-
-``` r
-# Single out years with both black-and-white and colour films in the list
-both <- inner_join(subset(greatest.by_colour, Colour == "BW"),
-                   subset(greatest.by_colour, Colour == "Col"),
-                   by = "Year")
-```
-
-``` r
-p1 <- ggplot(data = both, aes(x = Year, y = both$n.x / both$n.y)) +
-  geom_point(size = 0.75) +
-  # Include parity line (ratio of black-and-white-to-colour films equal to 1)
-  geom_hline(yintercept = 1, linetype = 2, size = 0.25) +
-  scale_x_continuous(breaks = seq(1925, 2015, 5), limits = c(1925, 2015),
-                     position = "top") +
-  scale_y_log10() +
-  # Highlight black-and-white-colour trend reversals
-  annotate("rect", xmin = c(1953, 1965), xmax = c(1958, 1970),
-           ymin = 0, ymax = Inf, alpha = 0.4) +
-  ggtitle("Figure 16: Timeline of colour/black-and-white prevalence") +
-  xlab("Year") +
-  ylab("Black-and-white-to-colour ratio") +
-  shared_themes
-
-p2 <- ggplot(data = subset(greatest, Colour %in% c("BW", "Col")),
-             aes(x = Year, fill = Colour)) +
-  geom_bar() +
-  scale_x_continuous(breaks = seq(1925, 2015, 5), limits = c(1925, 2015)) +
-  # Uniform y-axis label formatting to that of p1
-  scale_y_continuous(labels = function(x) sprintf("%.1f", x)) +
-  xlab("Year") +
-  ylab("Count") +
-  labs(caption = "Data source: theyshootpictures.com") +
-  shared_themes
-
-# Plot p1, p2 in the same figure
-grid.arrange(p1, p2, ncol = 1, heights = 2:1, widths = 1:1)
-```
-
-<img src="./img/figure-16.png" width="816" />
-
-#### **Observations**
-
-**Bibliography**
-----------------
-
-Wickham, H. (2014): *Tidy Data*, Journal of Statistical Software, Vol. 59, Issue 10.
+<img src="./img/figure-10-1.png" width="816" />
