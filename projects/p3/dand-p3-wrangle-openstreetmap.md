@@ -1,6 +1,6 @@
 Previous: [P2 Investigate a Dataset](https://nbviewer.jupyter.org/github/federicomariamassari/udacity-dand/blob/master/projects/p2/dand-p2-investigate-a-dataset.ipynb) | [Table of Contents](https://github.com/federicomariamassari/udacity-dand/blob/master/README.md) | Next: [P4 Explore and Summarise Data](https://github.com/federicomariamassari/udacity-dand/blob/master/projects/p4/dand-p4-explore-and-summarise-data.md)
 # Data Analyst Nanodegree: P3 Wrangle OpenStreetMap
-__Federico Maria Massari / federico.massari@bocconialumni.it__
+__Federico Maria Massari__
 
 The project is connected to the course _[Data Wrangling with MongoDB](https://eu.udacity.com/course/data-wrangling-with-mongodb--ud032)_. | ★ This is a featured project.
 
